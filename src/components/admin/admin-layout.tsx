@@ -8,7 +8,6 @@ import { getSiteConfig } from '@/server/actions/site-config.actions';
 import { canManageUsers, type Role } from '@/server/auth/roles';
 import { Sidebar } from '@/components/admin/sidebar';
 import { Menu } from 'lucide-react';
-import { LocaleSwitcher } from '@/components/locale-switcher';
 
 interface NavItem {
   href: string;
@@ -120,9 +119,6 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <span className="ml-2 text-sm font-medium text-[var(--foreground)]">{siteTitle}</span>
-          <div className="ml-auto">
-            <LocaleSwitcher />
-          </div>
         </div>
         <div className={`p-6 ${isEditorRoute ? 'max-w-full' : 'max-w-5xl mx-auto'}`}>{children}</div>
       </main>

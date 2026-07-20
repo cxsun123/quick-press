@@ -5,7 +5,7 @@ import { ClientProviders } from "@/components/blog/client-providers";
 import { getSiteTheme } from "@/server/actions/site-config.actions";
 import { getSiteConfig } from "@/server/actions/site-config.actions";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = await getSiteConfig('site_title');
@@ -19,6 +19,7 @@ export default async function RootLayout({
 }>) {
   const { mode, theme } = await getSiteTheme();
   const locale = await getLocale();
+  const messages = await getMessages();
 
   const isExplicitDark = mode === 'dark' || theme === 'night';
   const htmlClasses = [
@@ -29,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={htmlClasses} data-theme-mode={mode} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ClientProviders>
             <ThemeProvider>{children}</ThemeProvider>
           </ClientProviders>

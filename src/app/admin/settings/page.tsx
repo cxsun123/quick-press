@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { getSiteConfig, updateSiteConfig } from '@/server/actions/site-config.actions';
 import { useTheme, BUILTIN_THEMES, type ThemeVars, type ThemeMode } from '@/hooks/use-theme';
 import { Sun, Moon, Monitor, Eye, EyeOff } from 'lucide-react';
+import { routing, localeNames, type Locale } from '@/i18n/routing';
 
 const MODE_OPTIONS: { id: ThemeMode; label: string; icon: typeof Sun }[] = [
   { id: 'light', label: '亮色', icon: Sun },
@@ -13,6 +15,7 @@ const MODE_OPTIONS: { id: ThemeMode; label: string; icon: typeof Sun }[] = [
 ];
 
 export default function SettingsPage() {
+  const router = useRouter();
   const { mode, resolved, theme, setMode, setTheme, customVars, setCustomVars, resetCustom } = useTheme();
   const [siteTitle, setSiteTitle] = useState('');
   const [regMode, setRegMode] = useState('open');
@@ -30,6 +33,8 @@ export default function SettingsPage() {
   const [mcpKey, setMcpKey] = useState('');
   const [showMcpKey, setShowMcpKey] = useState(false);
 
+  const [currentLocale, setCurrentLocale] = useState<string>(routing.defaultLocale);
+
   useEffect(() => {
     (async () => {
       setSiteTitle((await getSiteConfig('site_title')) || 'i_blog');
@@ -40,6 +45,10 @@ export default function SettingsPage() {
       setAiMaxContent((await getSiteConfig('ai_max_content_length')) || '100000');
       setMcpKey((await getSiteConfig('mcp_api_key')) || '');
     })();
+    const cookie = document.cookie.split('; ').find(r => r.startsWith('NEXT_LOCALE='));
+    if (cookie) {
+      setCurrentLocale(cookie.split('=')[1]);
+    }
   }, []);
 
   useEffect(() => { setLocalVars(customVars); }, [customVars]);
@@ -170,6 +179,24 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
+        </section>
+
+        {/* Language */}
+        <section>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">界面语言</h2>
+          <select
+            value={currentLocale}
+            onChange={(e) => {
+              setCurrentLocale(e.target.value);
+              document.cookie = `NEXT_LOCALE=${e.target.value}; path=/; max-age=31536000`;
+              router.refresh();
+            }}
+            className="px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] text-sm"
+          >
+            {routing.locales.map((l) => (
+              <option key={l} value={l}>{localeNames[l]}</option>
+            ))}
+          </select>
         </section>
 
         {/* Light / Dark Mode */}

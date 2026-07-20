@@ -1,32 +1,17 @@
+import createIntlMiddleware from 'next-intl/middleware';
 import { type NextRequest } from 'next/server';
 import { updateSession } from '@/server/db/middleware';
 import { routing } from '@/i18n/routing';
 
-const COOKIE_NAME = 'NEXT_LOCALE';
-
-function resolveLocale(request: NextRequest): string {
-  const existing = request.cookies.get(COOKIE_NAME)?.value;
-  if (existing && routing.locales.includes(existing as any)) {
-    return existing;
-  }
-  const header = request.headers.get('accept-language') || '';
-  const preferred = header.split(',')[0]?.split('-')[0]?.trim();
-  if (preferred && routing.locales.includes(preferred as any)) {
-    return preferred;
-  }
-  return routing.defaultLocale;
-}
+const intlMiddleware = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
+  const intlResponse = intlMiddleware(request);
   const response = await updateSession(request);
 
-  // Persist the resolved locale so next-intl (getLocale / requestLocale) can read it.
-  const locale = resolveLocale(request);
-  if (request.cookies.get(COOKIE_NAME)?.value !== locale) {
-    response.cookies.set(COOKIE_NAME, locale, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 365,
-    });
+  const localeCookie = intlResponse.cookies.get('NEXT_LOCALE');
+  if (localeCookie) {
+    response.cookies.set(localeCookie.name, localeCookie.value, localeCookie);
   }
 
   return response;
