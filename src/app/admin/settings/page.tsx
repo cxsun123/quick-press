@@ -5,25 +5,15 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { getSiteConfig, updateSiteConfig } from '@/server/actions/site-config.actions';
-import { useTheme, BUILTIN_THEMES, type ThemeVars, type ThemeMode } from '@/hooks/use-theme';
-import { Sun, Moon, Monitor, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { routing, localeNames, type Locale } from '@/i18n/routing';
-
-const MODE_OPTIONS: { id: ThemeMode; key: string; icon: typeof Sun }[] = [
-  { id: 'light', key: 'light', icon: Sun },
-  { id: 'dark', key: 'dark', icon: Moon },
-  { id: 'system', key: 'system', icon: Monitor },
-];
 
 export default function SettingsPage() {
   const router = useRouter();
   const t = useTranslations('admin');
-  const tc = useTranslations('common');
-  const { mode, resolved, theme, setMode, setTheme, customVars, setCustomVars, resetCustom } = useTheme();
   const [siteTitle, setSiteTitle] = useState('');
   const [regMode, setRegMode] = useState('open');
   const [saving, setSaving] = useState(false);
-  const [localVars, setLocalVars] = useState<ThemeVars>(customVars);
 
   const [aiUrl, setAiUrl] = useState('');
   const [aiKey, setAiKey] = useState('');
@@ -51,8 +41,6 @@ export default function SettingsPage() {
       setCurrentLocale(cookie.split('=')[1]);
     }
   }, []);
-
-  useEffect(() => { setLocalVars(customVars); }, [customVars]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -194,89 +182,7 @@ export default function SettingsPage() {
           </select>
         </section>
 
-        <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('appearanceMode')}</h2>
-          <div className="flex gap-2">
-            {MODE_OPTIONS.map((opt) => {
-              const Icon = opt.icon;
-              const active = mode === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  onClick={() => setMode(opt.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm transition-colors ${
-                    active
-                      ? 'border-[var(--ring)] ring-2 ring-[var(--ring)] bg-[var(--accent)] text-[var(--foreground)]'
-                      : 'border-[var(--border)] text-[var(--foreground-secondary)] hover:bg-[var(--accent)]'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {t(opt.key)}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-2 text-xs text-[var(--muted-foreground)]">
-            {t('currentMode')}：<span className="font-medium text-[var(--foreground)]">{resolved === 'dark' ? t('dark') : t('light')}</span>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('themeStyle')}</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {BUILTIN_THEMES.filter(th => th.id !== 'custom').map((th) => (
-              <button key={th.id} onClick={() => setTheme(th.id)}
-                className={`text-left px-4 py-3 rounded-lg border transition-colors ${
-                  theme === th.id
-                    ? 'border-[var(--ring)] ring-2 ring-[var(--ring)] bg-[var(--accent)]'
-                    : 'border-[var(--border)] hover:bg-[var(--accent)]'
-                }`}>
-                <div className="text-sm font-medium text-[var(--foreground)]">{th.name}</div>
-                <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{th.desc}</div>
-              </button>
-            ))}
-          </div>
-
-          <details className="mt-4">
-            <summary className="text-sm font-medium text-[var(--foreground)] cursor-pointer hover:text-[var(--primary)]">
-              {t('customTheme')} {theme === 'custom' ? `（${tc('current')}）` : ''}
-            </summary>
-            <div className="mt-3 space-y-3 pl-2 border-l-2 border-[var(--border)]">
-              <div className="grid grid-cols-2 gap-3">
-                {Object.entries(localVars).map(([key, val]) => (
-                  <div key={key}>
-                    <label className="block text-[10px] text-[var(--muted-foreground)] mb-0.5">{key}</label>
-                    {key === '--font-body' || key === '--font-heading' ? (
-                      <input value={val} onChange={(e) => setLocalVars({ ...localVars, [key]: e.target.value })}
-                        className="w-full px-2 py-1 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] font-mono" />
-                    ) : key === '--radius' ? (
-                      <input value={val} onChange={(e) => setLocalVars({ ...localVars, [key]: e.target.value })}
-                        className="w-full px-2 py-1 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] font-mono" />
-                    ) : (
-                      <div className="flex gap-1">
-                        <input type="color" value={val} onChange={(e) => setLocalVars({ ...localVars, [key]: e.target.value })}
-                          className="w-8 h-8 rounded border border-[var(--border)] cursor-pointer" />
-                        <input value={val} onChange={(e) => setLocalVars({ ...localVars, [key]: e.target.value })}
-                          className="flex-1 px-2 py-1 text-xs border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] font-mono" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => { setTheme('custom'); setCustomVars(localVars); }}
-                  className="px-3 py-1.5 text-xs rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90">
-                  {t('applyCustom')}
-                </button>
-                <button onClick={resetCustom}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                  {t('resetToDefault')}
-                </button>
-              </div>
-            </div>
-          </details>
-        </section>
-
+        {/* Save */}
         <button onClick={handleSave} disabled={saving}
           className="px-6 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50">
           {saving ? t('saving') : t('saveSettings')}
