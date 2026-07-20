@@ -1,0 +1,965 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - heading "WYSIWYG Markdown Editor" [level=1] [ref=e6]
+        - generic [ref=e7]:
+          - button "切换到暗色模式" [ref=e8]:
+            - img [ref=e9]
+          - button "打开源码编辑" [ref=e11]:
+            - img [ref=e12]
+          - button "HTML 预览" [ref=e14]:
+            - img [ref=e15]
+          - button "导出" [ref=e19]:
+            - img [ref=e20]
+            - text: 导出
+    - main [ref=e23]:
+      - generic [ref=e36]:
+        - generic [ref=e1348]:
+          - button "撤销 (Ctrl+Z)" [disabled] [ref=e1349]:
+            - img [ref=e1350]
+          - button "重做 (Ctrl+Shift+Z)" [disabled] [ref=e1353]:
+            - img [ref=e1354]
+          - button "H1" [ref=e1359]:
+            - generic [ref=e1360]: H1
+            - img [ref=e1361]
+          - button "粗体 (Ctrl+B)" [ref=e1364]:
+            - img [ref=e1365]
+          - button "斜体 (Ctrl+I)" [ref=e1367]:
+            - img [ref=e1368]
+          - button "删除线" [ref=e1370]:
+            - img [ref=e1371]
+          - button "行内代码" [ref=e1374]:
+            - img [ref=e1375]
+          - button "高亮" [ref=e1378]:
+            - img [ref=e1379]
+          - button "字体颜色" [ref=e1383]:
+            - img [ref=e1384]
+          - button "背景颜色" [ref=e1392]:
+            - img [ref=e1393]
+          - button "下标" [ref=e1398]:
+            - img [ref=e1399]
+          - button "上标" [ref=e1403]:
+            - img [ref=e1404]
+          - button "无序列表" [ref=e1409]:
+            - img [ref=e1410]
+          - button "有序列表" [ref=e1411]:
+            - img [ref=e1412]
+          - button "任务列表" [ref=e1415]:
+            - img [ref=e1416]
+          - button "引用块" [ref=e1419]:
+            - img [ref=e1420]
+          - button "代码块" [ref=e1423]:
+            - img [ref=e1424]
+          - button "行内公式 (KaTeX)" [ref=e1428]:
+            - img [ref=e1429]
+          - button "∑" [ref=e1431]
+          - button "流程图/序列图 (Mermaid)" [ref=e1432]:
+            - img [ref=e1433]
+          - button "分割线" [ref=e1437]:
+            - img [ref=e1438]
+          - button "插入链接" [ref=e1441]:
+            - img [ref=e1442]
+          - button "插入图片" [ref=e1445]:
+            - img [ref=e1446]
+          - button "插入表格" [ref=e1451]:
+            - img [ref=e1452]
+        - generic [active] [ref=e40]:
+          - heading "Editor.md" [level=1] [ref=e43] [cursor=pointer]:
+            - generic [ref=e45]: Editor.md
+          - paragraph [ref=e46]
+          - paragraph [ref=e49]
+          - paragraph [ref=e62]:
+            - strong [ref=e63]: 目录 (Table of Contents)
+          - paragraph [ref=e64]: "[TOCM]"
+          - paragraph [ref=e65]: "[TOC]"
+          - paragraph [ref=e66]: Heading 1
+          - heading "Heading 2" [level=2] [ref=e69] [cursor=pointer]:
+            - generic [ref=e71]: Heading 2
+          - heading "Heading 3" [level=3] [ref=e74] [cursor=pointer]:
+            - generic [ref=e76]: Heading 3
+          - heading "Heading 4" [level=4] [ref=e79] [cursor=pointer]:
+            - generic [ref=e81]: Heading 4
+          - heading "Heading 5" [level=5] [ref=e84] [cursor=pointer]:
+            - generic [ref=e86]: Heading 5
+          - heading "Heading 6" [level=6] [ref=e89] [cursor=pointer]:
+            - generic [ref=e91]: Heading 6
+          - heading "Heading 1 link Heading link" [level=1] [ref=e94] [cursor=pointer]:
+            - generic [ref=e96]:
+              - text: Heading 1 link
+              - link "Heading link" [ref=e97]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "Heading 2 link Heading link" [level=2] [ref=e100] [cursor=pointer]:
+            - generic [ref=e102]:
+              - text: Heading 2 link
+              - link "Heading link" [ref=e103]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "Heading 3 link Heading link" [level=3] [ref=e106] [cursor=pointer]:
+            - generic [ref=e108]:
+              - text: Heading 3 link
+              - link "Heading link" [ref=e109]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "Heading 4 link Heading link Heading link Heading link" [level=4] [ref=e112] [cursor=pointer]:
+            - generic [ref=e114]:
+              - text: Heading 4 link
+              - link "Heading link" [ref=e115]:
+                - /url: https://github.com/pandao/editor.md
+              - text: Heading link
+              - link "Heading link" [ref=e116]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "Heading 5 link Heading link" [level=5] [ref=e119] [cursor=pointer]:
+            - generic [ref=e121]:
+              - text: Heading 5 link
+              - link "Heading link" [ref=e122]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "Heading 6 link Heading link" [level=6] [ref=e125] [cursor=pointer]:
+            - generic [ref=e127]:
+              - text: Heading 6 link
+              - link "Heading link" [ref=e128]:
+                - /url: https://github.com/pandao/editor.md
+          - heading "标题（用底线的形式）Heading (underline)" [level=4] [ref=e131] [cursor=pointer]:
+            - generic [ref=e133]: 标题（用底线的形式）Heading (underline)
+          - heading "This is an H1#" [level=1] [ref=e136] [cursor=pointer]:
+            - generic [ref=e138]: This is an H1#
+          - heading "This is an H2" [level=2] [ref=e141] [cursor=pointer]:
+            - generic [ref=e143]: This is an H2
+          - heading "字符效果和横线等" [level=3] [ref=e146] [cursor=pointer]:
+            - generic [ref=e148]: 字符效果和横线等
+          - separator [ref=e149]
+          - paragraph [ref=e150]:
+            - text: 删除线 删除线（开启识别HTML标签时）
+            - emphasis [ref=e151]: 斜体字
+            - emphasis [ref=e152]: 斜体字
+            - strong [ref=e153]: 粗体
+            - strong [ref=e154]: 粗体
+            - strong [ref=e155]:
+              - emphasis [ref=e156]: 粗斜体
+            - strong [ref=e157]:
+              - emphasis [ref=e158]: 粗斜体
+          - paragraph [ref=e159]:
+            - text: 上标：X
+            - subscript [ref=e160]: "2"
+            - text: ，下标：O
+            - superscript [ref=e161]: "2"
+          - paragraph [ref=e162]:
+            - strong [ref=e163]: 缩写(同HTML的abbr标签)
+          - blockquote [ref=e166] [cursor=pointer]:
+            - paragraph [ref=e167]: 即更长的单词或短语的缩写形式，前提是开启识别HTML标签时，已默认开启
+          - paragraph [ref=e168]: The HTML specification is maintained by the W3C.
+          - heading "引用 Blockquotes" [level=3] [ref=e171] [cursor=pointer]:
+            - generic [ref=e173]: 引用 Blockquotes
+          - blockquote [ref=e176] [cursor=pointer]:
+            - paragraph [ref=e177]: 引用文本 Blockquotes
+          - paragraph [ref=e178]: 引用的行内混合 Blockquotes
+          - blockquote [ref=e181] [cursor=pointer]:
+            - paragraph [ref=e182]: 引用：如果想要插入空白换行即<br />标签，在插入处先键入两个以上的空格然后回车即可，普通链接。
+          - heading "锚点与链接 Links" [level=3] [ref=e185] [cursor=pointer]:
+            - generic [ref=e187]: 锚点与链接 Links
+          - paragraph [ref=e188]:
+            - link "普通链接" [ref=e189] [cursor=pointer]:
+              - /url: http://localhost/
+          - paragraph [ref=e190]:
+            - link "普通链接带标题" [ref=e191] [cursor=pointer]:
+              - /url: http://localhost/
+          - paragraph [ref=e192]:
+            - text: 直接链接：
+            - link "https://github.com" [ref=e193] [cursor=pointer]:
+              - /url: https://github.com
+          - paragraph [ref=e194]:
+            - link "锚点链接" [ref=e195] [cursor=pointer]:
+              - /url: http://www.this-anchor-link.com/
+          - paragraph [ref=e196]:
+            - link "mailto:test.test@gmail.com" [ref=e197] [cursor=pointer]:
+              - /url: mailto:test.test@gmail.com
+          - paragraph [ref=e198]: GFM a-tail link @pandao 邮箱地址自动链接 test.test@gmail.com www@vip.qq.com
+          - blockquote [ref=e201] [cursor=pointer]:
+            - paragraph [ref=e202]: "@pandao"
+          - heading "多语言代码高亮 Codes" [level=3] [ref=e205] [cursor=pointer]:
+            - generic [ref=e207]: 多语言代码高亮 Codes
+          - heading "行内代码 Inline code" [level=4] [ref=e210] [cursor=pointer]:
+            - generic [ref=e212]: 行内代码 Inline code
+          - paragraph [ref=e213]:
+            - text: 执行命令：
+            - code [ref=e214]: npm install marked
+          - heading "缩进风格" [level=4] [ref=e217] [cursor=pointer]:
+            - generic [ref=e219]: 缩进风格
+          - paragraph [ref=e220]:
+            - text: 即缩进四个空格，也做为实现类似
+            - code [ref=e221]: <pre>
+            - text: 预格式化文本 ( Preformatted Text ) 的功能。
+          - generic [ref=e224]:
+            - generic [ref=e226]: text | 长按编辑
+            - generic [ref=e227] [cursor=pointer]: <?php echo "Hello world!"; ?>
+          - paragraph [ref=e228]: 预格式化文本：
+          - generic [ref=e231]:
+            - generic [ref=e233]: text | 长按编辑
+            - generic [ref=e234] [cursor=pointer]: "| First Header | Second Header | | ------------- | ------------- | | Content Cell | Content Cell | | Content Cell | Content Cell |"
+          - heading "JS代码" [level=4] [ref=e237] [cursor=pointer]:
+            - generic [ref=e239]: JS代码
+          - generic [ref=e242]:
+            - generic [ref=e244]: javascript | 长按编辑
+            - generic [ref=e245] [cursor=pointer]:
+              - text: function test(
+              - text: ") { console.log(\"Hello world!\"); } (function("
+              - text: "){ var box = function("
+              - text: ") { return box.fn.init(); }; box."
+              - generic [ref=e246]: prototype
+              - text: "= box.fn = { init : function("
+              - text: "){ console.log('box.init()'); return this; }, add : function(str) { alert(\"add\", str); return this; }, remove : function(str) { alert(\"remove\", str); return this; } }; box.fn.init."
+              - generic [ref=e247]: prototype
+              - text: "= box.fn; window.box =box; })(); var testBox = box(); testBox.add(\"jQuery\").remove(\"jQuery\");"
+          - heading "HTML 代码 HTML codes" [level=4] [ref=e250] [cursor=pointer]:
+            - generic [ref=e252]: HTML 代码 HTML codes
+          - generic [ref=e255]:
+            - generic [ref=e257]: html | 长按编辑
+            - generic [ref=e258] [cursor=pointer]:
+              - generic [ref=e259]: <!DOCTYPE html>
+              - generic [ref=e260]: <html>
+              - generic [ref=e261]: <head>
+              - generic [ref=e262]: <mate charest="utf-8" />
+              - generic [ref=e263]: <meta name="keywords" content="Editor.md, Markdown, Editor" />
+              - generic [ref=e264]: <title>
+              - text: Hello world!
+              - generic [ref=e265]: </title>
+              - generic [ref=e266]: <style type="text/css">
+              - generic [ref=e267]: "body{font-size:14px;color:#444;font-family: \"Microsoft Yahei\", Tahoma, \"Hiragino Sans GB\", Arial;background:#fff;} ul{list-style: none;} img{border:none;vertical-align: middle;}"
+              - generic [ref=e268]: </style>
+              - generic [ref=e269]: </head>
+              - generic [ref=e270]: <body>
+              - generic [ref=e271]: <h1 class="text-xxl">
+              - text: Hello world!
+              - generic [ref=e272]: </h1>
+              - generic [ref=e273]: <p class="text-green">
+              - text: Plain text
+              - generic [ref=e274]: </p>
+              - generic [ref=e275]: </body>
+              - generic [ref=e276]: </html>
+          - heading "图片 Images" [level=3] [ref=e279] [cursor=pointer]:
+            - generic [ref=e281]: 图片 Images
+          - paragraph [ref=e282]: "Image:"
+          - paragraph [ref=e283]
+          - blockquote [ref=e288] [cursor=pointer]:
+            - paragraph [ref=e289]: Follow your heart.
+          - paragraph [ref=e290]
+          - blockquote [ref=e295] [cursor=pointer]:
+            - paragraph [ref=e296]: 图为：厦门白城沙滩
+          - paragraph [ref=e297]: 图片加链接 (Image + Link)：
+          - paragraph [ref=e298]:
+            - link "李健首张专辑《似水流年》封面" [ref=e299] [cursor=pointer]:
+              - /url: https://pandao.github.io/editor.md/images/7.jpg
+          - blockquote [ref=e304] [cursor=pointer]:
+            - paragraph [ref=e305]: 图为：李健首张专辑《似水流年》封面
+          - separator [ref=e306]
+          - heading "列表 Lists" [level=3] [ref=e309] [cursor=pointer]:
+            - generic [ref=e311]: 列表 Lists
+          - heading "无序列表（减号）Unordered Lists (-)" [level=4] [ref=e314] [cursor=pointer]:
+            - generic [ref=e316]: 无序列表（减号）Unordered Lists (-)
+          - list [ref=e317]:
+            - listitem [ref=e318]:
+              - paragraph [ref=e319]: 列表一
+            - listitem [ref=e320]:
+              - paragraph [ref=e321]: 列表二
+            - listitem [ref=e322]:
+              - paragraph [ref=e323]: 列表三
+          - heading "无序列表（星号）Unordered Lists (*)" [level=4] [ref=e326] [cursor=pointer]:
+            - generic [ref=e328]: 无序列表（星号）Unordered Lists (*)
+          - list [ref=e329]:
+            - listitem [ref=e330]:
+              - paragraph [ref=e331]: 列表一
+            - listitem [ref=e332]:
+              - paragraph [ref=e333]: 列表二
+            - listitem [ref=e334]:
+              - paragraph [ref=e335]: 列表三
+          - heading "无序列表（加号和嵌套）Unordered Lists (+)" [level=4] [ref=e338] [cursor=pointer]:
+            - generic [ref=e340]: 无序列表（加号和嵌套）Unordered Lists (+)
+          - list [ref=e341]:
+            - listitem [ref=e342]:
+              - paragraph [ref=e343]: 列表一
+            - listitem [ref=e344]:
+              - paragraph [ref=e345]: 列表二
+              - list [ref=e346]:
+                - listitem [ref=e347]:
+                  - paragraph [ref=e348]: 列表二-1
+                - listitem [ref=e349]:
+                  - paragraph [ref=e350]: 列表二-2
+                - listitem [ref=e351]:
+                  - paragraph [ref=e352]: 列表二-3
+            - listitem [ref=e353]:
+              - paragraph [ref=e354]: 列表三
+              - list [ref=e355]:
+                - listitem [ref=e356]:
+                  - paragraph [ref=e357]: 列表一
+                - listitem [ref=e358]:
+                  - paragraph [ref=e359]: 列表二
+                - listitem [ref=e360]:
+                  - paragraph [ref=e361]: 列表三
+          - heading "有序列表 Ordered Lists (-)" [level=4] [ref=e364] [cursor=pointer]:
+            - generic [ref=e366]: 有序列表 Ordered Lists (-)
+          - list [ref=e367]:
+            - listitem [ref=e368]:
+              - paragraph [ref=e369]: 第一行
+            - listitem [ref=e370]:
+              - paragraph [ref=e371]: 第二行
+            - listitem [ref=e372]:
+              - paragraph [ref=e373]: 第三行
+          - heading "GFM task list" [level=4] [ref=e376] [cursor=pointer]:
+            - generic [ref=e378]: GFM task list
+          - list [ref=e379]:
+            - listitem [ref=e380]:
+              - checkbox "Task item checkbox for GFM task list 1" [checked] [ref=e382] [cursor=pointer]
+              - paragraph [ref=e384]: GFM task list 1
+            - listitem [ref=e385]:
+              - checkbox "Task item checkbox for GFM task list 2" [checked] [ref=e387] [cursor=pointer]
+              - paragraph [ref=e389]: GFM task list 2
+            - listitem [ref=e390]:
+              - checkbox "Task item checkbox for GFM task list 3GFM task list 3-1GFM task list 3-2GFM task list 3-3" [ref=e392] [cursor=pointer]
+              - generic [ref=e393]:
+                - paragraph [ref=e394]: GFM task list 3
+                - list [ref=e395]:
+                  - listitem [ref=e396]:
+                    - checkbox "Task item checkbox for GFM task list 3-1" [ref=e398] [cursor=pointer]
+                    - paragraph [ref=e400]: GFM task list 3-1
+                  - listitem [ref=e401]:
+                    - checkbox "Task item checkbox for GFM task list 3-2" [ref=e403] [cursor=pointer]
+                    - paragraph [ref=e405]: GFM task list 3-2
+                  - listitem [ref=e406]:
+                    - checkbox "Task item checkbox for GFM task list 3-3" [ref=e408] [cursor=pointer]
+                    - paragraph [ref=e410]: GFM task list 3-3
+            - listitem [ref=e411]:
+              - checkbox "Task item checkbox for GFM task list 4GFM task list 4-1GFM task list 4-2" [ref=e413] [cursor=pointer]
+              - generic [ref=e414]:
+                - paragraph [ref=e415]: GFM task list 4
+                - list [ref=e416]:
+                  - listitem [ref=e417]:
+                    - checkbox "Task item checkbox for GFM task list 4-1" [ref=e419] [cursor=pointer]
+                    - paragraph [ref=e421]: GFM task list 4-1
+                  - listitem [ref=e422]:
+                    - checkbox "Task item checkbox for GFM task list 4-2" [ref=e424] [cursor=pointer]
+                    - paragraph [ref=e426]: GFM task list 4-2
+          - separator [ref=e427]
+          - heading "绘制表格 Tables" [level=3] [ref=e430] [cursor=pointer]:
+            - generic [ref=e432]: 绘制表格 Tables
+          - table [ref=e434]:
+            - rowgroup [ref=e439]:
+              - row "项目 价格 数量" [ref=e440]:
+                - columnheader "项目" [ref=e441]:
+                  - paragraph [ref=e442]: 项目
+                - columnheader "价格" [ref=e443]:
+                  - paragraph [ref=e444]: 价格
+                - columnheader "数量" [ref=e445]:
+                  - paragraph [ref=e446]: 数量
+              - row "计算机 $1600 5" [ref=e447]:
+                - cell "计算机" [ref=e448]:
+                  - paragraph [ref=e449]: 计算机
+                - cell "$1600" [ref=e450]:
+                  - paragraph [ref=e451]: $1600
+                - cell "5" [ref=e452]:
+                  - paragraph [ref=e453]: "5"
+              - row "手机 $12 12" [ref=e454]:
+                - cell "手机" [ref=e455]:
+                  - paragraph [ref=e456]: 手机
+                - cell "$12" [ref=e457]:
+                  - paragraph [ref=e458]: $12
+                - cell "12" [ref=e459]:
+                  - paragraph [ref=e460]: "12"
+              - row "管线 $1 234" [ref=e461]:
+                - cell "管线" [ref=e462]:
+                  - paragraph [ref=e463]: 管线
+                - cell "$1" [ref=e464]:
+                  - paragraph [ref=e465]: $1
+                - cell "234" [ref=e466]:
+                  - paragraph [ref=e467]: "234"
+          - table [ref=e469]:
+            - rowgroup [ref=e473]:
+              - row "First Header Second Header" [ref=e474]:
+                - columnheader "First Header" [ref=e475]:
+                  - paragraph [ref=e476]: First Header
+                - columnheader "Second Header" [ref=e477]:
+                  - paragraph [ref=e478]: Second Header
+              - row "Content Cell Content Cell" [ref=e479]:
+                - cell "Content Cell" [ref=e480]:
+                  - paragraph [ref=e481]: Content Cell
+                - cell "Content Cell" [ref=e482]:
+                  - paragraph [ref=e483]: Content Cell
+              - row "Content Cell Content Cell" [ref=e484]:
+                - cell "Content Cell" [ref=e485]:
+                  - paragraph [ref=e486]: Content Cell
+                - cell "Content Cell" [ref=e487]:
+                  - paragraph [ref=e488]: Content Cell
+          - table [ref=e490]:
+            - rowgroup [ref=e494]:
+              - row "First Header Second Header" [ref=e495]:
+                - columnheader "First Header" [ref=e496]:
+                  - paragraph [ref=e497]: First Header
+                - columnheader "Second Header" [ref=e498]:
+                  - paragraph [ref=e499]: Second Header
+              - row "Content Cell Content Cell" [ref=e500]:
+                - cell "Content Cell" [ref=e501]:
+                  - paragraph [ref=e502]: Content Cell
+                - cell "Content Cell" [ref=e503]:
+                  - paragraph [ref=e504]: Content Cell
+              - row "Content Cell Content Cell" [ref=e505]:
+                - cell "Content Cell" [ref=e506]:
+                  - paragraph [ref=e507]: Content Cell
+                - cell "Content Cell" [ref=e508]:
+                  - paragraph [ref=e509]: Content Cell
+          - table [ref=e511]:
+            - rowgroup [ref=e515]:
+              - row "Function name Description" [ref=e516]:
+                - columnheader "Function name" [ref=e517]:
+                  - paragraph [ref=e518]: Function name
+                - columnheader "Description" [ref=e519]:
+                  - paragraph [ref=e520]: Description
+              - row "help() Display the help window." [ref=e521]:
+                - cell "help()" [ref=e522]:
+                  - paragraph [ref=e523]:
+                    - code [ref=e524]: help()
+                - cell "Display the help window." [ref=e525]:
+                  - paragraph [ref=e526]: Display the help window.
+              - row "destroy() Destroy your computer!" [ref=e527]:
+                - cell "destroy()" [ref=e528]:
+                  - paragraph [ref=e529]:
+                    - code [ref=e530]: destroy()
+                - cell "Destroy your computer!" [ref=e531]:
+                  - paragraph [ref=e532]:
+                    - strong [ref=e533]: Destroy your computer!
+          - table [ref=e535]:
+            - rowgroup [ref=e540]:
+              - row "Left-Aligned Center Aligned Right Aligned" [ref=e541]:
+                - columnheader "Left-Aligned" [ref=e542]:
+                  - paragraph [ref=e543]: Left-Aligned
+                - columnheader "Center Aligned" [ref=e544]:
+                  - paragraph [ref=e545]: Center Aligned
+                - columnheader "Right Aligned" [ref=e546]:
+                  - paragraph [ref=e547]: Right Aligned
+              - row "col 3 is some wordy text $1600" [ref=e548]:
+                - cell "col 3 is" [ref=e549]:
+                  - paragraph [ref=e550]: col 3 is
+                - cell "some wordy text" [ref=e551]:
+                  - paragraph [ref=e552]: some wordy text
+                - cell "$1600" [ref=e553]:
+                  - paragraph [ref=e554]: $1600
+              - row "col 2 is centered $12" [ref=e555]:
+                - cell "col 2 is" [ref=e556]:
+                  - paragraph [ref=e557]: col 2 is
+                - cell "centered" [ref=e558]:
+                  - paragraph [ref=e559]: centered
+                - cell "$12" [ref=e560]:
+                  - paragraph [ref=e561]: $12
+              - row "zebra stripes are neat $1" [ref=e562]:
+                - cell "zebra stripes" [ref=e563]:
+                  - paragraph [ref=e564]: zebra stripes
+                - cell "are neat" [ref=e565]:
+                  - paragraph [ref=e566]: are neat
+                - cell "$1" [ref=e567]:
+                  - paragraph [ref=e568]: $1
+          - table [ref=e570]:
+            - rowgroup [ref=e574]:
+              - row "Item Value" [ref=e575]:
+                - columnheader "Item" [ref=e576]:
+                  - paragraph [ref=e577]: Item
+                - columnheader "Value" [ref=e578]:
+                  - paragraph [ref=e579]: Value
+              - row "Computer $1600" [ref=e580]:
+                - cell "Computer" [ref=e581]:
+                  - paragraph [ref=e582]: Computer
+                - cell "$1600" [ref=e583]:
+                  - paragraph [ref=e584]: $1600
+              - row "Phone $12" [ref=e585]:
+                - cell "Phone" [ref=e586]:
+                  - paragraph [ref=e587]: Phone
+                - cell "$12" [ref=e588]:
+                  - paragraph [ref=e589]: $12
+              - row "Pipe $1" [ref=e590]:
+                - cell "Pipe" [ref=e591]:
+                  - paragraph [ref=e592]: Pipe
+                - cell "$1" [ref=e593]:
+                  - paragraph [ref=e594]: $1
+          - separator [ref=e595]
+          - heading "特殊符号 HTML Entities Codes" [level=4] [ref=e598] [cursor=pointer]:
+            - generic [ref=e600]: 特殊符号 HTML Entities Codes
+          - paragraph [ref=e601]:
+            - text: © & ¨ ™ ¡ £
+            - text: "& < > ¥ € ® ± ¶ § ¦ ¯ « ·"
+          - paragraph [ref=e602]: X² Y³ ¾ ¼ × ÷ »
+          - paragraph [ref=e603]: 18ºC " '
+          - paragraph [ref=e604]: "[========]"
+          - heading "Emoji表情 😃" [level=3] [ref=e607] [cursor=pointer]:
+            - generic [ref=e609]: Emoji表情 😃
+          - blockquote [ref=e612] [cursor=pointer]:
+            - paragraph [ref=e613]: Blockquotes ⭐
+          - heading "GFM task lists & Emoji & fontAwesome icon emoji & editormd logo emoji :editormd-logo-5x:" [level=4] [ref=e616] [cursor=pointer]:
+            - generic [ref=e618]: "GFM task lists & Emoji & fontAwesome icon emoji & editormd logo emoji :editormd-logo-5x:"
+          - list [ref=e619]:
+            - listitem [ref=e620]:
+              - 'checkbox "Task item checkbox for 😃 @mentions, 😃 #refs, links, formatting, and tags supported :editormd-logo:;" [checked] [ref=e622] [cursor=pointer]'
+              - paragraph [ref=e624]:
+                - text: "😃 @mentions, 😃 #refs, links,"
+                - strong [ref=e625]: formatting
+                - text: ", and tags supported :editormd-logo:;"
+            - listitem [ref=e626]:
+              - checkbox "Task item checkbox for list syntax required (any unordered or ordered list supported) :editormd-logo-3x:;" [checked] [ref=e628] [cursor=pointer]
+              - paragraph [ref=e630]: list syntax required (any unordered or ordered list supported) :editormd-logo-3x:;
+            - listitem [ref=e631]:
+              - checkbox "Task item checkbox for [ ] 😃 this is a complete item 😃;" [checked] [ref=e633] [cursor=pointer]
+              - paragraph [ref=e635]: "[ ] 😃 this is a complete item 😃;"
+            - listitem [ref=e636]:
+              - 'checkbox "Task item checkbox for []this is an incomplete item test link :fa-star: @pandao;" [ref=e638] [cursor=pointer]'
+              - paragraph [ref=e640]:
+                - text: "[]this is an incomplete item"
+                - link "test link" [ref=e641] [cursor=pointer]:
+                  - /url: "#"
+                - text: ":fa-star: @pandao;"
+            - listitem [ref=e642]:
+              - 'checkbox "Task item checkbox for [ ]this is an incomplete item :fa-star: :fa-gear:;😃 this is an incomplete item test link :fa-star: :fa-gear:;😃 this is :fa-star: :fa-gear: an incomplete item test link;" [ref=e644] [cursor=pointer]'
+              - generic [ref=e645]:
+                - paragraph [ref=e646]: "[ ]this is an incomplete item :fa-star: :fa-gear:;"
+                - list [ref=e647]:
+                  - listitem [ref=e648]:
+                    - 'checkbox "Task item checkbox for 😃 this is an incomplete item test link :fa-star: :fa-gear:;" [ref=e650] [cursor=pointer]'
+                    - paragraph [ref=e652]:
+                      - text: 😃 this is an incomplete item
+                      - link "test link" [ref=e653] [cursor=pointer]:
+                        - /url: "#"
+                      - text: ":fa-star: :fa-gear:;"
+                  - listitem [ref=e654]:
+                    - 'checkbox "Task item checkbox for 😃 this is :fa-star: :fa-gear: an incomplete item test link;" [ref=e656] [cursor=pointer]'
+                    - paragraph [ref=e658]:
+                      - text: "😃 this is :fa-star: :fa-gear: an incomplete item"
+                      - link "test link" [ref=e659] [cursor=pointer]:
+                        - /url: "#"
+                      - text: ;
+          - heading "反斜杠 Escape" [level=4] [ref=e662] [cursor=pointer]:
+            - generic [ref=e664]: 反斜杠 Escape
+          - paragraph [ref=e665]: "*literal asterisks*"
+          - paragraph [ref=e666]: "[========]"
+          - heading "科学公式 TeX(KaTeX)" [level=3] [ref=e669] [cursor=pointer]:
+            - generic [ref=e671]: 科学公式 TeX(KaTeX)
+          - generic [ref=e674]:
+            - math [ref=e676]:
+              - generic [ref=e678]:
+                - generic [ref=e679]: E
+                - generic [ref=e680]: =
+                - generic [ref=e681]: m
+                - generic [ref=e682]:
+                  - generic [ref=e683]: c
+                  - generic [ref=e684]: "2"
+            - generic [ref=e685]:
+              - generic [ref=e686]: E =
+              - generic [ref=e687]:
+                - text: m
+                - generic [ref=e688]:
+                  - text: c
+                  - generic [ref=e693]: "2"
+          - paragraph [ref=e694]:
+            - text: 行内的公式
+            - generic [ref=e696]:
+              - math [ref=e698]:
+                - generic [ref=e700]:
+                  - generic [ref=e701]: E
+                  - generic [ref=e702]: =
+                  - generic [ref=e703]: m
+                  - generic [ref=e704]:
+                    - generic [ref=e705]: c
+                    - generic [ref=e706]: "2"
+              - generic [ref=e707]:
+                - generic [ref=e708]: E =
+                - generic [ref=e709]:
+                  - text: m
+                  - generic [ref=e710]:
+                    - text: c
+                    - generic [ref=e715]: "2"
+            - text: 行内的公式，行内的
+            - generic [ref=e717]:
+              - math [ref=e719]:
+                - generic [ref=e721]:
+                  - generic [ref=e722]: E
+                  - generic [ref=e723]: =
+                  - generic [ref=e724]: m
+                  - generic [ref=e725]:
+                    - generic [ref=e726]: c
+                    - generic [ref=e727]: "2"
+              - generic [ref=e728]:
+                - generic [ref=e729]: E =
+                - generic [ref=e730]:
+                  - text: m
+                  - generic [ref=e731]:
+                    - text: c
+                    - generic [ref=e736]: "2"
+            - text: 公式。
+          - generic [ref=e739]:
+            - math [ref=e741]:
+              - generic [ref=e743]:
+                - generic [ref=e744]: x
+                - generic [ref=e745]: ">"
+                - generic [ref=e746]: "y"
+            - generic [ref=e747]:
+              - generic [ref=e748]: x >
+              - generic [ref=e749]: "y"
+          - generic [ref=e752]:
+            - math [ref=e754]:
+              - generic [ref=e756]:
+                - generic [ref=e758]:
+                  - generic [ref=e759]: "3"
+                  - generic [ref=e760]: x
+                  - generic [ref=e761]: −
+                  - generic [ref=e762]: "1"
+                - generic [ref=e763]: +
+                - generic [ref=e764]: (
+                - generic [ref=e765]: "1"
+                - generic [ref=e766]: +
+                - generic [ref=e767]: x
+                - generic [ref=e768]:
+                  - generic [ref=e769]: )
+                  - generic [ref=e770]: "2"
+            - generic [ref=e771]:
+              - generic [ref=e772]:
+                - generic [ref=e776]:
+                  - generic [ref=e777]: 3x − 1
+                  - img [ref=e779]
+                - text: +
+              - generic [ref=e784]: (1 +
+              - generic [ref=e785]:
+                - text: x
+                - generic [ref=e786]:
+                  - text: )
+                  - generic [ref=e791]: "2"
+          - generic [ref=e794]:
+            - math [ref=e796]:
+              - generic [ref=e798]:
+                - generic [ref=e799]: sin
+                - generic: ⁡
+                - generic [ref=e800]: (
+                - generic [ref=e801]: α
+                - generic [ref=e802]:
+                  - generic [ref=e803]: )
+                  - generic [ref=e804]: θ
+                - generic [ref=e805]: =
+                - generic [ref=e806]:
+                  - generic [ref=e807]: ∑
+                  - generic [ref=e808]:
+                    - generic [ref=e809]: i
+                    - generic [ref=e810]: =
+                    - generic [ref=e811]: "0"
+                  - generic [ref=e812]: "n"
+                - generic [ref=e813]: (
+                - generic [ref=e814]:
+                  - generic [ref=e815]: x
+                  - generic [ref=e816]: i
+                - generic [ref=e817]: +
+                - generic [ref=e818]: cos
+                - generic: ⁡
+                - generic [ref=e819]: (
+                - generic [ref=e820]: f
+                - generic [ref=e821]: )
+                - generic [ref=e822]: )
+            - generic [ref=e823]:
+              - generic [ref=e824]:
+                - generic [ref=e825]: sin
+                - text: (α
+                - generic [ref=e826]:
+                  - text: )
+                  - generic [ref=e832]: θ
+                - text: =
+              - generic [ref=e833]:
+                - generic [ref=e834]:
+                  - text: ∑
+                  - generic [ref=e838]:
+                    - generic [ref=e840]: i=0
+                    - generic [ref=e842]: "n"
+                - text: (
+                - generic [ref=e846]:
+                  - text: x
+                  - generic [ref=e851]: i
+                - text: +
+              - generic [ref=e852]:
+                - generic [ref=e853]: cos
+                - text: (f))
+          - paragraph [ref=e854]: 多行公式：
+          - generic [ref=e857]:
+            - math [ref=e859]:
+              - generic [ref=e862]:
+                - generic [ref=e863]:
+                  - generic [ref=e864]:
+                    - generic [ref=e865]: (
+                    - generic [ref=e866]: ∑
+                    - generic [ref=e867]: _
+                    - generic [ref=e868]:
+                      - generic [ref=e869]:
+                        - generic [ref=e870]: k
+                        - generic [ref=e871]: =
+                        - generic [ref=e872]: "1"
+                      - generic [ref=e873]: "n"
+                    - generic [ref=e874]: a
+                    - generic [ref=e875]: _
+                    - generic [ref=e876]: k
+                    - generic [ref=e877]: b
+                    - generic [ref=e878]: _
+                    - generic [ref=e879]: k
+                    - generic [ref=e880]: )
+                  - generic [ref=e881]: "2"
+                - generic [ref=e882]: ≤
+                - generic [ref=e883]:
+                  - generic [ref=e884]: (
+                  - generic [ref=e885]: ∑
+                  - generic [ref=e886]: _
+                  - generic [ref=e887]:
+                    - generic [ref=e888]:
+                      - generic [ref=e889]: k
+                      - generic [ref=e890]: =
+                      - generic [ref=e891]: "1"
+                    - generic [ref=e892]: "n"
+                  - generic [ref=e893]: a
+                  - generic [ref=e894]: _
+                  - generic [ref=e895]:
+                    - generic [ref=e896]: k
+                    - generic [ref=e897]: "2"
+                  - generic [ref=e898]: )
+                - generic [ref=e899]:
+                  - generic [ref=e900]: (
+                  - generic [ref=e901]: ∑
+                  - generic [ref=e902]: _
+                  - generic [ref=e903]:
+                    - generic [ref=e904]:
+                      - generic [ref=e905]: k
+                      - generic [ref=e906]: =
+                      - generic [ref=e907]: "1"
+                    - generic [ref=e908]: "n"
+                  - generic [ref=e909]: b
+                  - generic [ref=e910]: _
+                  - generic [ref=e911]:
+                    - generic [ref=e912]: k
+                    - generic [ref=e913]: "2"
+                  - generic [ref=e914]: )
+            - generic [ref=e915]:
+              - generic [ref=e916]:
+                - generic [ref=e917]:
+                  - generic [ref=e918]:
+                    - generic [ref=e919]: (
+                    - text: ∑ _
+                    - generic [ref=e920]:
+                      - generic [ref=e921]: k = 1
+                      - generic [ref=e926]: "n"
+                    - text: a_kb_k
+                    - generic [ref=e927]: )
+                  - generic [ref=e932]: "2"
+                - text: ≤
+              - generic [ref=e933]:
+                - generic [ref=e934]:
+                  - generic [ref=e935]: (
+                  - text: ∑ _
+                  - generic [ref=e936]:
+                    - generic [ref=e937]: k = 1
+                    - generic [ref=e942]: "n"
+                  - text: a_
+                  - generic [ref=e943]:
+                    - text: k
+                    - generic [ref=e948]: "2"
+                  - generic [ref=e949]: )
+                - generic [ref=e950]:
+                  - generic [ref=e951]: (
+                  - text: ∑ _
+                  - generic [ref=e952]:
+                    - generic [ref=e953]: k = 1
+                    - generic [ref=e958]: "n"
+                  - text: b_
+                  - generic [ref=e959]:
+                    - text: k
+                    - generic [ref=e964]: "2"
+                  - generic [ref=e965]: )
+          - generic [ref=e968]:
+            - math [ref=e970]:
+              - generic [ref=e973]:
+                - generic [ref=e974]:
+                  - generic [ref=e975]: "1"
+                  - generic [ref=e976]:
+                    - generic [ref=e977]: (
+                    - generic [ref=e979]:
+                      - generic [ref=e980]: ϕ
+                      - generic [ref=e982]: "5"
+                    - generic [ref=e983]: −
+                    - generic [ref=e984]: ϕ
+                    - generic [ref=e985]: )
+                    - generic [ref=e986]:
+                      - generic [ref=e987]: e
+                      - generic [ref=e988]:
+                        - generic [ref=e989]:
+                          - generic [ref=e990]: "2"
+                          - generic [ref=e991]: "5"
+                        - generic [ref=e992]: π
+                - generic [ref=e993]: =
+                - generic [ref=e994]: "1"
+                - generic [ref=e995]: +
+                - generic [ref=e996]:
+                  - generic [ref=e997]:
+                    - generic [ref=e998]: e
+                    - generic [ref=e999]:
+                      - generic [ref=e1000]: −
+                      - generic [ref=e1001]: "2"
+                      - generic [ref=e1002]: π
+                  - generic [ref=e1003]:
+                    - generic [ref=e1004]: "1"
+                    - generic [ref=e1005]: +
+                    - generic [ref=e1006]:
+                      - generic [ref=e1007]:
+                        - generic [ref=e1008]: e
+                        - generic [ref=e1009]:
+                          - generic [ref=e1010]: −
+                          - generic [ref=e1011]: "4"
+                          - generic [ref=e1012]: π
+                      - generic [ref=e1013]:
+                        - generic [ref=e1014]: "1"
+                        - generic [ref=e1015]: +
+                        - generic [ref=e1016]:
+                          - generic [ref=e1017]:
+                            - generic [ref=e1018]: e
+                            - generic [ref=e1019]:
+                              - generic [ref=e1020]: −
+                              - generic [ref=e1021]: "6"
+                              - generic [ref=e1022]: π
+                          - generic [ref=e1023]:
+                            - generic [ref=e1024]: "1"
+                            - generic [ref=e1025]: +
+                            - generic [ref=e1026]:
+                              - generic [ref=e1027]:
+                                - generic [ref=e1028]: e
+                                - generic [ref=e1029]:
+                                  - generic [ref=e1030]: −
+                                  - generic [ref=e1031]: "8"
+                                  - generic [ref=e1032]: π
+                              - generic [ref=e1033]:
+                                - generic [ref=e1034]: "1"
+                                - generic [ref=e1035]: +
+                                - generic [ref=e1036]: ⋯
+            - generic [ref=e1037]:
+              - generic [ref=e1038]:
+                - generic [ref=e1043]:
+                  - generic [ref=e1044]:
+                    - generic [ref=e1045]: (
+                    - generic [ref=e1049]:
+                      - generic [ref=e1050]:
+                        - text: ϕ
+                        - generic [ref=e1054]:
+                          - generic [ref=e1055]: "5"
+                          - img [ref=e1057]
+                      - img [ref=e1063]
+                    - text: − ϕ
+                    - generic [ref=e1068]: )
+                    - generic [ref=e1069]:
+                      - text: e
+                      - generic [ref=e1075]:
+                        - generic [ref=e1080]:
+                          - generic [ref=e1082]: "5"
+                          - generic [ref=e1085]: "2"
+                        - text: π
+                  - generic [ref=e1090]: "1"
+                - text: =
+              - generic [ref=e1094]: 1 +
+              - generic [ref=e1100]:
+                - generic [ref=e1101]:
+                  - text: 1 +
+                  - generic [ref=e1106]:
+                    - generic [ref=e1108]:
+                      - text: 1+
+                      - generic [ref=e1113]:
+                        - generic [ref=e1115]:
+                          - text: 1+
+                          - generic [ref=e1120]:
+                            - generic [ref=e1121]: 1+⋯
+                            - generic [ref=e1124]:
+                              - text: e
+                              - generic [ref=e1129]: −8π
+                        - generic [ref=e1136]:
+                          - text: e
+                          - generic [ref=e1141]: −6π
+                    - generic [ref=e1148]:
+                      - text: e
+                      - generic [ref=e1154]: −4π
+                - generic [ref=e1160]:
+                  - text: e
+                  - generic [ref=e1166]: −2π
+          - generic [ref=e1172]:
+            - generic [ref=e1174]: latex | 长按编辑
+            - generic [ref=e1177] [cursor=pointer]:
+              - math [ref=e1179]:
+                - generic [ref=e1181]:
+                  - generic [ref=e1182]: f
+                  - generic [ref=e1183]: (
+                  - generic [ref=e1184]: x
+                  - generic [ref=e1185]: )
+                  - generic [ref=e1186]: =
+                  - generic [ref=e1187]:
+                    - generic [ref=e1188]: ∫
+                    - generic [ref=e1189]:
+                      - generic [ref=e1190]: −
+                      - generic [ref=e1191]: ∞
+                    - generic [ref=e1192]: ∞
+                  - generic [ref=e1193]:
+                    - generic [ref=e1194]: f
+                    - generic [ref=e1195]: ^
+                  - generic [ref=e1196]: (
+                  - generic [ref=e1197]: ξ
+                  - generic [ref=e1198]: )
+                  - generic [ref=e1199]:
+                    - generic [ref=e1200]: e
+                    - generic [ref=e1201]:
+                      - generic [ref=e1202]: "2"
+                      - generic [ref=e1203]: π
+                      - generic [ref=e1204]: i
+                      - generic [ref=e1205]: ξ
+                      - generic [ref=e1206]: x
+                  - generic [ref=e1207]: d
+                  - generic [ref=e1208]: ξ
+              - generic [ref=e1209]:
+                - generic [ref=e1210]: f(x) =
+                - generic [ref=e1211]:
+                  - generic [ref=e1212]:
+                    - text: ∫
+                    - generic [ref=e1216]:
+                      - generic [ref=e1218]: −∞
+                      - generic [ref=e1219]: ∞
+                  - generic [ref=e1226]:
+                    - generic [ref=e1227]: f
+                    - text: ^
+                  - text: (ξ)
+                  - generic [ref=e1231]:
+                    - text: e
+                    - generic [ref=e1237]: 2πiξx
+                  - text: dξ
+          - heading "分页符 Page break" [level=3] [ref=e1240] [cursor=pointer]:
+            - generic [ref=e1242]: 分页符 Page break
+          - blockquote [ref=e1245] [cursor=pointer]:
+            - paragraph [ref=e1246]: "Print Test: Ctrl + P"
+          - paragraph [ref=e1247]: "[========]"
+          - heading "绘制流程图 Flowchart" [level=3] [ref=e1250] [cursor=pointer]:
+            - generic [ref=e1252]: 绘制流程图 Flowchart
+          - document [ref=e1256] [cursor=pointer]:
+            - generic [ref=e1258]:
+              - generic [ref=e1264]:
+                - paragraph [ref=e1270]: 是
+                - paragraph [ref=e1276]: 否
+              - generic [ref=e1277]:
+                - paragraph [ref=e1286]: 用户登陆
+                - paragraph [ref=e1293]: 登陆操作
+                - paragraph [ref=e1300]: 登陆成功 Yes or No?
+                - paragraph [ref=e1309]: 进入后台
+          - paragraph [ref=e1310]: "[========]"
+          - heading "绘制序列图 Sequence Diagram" [level=3] [ref=e1313] [cursor=pointer]:
+            - generic [ref=e1315]: 绘制序列图 Sequence Diagram
+          - document [ref=e1319] [cursor=pointer]:
+            - generic [ref=e1322]: Andrew
+            - generic [ref=e1325]: China
+            - generic [ref=e1329]: Andrew
+            - generic [ref=e1333]: China
+            - generic [ref=e1336]: China thinks\nabout it
+            - generic [ref=e1337]: Says Hello
+            - generic [ref=e1338]: How are you?
+            - generic [ref=e1339]: I am good thanks!
+          - heading "End" [level=3] [ref=e1342] [cursor=pointer]:
+            - generic [ref=e1344]: End
+          - paragraph [ref=e1454]
+    - contentinfo [ref=e25]:
+      - generic [ref=e26]: WYSIWYG Markdown Editor - 支持 Markdown 语法的所见即所得编辑器
+  - button "Open Next.js Dev Tools" [ref=e32] [cursor=pointer]:
+    - img [ref=e33]
+  - alert [ref=e1345]

@@ -1,0 +1,63 @@
+/* ============================================
+   i_blog — Minimal Theme
+   Inspired by drakerossman.com
+   Ultra-clean, reading-optimized, warm minimal
+   ============================================ */
+
+.theme-minimal {
+  --background: #fafaf9;
+  --background-secondary: #f5f5f4;
+  --foreground: #1c1917;
+  --foreground-secondary: #78716c;
+
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+
+  --primary: #292524;
+  --primary-foreground: #fafaf9;
+  --primary-hover: #44403c;
+  --secondary: #e7e5e4;
+  --secondary-foreground: #292524;
+
+  --accent: #f5f5f4;
+  --accent-foreground: #292524;
+  --muted: #f5f5f4;
+  --muted-foreground: #a8a29e;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #fef2f2;
+
+  --border: #e7e5e4;
+  --input: #e7e5e4;
+  --ring: #292524;
+
+  --radius: 0.25rem;
+  --max-width: 720px;
+
+  --font-body: 'Merriweather', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.theme-minimal.dark {
+  --background: #1c1917;
+  --background-secondary: #292524;
+  --foreground: #f5f5f4;
+  --foreground-secondary: #a8a29e;
+  --card: #292524;
+  --card-foreground: #f5f5f4;
+  --primary: #f5f5f4;
+  --primary-foreground: #1c1917;
+  --primary-hover: #e7e5e4;
+  --secondary: #44403c;
+  --secondary-foreground: #e7e5e4;
+  --accent: #44403c;
+  --accent-foreground: #e7e5e4;
+  --muted: #292524;
+  --muted-foreground: #78716c;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fecaca;
+  --border: #44403c;
+  --input: #44403c;
+  --ring: #f5f5f4;
+}

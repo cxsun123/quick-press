@@ -1,0 +1,65 @@
+/* ============================================
+   i_blog — Default Theme (light / dark)
+   ============================================ */
+
+:root {
+  /* Base */
+  --background: #ffffff;
+  --background-secondary: #f8f9fa;
+  --foreground: #171717;
+  --foreground-secondary: #6b7280;
+
+  /* Card */
+  --card: #ffffff;
+  --card-foreground: #171717;
+
+  /* Interactive */
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --primary-hover: #2563eb;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1f2937;
+  --accent: #eff6ff;
+  --accent-foreground: #1d4ed8;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Chrome */
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #3b82f6;
+
+  /* Sizing */
+  --radius: 0.5rem;
+  --max-width: 720px;
+
+  /* Typography */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --background-secondary: #1a1a1a;
+  --foreground: #ededed;
+  --foreground-secondary: #9ca3af;
+  --card: #1a1a1a;
+  --card-foreground: #ededed;
+  --primary: #60a5fa;
+  --primary-foreground: #0a0a0a;
+  --primary-hover: #93c5fd;
+  --secondary: #1f2937;
+  --secondary-foreground: #e5e7eb;
+  --accent: #1e3a5f;
+  --accent-foreground: #93c5fd;
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fecaca;
+  --border: #333333;
+  --input: #333333;
+  --ring: #60a5fa;
+}

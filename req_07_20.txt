@@ -1,0 +1,39 @@
+几个新需求：
+1. 编辑界面优化
+	1. 左侧菜单可以最小化:可以关闭与打开。
+	2. 进入文章编辑界面后的布局优化: 
+	   - 左侧菜单自动关闭，
+	   - 新增右侧面板，标签、新加摘要/关键字等放到右侧面板
+	   - 管理员右侧面板，请参考wordpress管理员的文章编辑面板
+
+2. AI摘要
+	1. 文章除了title、content，加入摘要summary、关键字keywords。
+	1. 文章加入摘要的输入框，可空，默认空白，右边有个 '提取摘要'的按钮。
+	2. 用户可以手工点击'提取摘要'，AI生成摘要、关键字列表。
+	3. AI摘要需要配置AI provider (OpenAI chat兼容格式) URL，apk key，
+	4. 摘要提取： 让AI从文章提取50字以内的摘要 + 3-5 关键字
+	5. prompt
+	
+- Task: Extract the summary and keywords from the article below.
+- Input:
+  {
+    "article":"${content}"
+  }
+- Output Requirements:
+  - Return ONLY a JSON object containing summary and keywords.
+  - Summary: A single sentence of fewer than 50 characters.
+  - Keywords: 3–5 keywords.
+  - Output Language: Chinese.
+  - Content: The response should begin with { and end with }.
+  - Do not include any introductory text, markdown explanations, or notes.
+  - No Markdown: Do not wrap the JSON in markdown formatting.
+  - Strict Output Schema:
+      {
+        "summary": "本文是关于数组解构、合并展开及reduce的统计",
+        "keywords": ["Name 1", "Name 2"]
+      }	   
+
+3. Agent 集成	 MCP Server（Claude Code/Codex/Cursor）
+	加入MCP功能，用户可以通过MCP来管理文章，如生成新文章草稿，修改文章等。
+4. 文章 可以设置可见度 可见度包括 私有(private) 公开(public)；可以在文章列表批量修改可见性或进入文章单独设置可见性
+

@@ -1,0 +1,69 @@
+/* ============================================
+   i_blog — Developer Theme
+   Inspired by developer portfolio blogs
+   Clean, modern, code-friendly
+   ============================================ */
+
+.theme-developer {
+  /* Base — cool gray */
+  --background: #f8fafc;
+  --background-secondary: #f1f5f9;
+  --foreground: #0f172a;
+  --foreground-secondary: #64748b;
+
+  /* Card */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+
+  /* Interactive — indigo/teal accent */
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --primary-hover: #4f46e5;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #1e293b;
+
+  --accent: #eef2ff;
+  --accent-foreground: #4338ca;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+
+  /* Chrome */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #6366f1;
+
+  /* Sizing */
+  --radius: 0.5rem;
+  --max-width: 768px;
+
+  /* Typography — system fonts for clean dev feel */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+.theme-developer.dark {
+  --background: #0f172a;
+  --background-secondary: #1e293b;
+  --foreground: #e2e8f0;
+  --foreground-secondary: #94a3b8;
+  --card: #1e293b;
+  --card-foreground: #e2e8f0;
+  --primary: #818cf8;
+  --primary-foreground: #0f172a;
+  --primary-hover: #6366f1;
+  --secondary: #334155;
+  --secondary-foreground: #cbd5e1;
+  --accent: #1e1b4b;
+  --accent-foreground: #a5b4fc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fecaca;
+  --border: #334155;
+  --input: #334155;
+  --ring: #818cf8;
+}
