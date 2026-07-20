@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { Role } from '@/server/auth/roles';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 interface NavItem {
   href: string;
@@ -135,6 +136,11 @@ export function Sidebar({ collapsed, mobileOpen, onToggle, navItems, role, siteT
                {collapsed && !mobileOpen ? '✕' : t('logout')}
             </button>
           </form>
+          {(!collapsed || mobileOpen) && (
+            <div className="pt-2">
+              <LocaleSwitcher />
+            </div>
+          )}
         </div>
       </aside>
     </>
