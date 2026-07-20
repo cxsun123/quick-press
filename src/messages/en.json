@@ -209,7 +209,8 @@
     "toggleSource": "Toggle source editor",
     "sourceEditor": "Source editor",
     "insertMedia": "Insert media image",
-    "copyPostLink": "Copy post link (password must be shared separately)"
+    "copyPostLink": "Copy post link (password must be shared separately)",
+    "placeholder": "Start writing...\nMarkdown supported"
   },
   "comment": {
     "comments": "Comments",

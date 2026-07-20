@@ -203,7 +203,8 @@
     "toggleSource": "切换源码编辑",
     "sourceEditor": "源码编辑",
     "insertMedia": "插入资源图片",
-    "copyPostLink": "复制文章链接（密码需另行告知）"
+    "copyPostLink": "复制文章链接（密码需另行告知）",
+    "placeholder": "开始写作...\n支持 Markdown 语法"
   },
   "comment": {
     "comments": "评论",

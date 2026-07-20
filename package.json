@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@chengxinsun26/editor": "^0.3.8",
+    "@chengxinsun26/editor": "^0.3.10",
     "@supabase/ssr": "^0.12.1",
     "@supabase/supabase-js": "^2.110.5",
     "@tailwindcss/typography": "^0.5.20",
