@@ -165,7 +165,8 @@
     "deselect": "取消选择",
     "selectedCount": "已选择",
     "saveSettings": "保存设置",
-    "saving": "保存中..."
+    "saving": "保存中...",
+    "language": "界面语言"
   },
   "post": {
     "titlePlaceholder": "请输入文章标题",

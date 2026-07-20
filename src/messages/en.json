@@ -171,7 +171,8 @@
     "deselect": "Deselect",
     "selectedCount": "selected",
     "saveSettings": "Save settings",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "language": "Language"
   },
   "post": {
     "titlePlaceholder": "Enter post title",
