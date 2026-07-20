@@ -72,7 +72,9 @@
     "adding": "Adding...",
     "inUse": "In use",
     "enable": "Enable",
-    "all": "All"
+    "all": "All",
+    "mediaLibrary": "Media Library",
+    "customColor": "Custom"
   },
   "nav": {
     "home": "Home",

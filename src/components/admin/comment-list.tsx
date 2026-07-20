@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { updateCommentStatus, deleteComment } from '@/server/actions/comment.actions';
 
@@ -15,6 +16,8 @@ interface Comment {
 }
 
 export function CommentList({ comments }: { comments: Comment[] }) {
+  const t = useTranslations('comment');
+  const tc = useTranslations('common');
   const router = useRouter();
   const [pending, setPending] = useState<string | null>(null);
 
@@ -28,7 +31,7 @@ export function CommentList({ comments }: { comments: Comment[] }) {
       }
       router.refresh();
     } catch {
-      alert('操作失败');
+      alert('Operation failed');
     }
     setPending(null);
   }, [router]);
@@ -39,10 +42,10 @@ export function CommentList({ comments }: { comments: Comment[] }) {
         <div key={comment.id} className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm font-medium text-[var(--foreground)]">
-              {comment.author_name || '匿名'}
+              {comment.author_name || tc('anonymous')}
             </div>
             <div className="text-xs text-[var(--muted-foreground)]">
-              {new Date(comment.created_at).toLocaleString('zh-CN')}
+              {new Date(comment.created_at).toLocaleString()}
             </div>
           </div>
           <p className="text-sm text-[var(--foreground)] mb-3">{comment.content}</p>
@@ -53,7 +56,7 @@ export function CommentList({ comments }: { comments: Comment[] }) {
                 disabled={pending === comment.id}
                 className="px-3 py-1 text-xs rounded bg-green-500 text-white hover:bg-green-600 disabled:opacity-50"
               >
-                通过
+                {t('approve')}
               </button>
             )}
             {comment.status !== 'spam' && (
@@ -62,7 +65,7 @@ export function CommentList({ comments }: { comments: Comment[] }) {
                 disabled={pending === comment.id}
                 className="px-3 py-1 text-xs rounded bg-yellow-500 text-white hover:bg-yellow-600 disabled:opacity-50"
               >
-                垃圾
+                {t('spam')}
               </button>
             )}
             <button
@@ -70,7 +73,7 @@ export function CommentList({ comments }: { comments: Comment[] }) {
               disabled={pending === comment.id}
               className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
             >
-              删除
+              {t('delete')}
             </button>
           </div>
         </div>

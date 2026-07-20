@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { listMedia } from '@/server/actions/media.actions';
 
@@ -20,6 +21,7 @@ interface MediaPickerProps {
 }
 
 export function MediaPicker({ open, onClose, onSelect }: MediaPickerProps) {
+  const tc = useTranslations('common');
   const [items, setItems] = useState<MediaItem[]>([]);
   const [tab, setTab] = useState<'picker' | 'upload'>('picker');
   const [uploading, setUploading] = useState(false);
@@ -58,11 +60,11 @@ export function MediaPicker({ open, onClose, onSelect }: MediaPickerProps) {
           <div className="flex gap-3">
             <button onClick={() => setTab('picker')}
               className={`text-sm ${tab === 'picker' ? 'text-[var(--foreground)] font-medium' : 'text-[var(--muted-foreground)]'}`}>
-              媒体库
+              {tc('mediaLibrary')}
             </button>
             <button onClick={() => setTab('upload')}
               className={`text-sm ${tab === 'upload' ? 'text-[var(--foreground)] font-medium' : 'text-[var(--muted-foreground)]'}`}>
-              上传
+              {tc('upload')}
             </button>
           </div>
           <button onClick={onClose} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">&times;</button>
@@ -73,7 +75,7 @@ export function MediaPicker({ open, onClose, onSelect }: MediaPickerProps) {
             <label className="flex flex-col items-center justify-center border-2 border-dashed border-[var(--border)] rounded-lg p-12 cursor-pointer hover:bg-[var(--accent)] transition-colors">
               <div className="text-4xl mb-2">📁</div>
               <div className="text-sm text-[var(--muted-foreground)]">
-                {uploading ? '上传中...' : '点击选择图片'}
+                {uploading ? tc('uploading') : tc('upload')}
               </div>
               <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
             </label>

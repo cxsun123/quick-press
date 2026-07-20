@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 
 const PRESET_COLORS = [
   '#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', '#D946EF',
@@ -15,6 +16,7 @@ interface TagColorPickerProps {
 }
 
 export function TagColorPicker({ value, onChange }: TagColorPickerProps) {
+  const tc = useTranslations('common');
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -41,7 +43,7 @@ export function TagColorPicker({ value, onChange }: TagColorPickerProps) {
         onClick={() => setOpen(!open)}
         className="w-9 h-9 rounded border border-[var(--border)] cursor-pointer shrink-0 hover:ring-2 hover:ring-[var(--ring)] transition-shadow"
         style={{ backgroundColor: value }}
-        title="选择颜色"
+        title={tc('clickToSelect')}
       />
       {open && (
         <>
@@ -71,7 +73,7 @@ export function TagColorPicker({ value, onChange }: TagColorPickerProps) {
               onClick={() => { inputRef.current?.click() }}
               className="w-full mt-1.5 px-2 py-1 text-xs rounded bg-[var(--background-secondary)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
             >
-              自定义颜色...
+              {tc('customColor')}...
             </button>
             <input
               ref={inputRef}

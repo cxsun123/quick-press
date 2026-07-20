@@ -67,7 +67,8 @@
     "disable": "禁用",
     "inUse": "使用中",
     "current": "当前",
-    "clickToSelect": "点击选择"
+    "clickToSelect": "点击选择",
+    "customColor": "自定义颜色"
   },
   "nav": {
     "home": "首页",
