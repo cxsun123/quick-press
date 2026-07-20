@@ -173,7 +173,9 @@
     "selectedCount": "selected",
     "saveSettings": "Save settings",
     "saving": "Saving...",
-    "language": "Language"
+    "language": "Language",
+    "logout": "Log out",
+    "backToSite": "Back to site"
   },
   "post": {
     "titlePlaceholder": "Enter post title",

@@ -167,7 +167,9 @@
     "selectedCount": "已选择",
     "saveSettings": "保存设置",
     "saving": "保存中...",
-    "language": "界面语言"
+    "language": "界面语言",
+    "logout": "退出登录",
+    "backToSite": "返回前台"
   },
   "post": {
     "titlePlaceholder": "请输入文章标题",
