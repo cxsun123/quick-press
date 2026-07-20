@@ -1,17 +1,33 @@
 import createIntlMiddleware from 'next-intl/middleware';
-import { type NextRequest } from 'next/server';
-import { updateSession } from '@/server/db/middleware';
+import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 import { routing } from '@/i18n/routing';
 
 const intlMiddleware = createIntlMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
-  const intlResponse = intlMiddleware(request);
-  const response = await updateSession(request);
+  const response = intlMiddleware(request);
 
-  const localeCookie = intlResponse.cookies.get('NEXT_LOCALE');
-  if (localeCookie) {
-    response.cookies.set(localeCookie.name, localeCookie.value, localeCookie);
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return request.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          for (const { name, value, options } of cookiesToSet) {
+            response.cookies.set(name, value, options);
+          }
+        },
+      },
+    },
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user && request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/login')) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
   }
 
   return response;
