@@ -21,7 +21,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@chengxinsun26/editor": "^0.3.7",
+    "@chengxinsun26/editor": "^0.3.8",
     "@supabase/ssr": "^0.12.1",
     "@supabase/supabase-js": "^2.110.5",
     "@tailwindcss/typography": "^0.5.20",
@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.24.0",
     "next": "^16.2.10",
+    "next-intl": "^4.13.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
