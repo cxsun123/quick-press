@@ -3,6 +3,7 @@ import { PublicLayout } from '@/components/blog/public-layout';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { markdownToHtml } from '@chengxinsun26/editor';
+import { getTranslations } from 'next-intl/server';
 
 export default async function PublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: rawSlug } = await params;
@@ -14,8 +15,9 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
     .eq('slug', slug)
     .eq('status', 'published')
     .single();
+  const t = await getTranslations('home');
 
-  if (!page) notFound();
+  if (!page) { notFound(); }
 
   let contentHtml = '';
   if (page.content) {
@@ -33,11 +35,11 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
               dangerouslySetInnerHTML={{ __html: contentHtml }}
             />
           ) : (
-            <div className="text-[var(--muted-foreground)]">暂无内容</div>
+            <div className="text-[var(--muted-foreground)]">{t('noContent')}</div>
           )}
         </div>
         <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-[var(--border)]">
-          <Link href="/" className="text-sm text-[var(--primary)] hover:underline">← 返回首页</Link>
+          <Link href="/" className="text-sm text-[var(--primary)] hover:underline">{t('backToHome')}</Link>
         </div>
       </article>
     </PublicLayout>
