@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Copy, Check, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import type { PostVisibility } from '@/models/post.model';
 
@@ -14,12 +15,6 @@ interface VisibilityPanelProps {
   passwordSavedVersion?: number;
 }
 
-const OPTIONS: { value: PostVisibility; label: string; desc: string }[] = [
-  { value: 'public', label: '公开', desc: '所有人可见' },
-  { value: 'private', label: '私密', desc: '仅自己和管理员可见' },
-  { value: 'password', label: '密码保护', desc: '输入密码访问' },
-];
-
 export function VisibilityPanel({
   visibility,
   onChange,
@@ -28,6 +23,8 @@ export function VisibilityPanel({
   slug,
   passwordSavedVersion = 0,
 }: VisibilityPanelProps) {
+  const t = useTranslations('post');
+  const tc = useTranslations('common');
   const [copied, setCopied] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const savedPasswordRef = useRef(password);
@@ -60,9 +57,15 @@ export function VisibilityPanel({
     }
   };
 
+  const OPTIONS: { value: PostVisibility; label: string; desc: string }[] = [
+    { value: 'public', label: t('public'), desc: t('publicDesc') },
+    { value: 'private', label: t('private'), desc: t('privateDesc') },
+    { value: 'password', label: t('passwordProtected'), desc: t('passwordDesc') },
+  ];
+
   return (
     <div>
-      <div className="text-xs text-[var(--muted-foreground)] mb-2">可见度</div>
+      <div className="text-xs text-[var(--muted-foreground)] mb-2">{t('visibility')}</div>
       <div className="space-y-1">
         {OPTIONS.map((opt) => (
           <label
@@ -95,7 +98,7 @@ export function VisibilityPanel({
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => onPasswordChange(e.target.value)}
-              placeholder="设置访问密码"
+              placeholder={t('passwordPlaceholder')}
               className="w-full px-2 py-1.5 text-sm rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)] pr-8"
             />
             <button
@@ -109,7 +112,7 @@ export function VisibilityPanel({
           {passwordChanged && (
             <div className="flex items-center gap-1.5 text-xs text-red-500">
               <AlertTriangle className="h-3 w-3 shrink-0" />
-              <span>修改密码后请重新发布文章，否则旧密码仍可访问</span>
+              <span>{t('passwordNote')}</span>
             </div>
           )}
           {shareUrl && (
@@ -123,7 +126,7 @@ export function VisibilityPanel({
                 className="flex items-center gap-1 px-2 py-1 text-xs rounded border border-[var(--border)] hover:bg-[var(--accent)] shrink-0 transition-colors"
               >
                 {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                {copied ? '已复制' : '复制'}
+                {copied ? tc('copied') : tc('copy')}
               </button>
             </div>
           )}

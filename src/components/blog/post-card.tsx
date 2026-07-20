@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 interface PostCardProps {
   post: {
@@ -15,7 +16,8 @@ interface PostCardProps {
   };
 }
 
-export function PostCard({ post }: PostCardProps) {
+export async function PostCard({ post }: PostCardProps) {
+  const t = await getTranslations('postCard');
   const categories = post.post_categories
     ?.map((pc) => pc.categories)
     .filter(Boolean) || [];
@@ -29,7 +31,7 @@ export function PostCard({ post }: PostCardProps) {
         <h2 className="text-3xl font-bold text-[var(--primary)] hover:opacity-80 transition-opacity">
           {post.is_pinned && (
             <span className="inline-block bg-[var(--primary)] text-[var(--primary-foreground)] text-xs px-2 py-0.5 rounded mr-2 align-middle">
-              置顶
+              {t('pinned')}
             </span>
           )}
           {post.title}
@@ -72,7 +74,7 @@ export function PostCard({ post }: PostCardProps) {
             dateTime={post.published_at}
             className="text-sm text-[var(--muted-foreground)]"
           >
-            {new Date(post.published_at).toLocaleDateString('zh-CN')}
+            {new Date(post.published_at).toLocaleDateString()}
           </time>
         </div>
       )}

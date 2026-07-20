@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Lock } from 'lucide-react';
 
 interface VerifiedPost {
@@ -17,6 +18,9 @@ interface PasswordGateProps {
 }
 
 export function PasswordGate({ postId, postTitle, onVerified }: PasswordGateProps) {
+  const t = useTranslations('common');
+  const tp = useTranslations('post');
+  const te = useTranslations('error');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,10 +40,10 @@ export function PasswordGate({ postId, postTitle, onVerified }: PasswordGateProp
       if (res.ok && data.success) {
         onVerified(data.post);
       } else {
-        setError(data.error || '密码错误');
+        setError(data.error || te('wrongPassword'));
       }
     } catch {
-      setError('验证失败，请重试');
+      setError(te('verifyFailed'));
     }
     setLoading(false);
   };
@@ -48,13 +52,13 @@ export function PasswordGate({ postId, postTitle, onVerified }: PasswordGateProp
     <div className="max-w-md mx-auto my-16 p-8 rounded-lg border border-[var(--border)] bg-[var(--card)] text-center">
       <Lock className="h-10 w-10 mx-auto mb-4 text-[var(--muted-foreground)]" />
       <h1 className="text-xl font-bold text-[var(--foreground)] mb-2">{postTitle}</h1>
-      <p className="text-sm text-[var(--muted-foreground)] mb-6">此文章受密码保护，请输入密码查看。</p>
+      <p className="text-sm text-[var(--muted-foreground)] mb-6">{tp('passwordProtectedText')}</p>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="请输入密码"
+          placeholder={t('enterPassword')}
           className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]"
           autoFocus
         />
@@ -64,7 +68,7 @@ export function PasswordGate({ postId, postTitle, onVerified }: PasswordGateProp
           disabled={loading || !password.trim()}
           className="w-full px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-opacity"
         >
-          {loading ? '验证中...' : '查看内容'}
+          {loading ? t('verifying') : t('verify')}
         </button>
       </form>
     </div>
