@@ -108,8 +108,10 @@ export default function ThemesPage() {
           </div>
           <div className="flex-1">
             <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('cssFile')}</label>
-            <input ref={fileRef} type="file" accept=".css"
-              className="w-full text-sm text-[var(--foreground)] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-[var(--primary)] file:text-[var(--primary-foreground)] hover:file:opacity-90" />
+            <label className="inline-block px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] cursor-pointer">
+              {fileRef.current?.files?.[0]?.name || tc('chooseFile')}
+              <input ref={fileRef} type="file" accept=".css" className="hidden" />
+            </label>
           </div>
           <button onClick={handleUpload} disabled={uploading}
             className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50">

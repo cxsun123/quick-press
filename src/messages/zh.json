@@ -69,7 +69,8 @@
     "current": "当前",
     "clickToSelect": "点击选择",
     "customColor": "自定义颜色",
-    "mediaLibrary": "媒体库"
+    "mediaLibrary": "媒体库",
+    "chooseFile": "选择文件"
   },
   "nav": {
     "home": "首页",

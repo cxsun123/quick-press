@@ -74,7 +74,8 @@
     "enable": "Enable",
     "all": "All",
     "mediaLibrary": "Media Library",
-    "customColor": "Custom"
+    "customColor": "Custom",
+    "chooseFile": "Choose file"
   },
   "nav": {
     "home": "Home",
