@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { WysiwygEditor } from '@chengxinsun26/editor';
 import { savePost } from '@/server/actions/post.actions';
 import { getTags, getCategories } from '@/server/actions/taxonomy.actions';
@@ -32,6 +32,9 @@ interface PostEditorProps {
 export function PostEditor({ initialData }: PostEditorProps) {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations('post');
+  const ta = useTranslations('admin');
+  const tc = useTranslations('common');
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [status, setStatus] = useState(initialData?.status || 'draft');
@@ -43,7 +46,6 @@ export function PostEditor({ initialData }: PostEditorProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>(initialData?.tag_ids || []);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.category_ids || []);
 
-  // New fields
   const [visibility, setVisibility] = useState<PostVisibility>(initialData?.visibility || 'public');
   const [password, setPassword] = useState(initialData?.password || '');
   const [summary, setSummary] = useState(initialData?.summary || '');
@@ -52,7 +54,6 @@ export function PostEditor({ initialData }: PostEditorProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [passwordSavedVersion, setPasswordSavedVersion] = useState(0);
 
-  // Close right sidebar on mobile by default
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setSidebarOpen(false);
@@ -61,7 +62,6 @@ export function PostEditor({ initialData }: PostEditorProps) {
   const [postSlug, setPostSlug] = useState('');
   const [coverImageUrl, setCoverImageUrl] = useState<string | null>(initialData?.cover_image_url || null);
 
-  // Sync coverImageUrl state when initialData updates (e.g. after save + refresh)
   useEffect(() => {
     if (initialData?.cover_image_url) {
       setCoverImageUrl(initialData.cover_image_url);
@@ -129,14 +129,14 @@ export function PostEditor({ initialData }: PostEditorProps) {
         router.refresh();
       }
     } catch (e: any) {
-      alert(e.message || '保存失败');
+      alert(e.message || tc('loading'));
     }
     setSaving(false);
-  }, [title, content, selectedTags, selectedCategories, initialData?.id, router, markSaved, visibility, password, summary, keywords, coverImageUrl]);
+  }, [title, content, selectedTags, selectedCategories, initialData?.id, router, markSaved, visibility, password, summary, keywords, coverImageUrl, tc]);
 
   const handleExtractSummary = useCallback(async () => {
     if (!content.trim()) {
-      alert('请先输入文章内容');
+      alert(tc('noContent'));
       return;
     }
     setExtracting(true);
@@ -146,21 +146,19 @@ export function PostEditor({ initialData }: PostEditorProps) {
       setSummary(result.summary);
       setKeywords(result.keywords);
     } catch (e: any) {
-      alert(e.message || '提取失败');
+      alert(e.message || tc('loading'));
     }
     setExtracting(false);
-  }, [content]);
+  }, [content, tc]);
 
   const handleBack = useCallback(() => {
-    if (!savedRef.current && !confirm('有未保存的修改，确定离开？')) return;
+    if (!savedRef.current && !confirm(tc('confirmDelete'))) return;
     router.push('/admin/posts');
-  }, [router]);
+  }, [router, tc]);
 
   return (
     <div className="flex gap-0 relative">
-      {/* Main editor area */}
       <div className="flex-1 min-w-0 space-y-4">
-        {/* Top action bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -169,10 +167,10 @@ export function PostEditor({ initialData }: PostEditorProps) {
               className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              返回列表
+              {t('backToList')}
             </button>
             <h1 className="text-lg font-semibold text-[var(--muted-foreground)]">
-              {initialData?.id ? '编辑文章' : '新建文章'}
+              {initialData?.id ? ta('editPost') : ta('newPost')}
             </h1>
           </div>
         </div>
@@ -182,7 +180,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="请输入文章标题"
+            placeholder={t('titlePlaceholder')}
             className="w-full px-4 py-3 text-2xl font-bold border-0 border-b border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]/50 placeholder:italic focus:outline-none focus:border-[var(--ring)] transition-colors"
           />
         </div>
@@ -199,7 +197,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
                   {
                     id: 'insert-media',
                     icon: <ImagePlus className="h-4 w-4" />,
-                    title: '插入资源图片',
+                    title: t('insertMedia'),
                     onClick: () => setShowMediaPicker(true),
                   },
                 ]}
@@ -208,7 +206,6 @@ export function PostEditor({ initialData }: PostEditorProps) {
           </div>
         </div>
 
-      {/* Right sidebar */}
       <div className="relative">
         <EditorSidebar
           open={sidebarOpen}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { WysiwygEditor } from '@chengxinsun26/editor';
 import { createPage, updatePage } from '@/server/actions/page.actions';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,9 @@ interface PageEditorProps {
 export function PageEditor({ initialData, onDone }: PageEditorProps) {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations('post');
+  const ta = useTranslations('admin');
+  const tc = useTranslations('common');
   const [title, setTitle] = useState(initialData?.title || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
   const [content, setContent] = useState(initialData?.content || '');
@@ -50,30 +53,30 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
       router.refresh();
       onDone?.();
     } catch (e: any) {
-      alert(e.message || '保存失败');
+      alert(e.message || tc('loading'));
     }
     setSaving(false);
-  }, [title, slug, content, initialData?.id, router, onDone]);
+  }, [title, slug, content, initialData?.id, router, onDone, tc]);
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold text-[var(--foreground)]">
-        {initialData?.id ? '编辑页面' : '新建页面'}
+        {initialData?.id ? ta('editPage') : ta('newPage')}
       </h2>
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="text-xs text-[var(--muted-foreground)] mb-1 block">页面标题</label>
+          <label className="text-xs text-[var(--muted-foreground)] mb-1 block">{t('pageTitlePlaceholder')}</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="页面标题"
+            placeholder={t('pageTitlePlaceholder')}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--ring)]"
           />
         </div>
         <div className="flex-1">
-          <label className="text-xs text-[var(--muted-foreground)] mb-1 block">Slug（留空自动生成）</label>
+          <label className="text-xs text-[var(--muted-foreground)] mb-1 block">{t('slugAuto')}</label>
           <input
             type="text"
             value={slug}
@@ -93,10 +96,10 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
               ? 'border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]'
               : 'border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]'
           }`}
-          title={showSource ? '关闭源码编辑' : '打开源码编辑'}
+          title={showSource ? t('sourceEditor') : t('toggleSource')}
         >
           <CodeSquare className="h-4 w-4" />
-          {showSource ? '关闭源码' : '源码编辑'}
+          {showSource ? t('sourceEditor') : t('toggleSource')}
         </button>
       </div>
 
@@ -111,7 +114,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
             {
               id: 'insert-media',
               icon: <ImagePlus className="h-4 w-4" />,
-              title: '插入资源图片',
+              title: t('insertMedia'),
               onClick: () => setShowMediaPicker(true),
             },
           ]}
@@ -130,7 +133,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
 
       <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
         <div className="text-sm text-[var(--muted-foreground)]">
-          {status === 'published' ? '已发布' : '草稿'}
+          {status === 'published' ? tc('published') : tc('draft')}
         </div>
         <div className="flex items-center gap-2">
           {onDone && (
@@ -139,7 +142,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
               onClick={onDone}
               className="px-4 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
             >
-              取消
+              {tc('cancel')}
             </button>
           )}
           <button
@@ -148,7 +151,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
             disabled={saving}
             className="px-4 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] disabled:opacity-50 transition-colors"
           >
-            {saving ? '保存中...' : '保存草稿'}
+            {saving ? tc('saving') : t('saveDraft')}
           </button>
           <button
             type="button"
@@ -156,7 +159,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
             disabled={saving || !title.trim()}
             className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
-            发布
+            {tc('publish')}
           </button>
         </div>
       </div>

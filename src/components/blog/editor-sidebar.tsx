@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronRight, ChevronLeft, Plus, Search, X, CodeSquare } from 'lucide-react';
 import { TagColorPicker } from '@/components/admin/tag-color-picker';
 import type { PostStatus, PostVisibility } from '@/models/post.model';
@@ -78,6 +79,8 @@ export function EditorSidebar({
   passwordSavedVersion,
   previewUrl,
 }: EditorSidebarProps) {
+  const t = useTranslations('post');
+  const tc = useTranslations('common');
   const [tagSearch, setTagSearch] = useState('');
   const [newTagName, setNewTagName] = useState('');
   const [newTagColor, setNewTagColor] = useState('#3B82F6');
@@ -104,7 +107,7 @@ export function EditorSidebar({
         onTagsRefresh?.();
       }
     } catch (e: any) {
-      alert(e.message || '创建标签失败');
+      alert(e.message || 'Failed to create tag');
     }
     setAddingTag(false);
   };
@@ -124,13 +127,13 @@ export function EditorSidebar({
             {/* Publish Panel */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[var(--muted-foreground)]">发布状态</span>
+                <span className="text-xs text-[var(--muted-foreground)]">{t('status')}</span>
                 <span className={`text-xs px-1.5 py-0.5 rounded ${
                   status === 'published'
                     ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                     : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                 }`}>
-                  {status === 'published' ? '已发布' : '草稿'}
+                  {status === 'published' ? tc('published') : tc('draft')}
                 </span>
               </div>
               <div className="flex flex-col gap-1.5">
@@ -140,7 +143,7 @@ export function EditorSidebar({
                   disabled={saving}
                   className="w-full px-3 py-2 text-sm rounded-md border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] disabled:opacity-50 transition-colors"
                 >
-                  {saving ? '保存中...' : '保存草稿'}
+                  {saving ? tc('saving') : t('saveDraft')}
                 </button>
                 <div className="flex gap-1.5">
                   <button
@@ -149,7 +152,7 @@ export function EditorSidebar({
                     disabled={saving || !allowPublish}
                     className="flex-1 px-3 py-2 text-sm rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-opacity"
                   >
-                    发布
+                    {tc('publish')}
                   </button>
                   {previewUrl ? (
                     <a
@@ -158,21 +161,19 @@ export function EditorSidebar({
                       rel="noopener noreferrer"
                       className="w-[80px] shrink-0 px-3 py-2 text-sm rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors text-center"
                     >
-                      预览
+                      {tc('preview')}
                     </a>
                   ) : (
                     <span className="w-[80px] shrink-0 px-3 py-2 text-sm rounded-md border border-[var(--border)] text-[var(--muted-foreground)] text-center opacity-50 cursor-not-allowed">
-                      预览
+                      {tc('preview')}
                     </span>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Editor actions */}
             <div className="space-y-1.5">
               <button
                 type="button"
@@ -184,24 +185,20 @@ export function EditorSidebar({
                 }`}
               >
                 <CodeSquare className="h-4 w-4" />
-                {showSource ? '关闭源码' : '源码编辑'}
+                {showSource ? t('sourceEditor') : t('toggleSource')}
               </button>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Cover Image */}
             <CoverPicker
               coverImageUrl={coverImageUrl ?? null}
               contentImages={contentImages ?? []}
               onChange={(url) => onCoverImageChange?.(url)}
             />
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Visibility Panel */}
             <VisibilityPanel
               visibility={visibility}
               onChange={onVisibilityChange}
@@ -212,12 +209,11 @@ export function EditorSidebar({
               passwordSavedVersion={passwordSavedVersion}
             />
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Categories Panel */}
+            {/* Categories */}
             <div>
-              <div className="text-xs text-[var(--muted-foreground)] mb-2">分类</div>
+              <div className="text-xs text-[var(--muted-foreground)] mb-2">{t('categories')}</div>
               <div className="flex flex-wrap gap-1">
                 {categories.map((cat) => {
                   const active = selectedCategories.includes(cat.id);
@@ -245,21 +241,19 @@ export function EditorSidebar({
               </div>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Tags Panel */}
+            {/* Tags */}
             <div>
-              <div className="text-xs text-[var(--muted-foreground)] mb-2">标签</div>
+              <div className="text-xs text-[var(--muted-foreground)] mb-2">{t('tags')}</div>
 
-              {/* Tag search filter */}
               <div className="relative mb-2">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-[var(--muted-foreground)]" />
                 <input
                   type="text"
                   value={tagSearch}
                   onChange={(e) => setTagSearch(e.target.value)}
-                  placeholder="搜索标签..."
+                  placeholder={t('tagPlaceholder')}
                   className="w-full pl-7 pr-6 py-1 text-xs rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]"
                 />
                 {tagSearch && (
@@ -273,7 +267,6 @@ export function EditorSidebar({
                 )}
               </div>
 
-              {/* Tag list */}
               <div className="flex flex-wrap gap-1 mb-2 max-h-[160px] overflow-y-auto">
                 {filteredTags.map((tag) => {
                   const active = selectedTags.includes(tag.id);
@@ -300,18 +293,17 @@ export function EditorSidebar({
                   );
                 })}
                 {filteredTags.length === 0 && (
-                  <span className="text-xs text-[var(--muted-foreground)]">无匹配标签</span>
+                  <span className="text-xs text-[var(--muted-foreground)]">{t('noMatchTags')}</span>
                 )}
               </div>
 
-              {/* Add new tag */}
               <div className="flex gap-1 items-center">
                 <input
                   type="text"
                   value={newTagName}
                   onChange={(e) => setNewTagName(e.target.value)}
                   onKeyDown={handleTagKeyDown}
-                  placeholder="新标签名"
+                  placeholder={t('newTagNamePlaceholder')}
                   className="flex-1 min-w-0 px-2 py-1 text-xs rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]"
                 />
                 <TagColorPicker value={newTagColor} onChange={setNewTagColor} />
@@ -322,15 +314,13 @@ export function EditorSidebar({
                   className="flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-opacity shrink-0"
                 >
                   <Plus className="h-3 w-3" />
-                  新增
+                  {t('newTag')}
                 </button>
               </div>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-[var(--border)]" />
 
-            {/* Summary Panel */}
             <SummaryPanel
               summary={summary}
               onSummaryChange={onSummaryChange}
@@ -342,24 +332,22 @@ export function EditorSidebar({
           </div>
         </aside>
       )}
-      {/* Toggle button when sidebar is collapsed */}
       {!open && (
         <button
           type="button"
           onClick={onToggle}
           className="self-start mt-4 p-1.5 rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
-          title="打开右侧面板"
+          title={t('toggleSource')}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
       )}
-      {/* Toggle button when sidebar is open */}
       {open && (
         <button
           type="button"
           onClick={onToggle}
           className="absolute -left-3 top-4 p-0.5 rounded-full border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors z-10"
-          title="关闭右侧面板"
+          title={t('toggleSource')}
         >
           <ChevronRight className="h-3 w-3" />
         </button>
