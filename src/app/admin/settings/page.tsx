@@ -52,6 +52,7 @@ export default function SettingsPage() {
       await updateSiteConfig('ai_model', aiModel);
       await updateSiteConfig('ai_max_content_length', aiMaxContent);
       if (mcpKey) await updateSiteConfig('mcp_api_key', mcpKey);
+      await updateSiteConfig('locale', currentLocale);
       window.location.reload();
       return;
     } catch {}

@@ -4,7 +4,6 @@ import { routing } from './routing';
 import { cookies } from 'next/headers';
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  // 1) From middleware (createIntlMiddleware)
   const fromMiddleware = await requestLocale;
   if (fromMiddleware && hasLocale(routing.locales, fromMiddleware)) {
     return {
@@ -13,7 +12,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
     };
   }
 
-  // 2) From NEXT_LOCALE cookie directly
   try {
     const cookieStore = await cookies();
     const fromCookie = cookieStore.get('NEXT_LOCALE')?.value;
@@ -25,7 +23,23 @@ export default getRequestConfig(async ({ requestLocale }) => {
     }
   } catch {}
 
-  // 3) Default
+  // Fallback: site-wide default locale from site_config
+  try {
+    const { createAdminClient } = await import('@/server/db/client');
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from('site_config')
+      .select('value')
+      .eq('key', 'locale')
+      .single();
+    if (data?.value && hasLocale(routing.locales, data.value)) {
+      return {
+        locale: data.value,
+        messages: (await import(`../messages/${data.value}.json`)).default,
+      };
+    }
+  } catch {}
+
   return {
     locale: routing.defaultLocale,
     messages: (await import(`../messages/${routing.defaultLocale}.json`)).default,
