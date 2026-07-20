@@ -68,7 +68,8 @@
     "inUse": "使用中",
     "current": "当前",
     "clickToSelect": "点击选择",
-    "customColor": "自定义颜色"
+    "customColor": "自定义颜色",
+    "mediaLibrary": "媒体库"
   },
   "nav": {
     "home": "首页",
@@ -95,6 +96,7 @@
     "posts": "文章",
     "pages": "页面",
     "tags": "标签",
+    "categories": "分类",
     "comments": "评论",
     "themes": "主题",
     "media": "媒体",
@@ -161,7 +163,9 @@
     "batchPublic": "批量设为公开",
     "batchPrivate": "批量设为私密",
     "deselect": "取消选择",
-    "selectedCount": "已选择"
+    "selectedCount": "已选择",
+    "saveSettings": "保存设置",
+    "saving": "保存中..."
   },
   "post": {
     "titlePlaceholder": "请输入文章标题",
@@ -192,7 +196,8 @@
     "slugAuto": "Slug（留空自动生成）",
     "toggleSource": "切换源码编辑",
     "sourceEditor": "源码编辑",
-    "insertMedia": "插入资源图片"
+    "insertMedia": "插入资源图片",
+    "copyPostLink": "复制文章链接（密码需另行告知）"
   },
   "comment": {
     "comments": "评论",
