@@ -1,12 +1,14 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { PostEditor } from '@/components/blog/post-editor';
 import { getPost, getPostTags, getPostCategories } from '@/server/actions/post.actions';
 import { decryptPassword } from '@/server/actions/crypto.actions';
 
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const tc = useTranslations('common');
   const { id } = use(params);
   const [initialData, setInitialData] = useState<any>(null);
 
@@ -38,7 +40,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
       {initialData ? (
         <PostEditor initialData={initialData} />
       ) : (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">加载中...</div>
+        <div className="text-center py-12 text-[var(--muted-foreground)]">{tc('loading')}</div>
       )}
     </AdminLayout>
   );

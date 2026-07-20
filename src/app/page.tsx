@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { getTranslations } from 'next-intl/server';
 import { PublicLayout } from '@/components/blog/public-layout';
 import { getPublishedPostsPaginated } from '@/server/actions/post.actions';
 import { PostCard } from '@/components/blog/post-card';
@@ -21,6 +22,8 @@ export default async function Home(props: {
     ? searchParams.tags.split(',').filter(Boolean)
     : [];
   const query = searchParams?.q || undefined;
+  const tc = await getTranslations('common');
+  const th = await getTranslations('home');
 
   const { posts, total, totalPages } = await getPublishedPostsPaginated(page, 10, {
     month,
@@ -49,27 +52,27 @@ export default async function Home(props: {
             <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-[var(--muted-foreground)]">
               {month && (
                 <span className="inline-flex items-center gap-1">
-                  归档：<span className="font-medium text-[var(--foreground)]">{month.replace('-', '年')}月</span>
+                  {th('filterArchive')}<span className="font-medium text-[var(--foreground)]">{month.replace('-', '/')}</span>
                 </span>
               )}
               {tagSlugs.length > 0 && (
                 <span className="inline-flex items-center gap-1">
-                  标签：<span className="font-medium text-[var(--foreground)]">{tagSlugs.join(', ')}</span>
+                  {th('filterTag')}<span className="font-medium text-[var(--foreground)]">{tagSlugs.join(', ')}</span>
                 </span>
               )}
               {query && (
                 <span className="inline-flex items-center gap-1">
-                  搜索：<span className="font-medium text-[var(--foreground)]">{query}</span>
+                  {th('filterSearch')}<span className="font-medium text-[var(--foreground)]">{query}</span>
                 </span>
               )}
               <a href="/" className="ml-2 text-[var(--primary)] hover:underline">
-                清除筛选
+                {th('clearFilter')}
               </a>
             </div>
           )}
 
           {posts.length === 0 ? (
-            <p className="text-lg text-[var(--muted-foreground)]">暂无文章</p>
+            <p className="text-lg text-[var(--muted-foreground)]">{tc('noPosts')}</p>
           ) : (
             <div className="space-y-6">
               {posts.map((post) => (

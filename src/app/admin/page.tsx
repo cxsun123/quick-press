@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { getDashboardStats } from '@/server/actions/stats.actions';
 
 export default function AdminPage() {
+  const t = useTranslations('admin');
   const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
@@ -12,15 +14,15 @@ export default function AdminPage() {
   }, []);
 
   const cards = [
-    { label: '全部文章', value: stats?.totalPosts ?? '--', color: 'bg-blue-500' },
-    { label: '已发布', value: stats?.publishedPosts ?? '--', color: 'bg-green-500' },
-    { label: '评论总数', value: stats?.totalComments ?? '--', color: 'bg-purple-500' },
-    { label: '待审核评论', value: stats?.pendingComments ?? '--', color: 'bg-yellow-500' },
+    { label: t('totalPosts'), value: stats?.totalPosts ?? '--', color: 'bg-blue-500' },
+    { label: t('publishedPosts'), value: stats?.publishedPosts ?? '--', color: 'bg-green-500' },
+    { label: t('totalComments'), value: stats?.totalComments ?? '--', color: 'bg-purple-500' },
+    { label: t('pendingComments'), value: stats?.pendingComments ?? '--', color: 'bg-yellow-500' },
   ];
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">仪表盘</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">{t('dashboard')}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((card) => (
           <div key={card.label} className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-5">

@@ -1,15 +1,18 @@
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { getAllComments } from '@/server/actions/comment.actions';
 import { CommentList } from '@/components/admin/comment-list';
+import { getTranslations } from 'next-intl/server';
 
 export default async function CommentsPage(props: { searchParams?: Promise<{ status?: string }> }) {
   const searchParams = await props.searchParams;
   const status = searchParams?.status || 'pending';
   const comments = await getAllComments(status === 'all' ? undefined : status);
+  const t = await getTranslations('admin');
+  const tc = await getTranslations('common');
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">评论管理</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">{t('commentManagement')}</h1>
 
       <div className="mb-4 flex gap-2">
         <a
@@ -20,7 +23,7 @@ export default async function CommentsPage(props: { searchParams?: Promise<{ sta
               : 'border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]'
           }`}
         >
-          待审核
+          {tc('pendingReview')}
         </a>
         <a
           href="/admin/comments?status=approved"
@@ -30,7 +33,7 @@ export default async function CommentsPage(props: { searchParams?: Promise<{ sta
               : 'border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]'
           }`}
         >
-          已通过
+          {tc('approved')}
         </a>
         <a
           href="/admin/comments?status=all"
@@ -40,12 +43,12 @@ export default async function CommentsPage(props: { searchParams?: Promise<{ sta
               : 'border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]'
           }`}
         >
-          全部
+          {tc('all')}
         </a>
       </div>
 
       {comments.length === 0 ? (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">暂无评论</div>
+        <div className="text-center py-12 text-[var(--muted-foreground)]">{tc('noComments')}</div>
       ) : (
         <CommentList comments={comments} />
       )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { listUsers, updateUserRole } from '@/server/actions/user.actions';
 
@@ -15,6 +16,8 @@ interface UserProfile {
 const ROLES = ['admin', 'editor', 'author', 'subscriber'] as const;
 
 export default function UsersPage() {
+  const t = useTranslations('admin');
+  const tc = useTranslations('common');
   const [users, setUsers] = useState<UserProfile[]>([]);
 
   const load = useCallback(async () => { setUsers(await listUsers()); }, []);
@@ -22,7 +25,7 @@ export default function UsersPage() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">用户管理</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">{t('userManagement')}</h1>
 
       <div className="space-y-2">
         {users.map((user) => (
@@ -34,10 +37,10 @@ export default function UsersPage() {
               </div>
               <div>
                 <div className="text-sm font-medium text-[var(--foreground)]">
-                  {user.display_name || '未设置昵称'}
+                  {user.display_name || tc('anonymous')}
                 </div>
                 <div className="text-xs text-[var(--muted-foreground)]">
-                  {new Date(user.created_at).toLocaleDateString('zh-CN')}
+                  {new Date(user.created_at).toLocaleDateString()}
                 </div>
               </div>
             </div>
@@ -51,7 +54,7 @@ export default function UsersPage() {
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
-                  {r === 'admin' ? '管理员' : r === 'editor' ? '编辑' : r === 'author' ? '作者' : '订阅者'}
+                  {t(`role${r.charAt(0).toUpperCase() + r.slice(1)}`)}
                 </option>
               ))}
             </select>

@@ -6,15 +6,17 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { CommentSection } from '@/components/blog/comment-section';
+import { getTranslations } from 'next-intl/server';
 
-function ArticleContent({ post }: { post: any }) {
+async function ArticleContent({ post }: { post: any }) {
+  const t = await getTranslations('home');
   const htmlContent = markdownToHtml(post.content || '');
   return (
     <article className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm p-8 md:p-12">
         <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">{post.title}</h1>
         <div className="text-sm text-[var(--muted-foreground)] mb-8">
-          {post.published_at && new Date(post.published_at).toLocaleDateString('zh-CN')}
+          {post.published_at && new Date(post.published_at).toLocaleDateString()}
         </div>
         <div
           className="prose prose-lg max-w-none text-[var(--foreground)] leading-relaxed
@@ -34,7 +36,7 @@ function ArticleContent({ post }: { post: any }) {
         <CommentSection postId={post.id} />
       </div>
       <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-[var(--border)]">
-        <Link href="/" className="text-sm text-[var(--primary)] hover:underline">← 返回首页</Link>
+        <Link href="/" className="text-sm text-[var(--primary)] hover:underline">{t('backToHome')}</Link>
       </div>
     </article>
   );
@@ -54,7 +56,6 @@ export default async function BlogPostPage({
   const admin = createAdminClient();
   const supabase = await createClient();
 
-  // 0. Admin preview mode — bypass visibility checks for authenticated admins
   if (preview === 'true') {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -73,7 +74,6 @@ export default async function BlogPostPage({
     }
   }
 
-  // 1. Share token verification
   if (token && typeof token === 'string') {
     const { data: postByToken } = await admin
       .from('posts')
@@ -91,7 +91,6 @@ export default async function BlogPostPage({
     }
   }
 
-  // 2. Try RLS query (only returns published + public)
   const { data: post } = await supabase
     .from('posts')
     .select('*')
@@ -107,7 +106,6 @@ export default async function BlogPostPage({
     );
   }
 
-  // 3. Check if post exists at all (password-protected or private)
   const { data: existing } = await admin
     .from('posts')
     .select('id, title, visibility, published_at, created_at')
@@ -115,11 +113,9 @@ export default async function BlogPostPage({
     .single();
 
   if (!existing) notFound();
-
   if (existing.visibility === 'private') notFound();
 
   if (existing.visibility === 'password') {
-    // Check cookie for already verified
     const cookieStore = await cookies();
     const accessCookie = cookieStore.get(`post_access_${existing.id}`);
     if (accessCookie?.value === 'true') {
@@ -137,7 +133,6 @@ export default async function BlogPostPage({
       }
     }
 
-    // Show password gate
     return (
       <PublicLayout>
         <PostContentWrapper

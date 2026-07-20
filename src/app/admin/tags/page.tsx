@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import {
   getTags, createTag, deleteTag,
@@ -12,6 +13,8 @@ interface Tag { id: string; name: string; slug: string; color: string; }
 interface Category { id: string; name: string; slug: string; parent_id: string | null; }
 
 export default function TagsPage() {
+  const t = useTranslations('admin');
+  const tc = useTranslations('common');
   const [tags, setTags] = useState<Tag[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tab, setTab] = useState<'tags' | 'categories'>('tags');
@@ -47,7 +50,7 @@ export default function TagsPage() {
   };
 
   const handleDeleteTag = async (id: string, name: string) => {
-    if (!confirm(`确认删除标签「${name}」？`)) return;
+    if (!confirm(`${tc('confirmDelete')}「${name}」？`)) return;
     setError('');
     const res = await deleteTag(id);
     if (res.error) {
@@ -75,7 +78,7 @@ export default function TagsPage() {
   };
 
   const handleDeleteCategory = async (id: string, name: string) => {
-    if (!confirm(`确认删除分类「${name}」？`)) return;
+    if (!confirm(`${tc('confirmDelete')}「${name}」？`)) return;
     setError('');
     const res = await deleteCategory(id);
     if (res.error) {
@@ -87,16 +90,16 @@ export default function TagsPage() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">标签与分类</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">{t('tagManagement')}</h1>
 
       <div className="flex gap-2 mb-6">
         <button onClick={() => { setTab('tags'); setError(''); }}
           className={`px-4 py-2 text-sm rounded-lg ${tab === 'tags' ? 'bg-[var(--primary)] text-[var(--primary-foreground)]' : 'border border-[var(--border)] text-[var(--foreground)]'}`}>
-          标签
+          {t('tags')}
         </button>
         <button onClick={() => { setTab('categories'); setError(''); }}
           className={`px-4 py-2 text-sm rounded-lg ${tab === 'categories' ? 'bg-[var(--primary)] text-[var(--primary-foreground)]' : 'border border-[var(--border)] text-[var(--foreground)]'}`}>
-          分类
+          {t('categories')}
         </button>
       </div>
 
@@ -109,17 +112,17 @@ export default function TagsPage() {
       {tab === 'tags' && (
         <div>
           <form onSubmit={handleCreateTag} className="flex gap-2 mb-4">
-            <input name="name" placeholder="标签名" required value={tagName}
+            <input name="name" placeholder={tc('add') + ' ' + tc('tag')} required value={tagName}
               onChange={(e) => setTagName(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]" />
             <TagColorPicker value={tagColor} onChange={setTagColor} />
             <button type="submit" disabled={busy}
               className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] disabled:opacity-50">
-              {busy ? '添加中...' : '添加'}
+              {busy ? tc('adding') : tc('add')}
             </button>
           </form>
           {tags.length === 0 ? (
-            <div className="text-center py-8 text-[var(--muted-foreground)]">暂无标签</div>
+            <div className="text-center py-8 text-[var(--muted-foreground)]">{tc('noTags')}</div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
@@ -128,7 +131,7 @@ export default function TagsPage() {
                   style={{ backgroundColor: tag.color + '20', color: tag.color }}>
                   {tag.name}
                   <button onClick={() => handleDeleteTag(tag.id, tag.name)}
-                  title="删除"
+                  title={tc('delete')}
                   className="text-xs hover:opacity-70 ml-1">×</button>
                 </div>
               ))}
@@ -140,16 +143,16 @@ export default function TagsPage() {
       {tab === 'categories' && (
         <div>
           <form onSubmit={handleCreateCategory} className="flex gap-2 mb-4">
-            <input name="name" placeholder="分类名" required value={catName}
+            <input name="name" placeholder={tc('add') + ' ' + tc('category')} required value={catName}
               onChange={(e) => setCatName(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]" />
             <button type="submit" disabled={busy}
               className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] disabled:opacity-50">
-              {busy ? '添加中...' : '添加'}
+              {busy ? tc('adding') : tc('add')}
             </button>
           </form>
           {categories.length === 0 ? (
-            <div className="text-center py-8 text-[var(--muted-foreground)]">暂无分类</div>
+            <div className="text-center py-8 text-[var(--muted-foreground)]">{tc('noCategories')}</div>
           ) : (
             <div className="space-y-2">
               {categories.map((cat) => (
@@ -158,7 +161,7 @@ export default function TagsPage() {
                   <span className="text-[var(--foreground)]">{cat.name}</span>
                   <button onClick={() => handleDeleteCategory(cat.id, cat.name)}
                     className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600">
-                    删除
+                    {tc('delete')}
                   </button>
                 </div>
               ))}

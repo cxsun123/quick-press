@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { PublicLayout } from '@/components/blog/public-layout';
 import { getPublishedPostsPaginated } from '@/server/actions/post.actions';
 import { getCategories } from '@/server/actions/taxonomy.actions';
@@ -14,6 +15,7 @@ export default async function CategoryPage(props: {
   const slug = decodeURIComponent(rawSlug);
   const searchParams = await props.searchParams;
   const page = Math.max(1, parseInt(searchParams?.page || '1', 10) || 1);
+  const t = await getTranslations('home');
 
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === slug);
@@ -26,12 +28,12 @@ export default async function CategoryPage(props: {
     <PublicLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
-          分类：{category?.name || slug}
+          {t('categoryLabel')}{category?.name || slug}
         </h1>
 
         <TwoColumnLayout sidebar={<Sidebar />}>
           {posts.length === 0 ? (
-            <p className="text-lg text-[var(--muted-foreground)]">该分类下暂无文章</p>
+            <p className="text-lg text-[var(--muted-foreground)]">{t('noPostsInCategory')}</p>
           ) : (
             <div className="space-y-6">
               {posts.map((post) => (

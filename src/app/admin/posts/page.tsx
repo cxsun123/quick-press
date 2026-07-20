@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { listPosts, deletePost, batchUpdateVisibility } from '@/server/actions/post.actions';
 import { BatchActionBar } from '@/components/admin/batch-action-bar';
@@ -19,24 +20,28 @@ interface Post {
   post_tags: { tags: { id: string; name: string; slug: string; color: string } }[];
 }
 
-const visibilityLabels: Record<string, { label: string; class: string }> = {
-  public: { label: '公开', class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  private: { label: '私密', class: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400' },
-  password: { label: '密码', class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-};
-
-const visibilityOptions = [
-  { value: '', label: '全部可见度' },
-  { value: 'public', label: '公开' },
-  { value: 'private', label: '私密' },
-  { value: 'password', label: '密码保护' },
-];
-
 export default function PostsPage() {
+  const t = useTranslations('admin');
+  const tc = useTranslations('common');
+  const tb = useTranslations('post');
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [visibilityFilter, setVisibilityFilter] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const locale = new Date().toLocaleDateString().includes('/') ? 'en' : 'en';
+
+  const visibilityLabels: Record<string, { label: string; class: string }> = {
+    public: { label: tc('public'), class: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+    private: { label: tc('private'), class: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400' },
+    password: { label: tc('password'), class: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
+  };
+
+  const visibilityOptions = [
+    { value: '', label: t('allVisibility') },
+    { value: 'public', label: t('public') },
+    { value: 'private', label: t('private') },
+    { value: 'password', label: t('passwordProtected') },
+  ];
 
   const copyPostUrl = async (slug: string) => {
     const url = `${window.location.origin}/blog/${slug}`;
@@ -84,7 +89,7 @@ export default function PostsPage() {
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">文章管理</h1>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">{t('postManagement')}</h1>
         <div className="flex items-center gap-3">
           <select
             value={visibilityFilter}
@@ -99,7 +104,7 @@ export default function PostsPage() {
             href="/admin/posts/new"
             className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity"
           >
-            写文章
+            {t('writeNewPost')}
           </Link>
           <a
             href="/"
@@ -107,13 +112,13 @@ export default function PostsPage() {
             rel="noopener noreferrer"
             className="px-4 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
           >
-            预览
+            {tc('preview')}
           </a>
         </div>
       </div>
 
       {filteredPosts.length === 0 ? (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">暂无文章</div>
+        <div className="text-center py-12 text-[var(--muted-foreground)]">{tc('noPosts')}</div>
       ) : (
         <div className="space-y-2">
           {filteredPosts.map((post) => {
@@ -150,7 +155,7 @@ export default function PostsPage() {
                     </div>
                   )}
                   <div className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                    /{post.slug} · {new Date(post.created_at).toLocaleDateString('zh-CN')}
+                    /{post.slug} · {new Date(post.created_at).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -161,7 +166,7 @@ export default function PostsPage() {
                     <button
                       onClick={() => copyPostUrl(post.slug)}
                       className="p-1 rounded hover:bg-[var(--accent)] transition-colors"
-                      title="复制文章链接（密码需另行告知）"
+                      title={tb('copyPostLink')}
                     >
                       {copiedId === post.slug ? (
                         <Check className="h-3.5 w-3.5 text-green-500" />
@@ -175,24 +180,24 @@ export default function PostsPage() {
                       ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                       : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}>
-                    {post.status === 'published' ? '已发布' : '草稿'}
+                    {post.status === 'published' ? tc('published') : tc('draft')}
                   </span>
                   <Link
                     href={`/admin/posts/${post.id}/edit`}
                     className="px-3 py-1 text-xs rounded border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]"
                   >
-                    编辑
+                    {tc('edit')}
                   </Link>
                   <button
                     onClick={async () => {
-                      if (confirm('确认删除？')) {
+                      if (confirm(tc('confirmDelete'))) {
                         await deletePost(post.id);
                         load();
                       }
                     }}
                     className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600"
                   >
-                    删除
+                    {tc('delete')}
                   </button>
                 </div>
               </div>

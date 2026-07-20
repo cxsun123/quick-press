@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { uploadMedia, deleteMedia, listMedia } from '@/server/actions/media.actions';
 import { createClient } from '@/lib/supabase/client';
@@ -16,6 +17,7 @@ interface MediaItem {
 }
 
 export default function MediaPage() {
+  const tc = useTranslations('common');
   const [items, setItems] = useState<MediaItem[]>([]);
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +35,7 @@ export default function MediaPage() {
       await uploadMedia(form);
       load();
     } catch (err: any) {
-      alert(err.message || '上传失败');
+      alert(err.message || 'Upload failed');
     }
     setUploading(false);
     if (inputRef.current) inputRef.current.value = '';
@@ -47,15 +49,15 @@ export default function MediaPage() {
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">媒体库</h1>
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">Media</h1>
         <label className={`px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 cursor-pointer ${uploading ? 'opacity-50' : ''}`}>
-          {uploading ? '上传中...' : '上传文件'}
+          {uploading ? tc('uploading') : tc('upload')}
           <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
         </label>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-12 text-[var(--muted-foreground)]">暂无媒体文件</div>
+        <div className="text-center py-12 text-[var(--muted-foreground)]">{tc('noMedia')}</div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {items.map((item) => (
@@ -76,7 +78,7 @@ export default function MediaPage() {
               </div>
               <button
                 onClick={async () => {
-                  if (confirm('确认删除？')) { await deleteMedia(item.id); load(); }
+                  if (confirm(tc('confirmDelete'))) { await deleteMedia(item.id); load(); }
                 }}
                 className="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
               >

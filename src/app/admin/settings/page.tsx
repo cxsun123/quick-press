@@ -2,34 +2,35 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import { getSiteConfig, updateSiteConfig } from '@/server/actions/site-config.actions';
 import { useTheme, BUILTIN_THEMES, type ThemeVars, type ThemeMode } from '@/hooks/use-theme';
 import { Sun, Moon, Monitor, Eye, EyeOff } from 'lucide-react';
 import { routing, localeNames, type Locale } from '@/i18n/routing';
 
-const MODE_OPTIONS: { id: ThemeMode; label: string; icon: typeof Sun }[] = [
-  { id: 'light', label: '亮色', icon: Sun },
-  { id: 'dark', label: '暗色', icon: Moon },
-  { id: 'system', label: '跟随系统', icon: Monitor },
+const MODE_OPTIONS: { id: ThemeMode; key: string; icon: typeof Sun }[] = [
+  { id: 'light', key: 'light', icon: Sun },
+  { id: 'dark', key: 'dark', icon: Moon },
+  { id: 'system', key: 'system', icon: Monitor },
 ];
 
 export default function SettingsPage() {
   const router = useRouter();
+  const t = useTranslations('admin');
+  const tc = useTranslations('common');
   const { mode, resolved, theme, setMode, setTheme, customVars, setCustomVars, resetCustom } = useTheme();
   const [siteTitle, setSiteTitle] = useState('');
   const [regMode, setRegMode] = useState('open');
   const [saving, setSaving] = useState(false);
   const [localVars, setLocalVars] = useState<ThemeVars>(customVars);
 
-  // AI config
   const [aiUrl, setAiUrl] = useState('');
   const [aiKey, setAiKey] = useState('');
   const [aiModel, setAiModel] = useState('gpt-4o-mini');
   const [showAiKey, setShowAiKey] = useState(false);
   const [aiMaxContent, setAiMaxContent] = useState('100000');
 
-  // MCP config
   const [mcpKey, setMcpKey] = useState('');
   const [showMcpKey, setShowMcpKey] = useState(false);
 
@@ -37,7 +38,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     (async () => {
-      setSiteTitle((await getSiteConfig('site_title')) || 'i_blog');
+      setSiteTitle((await getSiteConfig('site_title')) || 'quick-press');
       setRegMode((await getSiteConfig('registration_mode')) || 'open');
       setAiUrl((await getSiteConfig('ai_provider_url')) || '');
       setAiKey((await getSiteConfig('ai_api_key')) || '');
@@ -78,42 +79,39 @@ export default function SettingsPage() {
 
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">系统设置</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-6">{t('systemSettings')}</h1>
 
       <div className="max-w-lg space-y-8">
-        {/* Site Info */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">站点信息</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('siteInfo')}</h2>
           <div>
-            <label className="block text-xs text-[var(--muted-foreground)] mb-1">站点标题</label>
+            <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('siteTitle')}</label>
             <input value={siteTitle} onChange={(e) => setSiteTitle(e.target.value)}
               className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)]" />
           </div>
         </section>
 
-        {/* Registration */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">注册设置</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('registrationSettings')}</h2>
           <select value={regMode} onChange={(e) => setRegMode(e.target.value)}
             className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)]">
-            <option value="open">开放注册</option>
-            <option value="invite">邀请注册</option>
-            <option value="closed">关闭注册</option>
+            <option value="open">{t('openRegistration')}</option>
+            <option value="invite">{t('inviteRegistration')}</option>
+            <option value="closed">{t('closedRegistration')}</option>
           </select>
         </section>
 
-        {/* AI Config */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">AI 配置</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('aiConfig')}</h2>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-[var(--muted-foreground)] mb-1">Provider URL</label>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('aiProviderUrl')}</label>
               <input value={aiUrl} onChange={(e) => setAiUrl(e.target.value)}
                 placeholder="https://api.openai.com/v1/chat/completions"
                 className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)]" />
             </div>
             <div>
-              <label className="block text-xs text-[var(--muted-foreground)] mb-1">API Key</label>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('aiApiKey')}</label>
               <div className="relative">
                 <input type={showAiKey ? 'text' : 'password'} value={aiKey}
                   onChange={(e) => setAiKey(e.target.value)}
@@ -126,28 +124,26 @@ export default function SettingsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs text-[var(--muted-foreground)] mb-1">Model</label>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('aiModel')}</label>
               <input value={aiModel} onChange={(e) => setAiModel(e.target.value)}
                 placeholder="gpt-4o-mini"
                 className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)]" />
             </div>
             <div>
-              <label className="block text-xs text-[var(--muted-foreground)] mb-1">内容截断长度 (字符)</label>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('aiContentTruncation')}</label>
               <input type="number" value={aiMaxContent} onChange={(e) => setAiMaxContent(e.target.value)}
                 placeholder="100000"
                 className="w-full px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)]" />
-              <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">超过此长度的文章内容会被截断，防止超出 AI 模型上下文窗口。默认 100000</p>
+              <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">{t('aiTruncationHint')}</p>
             </div>
           </div>
         </section>
 
-        {/* MCP Config */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">MCP API Key</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('mcpConfig')}</h2>
           <div className="space-y-3">
             <p className="text-xs text-[var(--muted-foreground)]">
-              MCP Key 用于 Claude Code、Cursor 等 AI 客户端通过 MCP 协议管理博客文章。
-              配置方法请参考 <code className="text-[var(--primary)]">docs/</code> 目录下的文档。
+              {t('mcpHint')}
             </p>
             <div className="flex gap-2">
               {mcpKey ? (
@@ -163,27 +159,26 @@ export default function SettingsPage() {
                   <div className="flex gap-2">
                     <button type="button" onClick={() => { navigator.clipboard.writeText(mcpKey); }}
                       className="px-3 py-1.5 text-xs rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors">
-                      复制 Key
+                      {t('mcpCopy')}
                     </button>
                     <button type="button" onClick={handleGenerateMcpKey}
                       className="px-3 py-1.5 text-xs rounded-md border border-[var(--border)] text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors">
-                      重新生成
+                      {t('mcpRegenerate')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <button type="button" onClick={handleGenerateMcpKey}
                   className="px-4 py-2 text-sm rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity">
-                  生成 MCP Key
+                  {t('mcpGenerate')}
                 </button>
               )}
             </div>
           </div>
         </section>
 
-        {/* Language */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">界面语言</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('language')}</h2>
           <select
             value={currentLocale}
             onChange={(e) => {
@@ -199,9 +194,8 @@ export default function SettingsPage() {
           </select>
         </section>
 
-        {/* Light / Dark Mode */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">外观模式</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('appearanceMode')}</h2>
           <div className="flex gap-2">
             {MODE_OPTIONS.map((opt) => {
               const Icon = opt.icon;
@@ -217,37 +211,35 @@ export default function SettingsPage() {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {opt.label}
+                  {t(opt.key)}
                 </button>
               );
             })}
           </div>
           <div className="mt-2 text-xs text-[var(--muted-foreground)]">
-            当前实际模式：<span className="font-medium text-[var(--foreground)]">{resolved === 'dark' ? '暗色' : '亮色'}</span>
+            {t('currentMode')}：<span className="font-medium text-[var(--foreground)]">{resolved === 'dark' ? t('dark') : t('light')}</span>
           </div>
         </section>
 
-        {/* Theme Style */}
         <section>
-          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">主题风格</h2>
+          <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('themeStyle')}</h2>
           <div className="grid grid-cols-2 gap-3">
-            {BUILTIN_THEMES.filter(t => t.id !== 'custom').map((t) => (
-              <button key={t.id} onClick={() => setTheme(t.id)}
+            {BUILTIN_THEMES.filter(th => th.id !== 'custom').map((th) => (
+              <button key={th.id} onClick={() => setTheme(th.id)}
                 className={`text-left px-4 py-3 rounded-lg border transition-colors ${
-                  theme === t.id
+                  theme === th.id
                     ? 'border-[var(--ring)] ring-2 ring-[var(--ring)] bg-[var(--accent)]'
                     : 'border-[var(--border)] hover:bg-[var(--accent)]'
                 }`}>
-                <div className="text-sm font-medium text-[var(--foreground)]">{t.name}</div>
-                <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{t.desc}</div>
+                <div className="text-sm font-medium text-[var(--foreground)]">{th.name}</div>
+                <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{th.desc}</div>
               </button>
             ))}
           </div>
 
-          {/* Custom theme */}
           <details className="mt-4">
             <summary className="text-sm font-medium text-[var(--foreground)] cursor-pointer hover:text-[var(--primary)]">
-              自定义主题 {theme === 'custom' ? '（当前）' : ''}
+              {t('customTheme')} {theme === 'custom' ? `（${tc('current')}）` : ''}
             </summary>
             <div className="mt-3 space-y-3 pl-2 border-l-2 border-[var(--border)]">
               <div className="grid grid-cols-2 gap-3">
@@ -274,21 +266,20 @@ export default function SettingsPage() {
               <div className="flex gap-2">
                 <button onClick={() => { setTheme('custom'); setCustomVars(localVars); }}
                   className="px-3 py-1.5 text-xs rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90">
-                  应用自定义
+                  {t('applyCustom')}
                 </button>
                 <button onClick={resetCustom}
                   className="px-3 py-1.5 text-xs rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                  重置为默认
+                  {t('resetToDefault')}
                 </button>
               </div>
             </div>
           </details>
         </section>
 
-        {/* Save */}
         <button onClick={handleSave} disabled={saving}
           className="px-6 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50">
-          {saving ? '保存中...' : '保存设置'}
+          {saving ? t('saving') : t('saveSettings')}
         </button>
       </div>
     </AdminLayout>
