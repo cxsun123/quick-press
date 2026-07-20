@@ -75,7 +75,9 @@
     "all": "All",
     "mediaLibrary": "Media Library",
     "customColor": "Custom",
-    "chooseFile": "Choose file"
+    "chooseFile": "Choose file",
+    "public": "Public",
+    "private": "Private"
   },
   "nav": {
     "home": "Home",

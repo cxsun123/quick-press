@@ -70,7 +70,9 @@
     "clickToSelect": "点击选择",
     "customColor": "自定义颜色",
     "mediaLibrary": "媒体库",
-    "chooseFile": "选择文件"
+    "chooseFile": "选择文件",
+    "public": "公开",
+    "private": "私密"
   },
   "nav": {
     "home": "首页",
