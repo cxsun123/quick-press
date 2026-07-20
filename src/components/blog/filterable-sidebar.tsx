@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useCallback, useEffect } from 'react';
 import { startGlobalLoading } from '@/hooks/use-loading';
@@ -40,7 +41,7 @@ interface FilterableSidebarProps {
 
 function formatMonth(month: string): string {
   const [year, mon] = month.split('-');
-  return `${year}年${parseInt(mon)}月`;
+  return `${year}/${mon}`;
 }
 
 function readTagsFromParams(sp: URLSearchParams): string[] {
@@ -54,6 +55,7 @@ export function FilterableSidebar({
   recentPosts,
   archives,
 }: FilterableSidebarProps) {
+  const t = useTranslations('sidebar');
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -120,31 +122,29 @@ export function FilterableSidebar({
   return (
     <>
       <aside className="space-y-6">
-        {/* Search */}
         <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
-          <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">搜索</h3>
+          <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('search')}</h3>
           <form onSubmit={handleSearch}>
             <div className="flex gap-2">
               <input
                 name="q"
                 defaultValue={searchQuery}
-                placeholder="搜索文章..."
+                placeholder={t('search') + '...'}
                 className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
               />
               <button
                 type="submit"
                 className="px-3 py-2 text-sm rounded bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
               >
-                搜索
+                {t('search')}
               </button>
             </div>
           </form>
         </section>
 
-        {/* Categories */}
         {categories.length > 0 && (
           <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">分类</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('categories')}</h3>
             <ul className="space-y-1.5">
               {categories.map((cat) => (
                 <li key={cat.id}>
@@ -161,10 +161,9 @@ export function FilterableSidebar({
           </section>
         )}
 
-        {/* Tags - selectable */}
         {tags.length > 0 && (
           <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">标签</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('tags')}</h3>
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => {
                 const isSelected = selectedTags.includes(tag.slug);
@@ -192,10 +191,9 @@ export function FilterableSidebar({
           </section>
         )}
 
-        {/* Recent Posts */}
         {recentPosts.length > 0 && (
           <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">近期文章</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('recentPosts')}</h3>
             <ul className="space-y-2">
               {recentPosts.map((post) => (
                 <li key={post.id}>
@@ -211,10 +209,9 @@ export function FilterableSidebar({
           </section>
         )}
 
-        {/* Archives */}
         {archives.length > 0 && (
           <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
-            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">按月归档</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('archiveByMonth')}</h3>
             <ul className="space-y-1.5">
               {archives.map((a) => (
                 <li key={a.month}>

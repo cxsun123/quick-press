@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Image, X } from 'lucide-react';
 
 interface CoverPickerProps {
@@ -10,11 +11,12 @@ interface CoverPickerProps {
 }
 
 export function CoverPicker({ coverImageUrl, contentImages, onChange }: CoverPickerProps) {
+  const t = useTranslations('post');
   const [open, setOpen] = useState(false);
 
   return (
     <div>
-      <div className="text-xs text-[var(--muted-foreground)] mb-2">封面图</div>
+      <div className="text-xs text-[var(--muted-foreground)] mb-2">{t('coverImage')}</div>
       <div className="flex items-center gap-2">
         {coverImageUrl ? (
           <div className="relative w-16 h-16 rounded-md overflow-hidden border border-[var(--border)] shrink-0">
@@ -38,12 +40,11 @@ export function CoverPicker({ coverImageUrl, contentImages, onChange }: CoverPic
             onClick={() => setOpen(true)}
             className="px-2 py-1 text-xs rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] transition-colors"
           >
-            从内容选择
+            {t('selectFromContent')}
           </button>
         )}
       </div>
 
-      {/* Image selector modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setOpen(false)}>
           <div
@@ -51,7 +52,7 @@ export function CoverPicker({ coverImageUrl, contentImages, onChange }: CoverPic
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-[var(--foreground)]">选择封面图</span>
+              <span className="text-sm font-medium text-[var(--foreground)]">{t('selectCover')}</span>
               <button type="button" onClick={() => setOpen(false)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
                 <X className="h-4 w-4" />
               </button>
@@ -70,7 +71,7 @@ export function CoverPicker({ coverImageUrl, contentImages, onChange }: CoverPic
                 </button>
               ))}
             </div>
-            <p className="text-xs text-[var(--muted-foreground)] mt-2">共 {contentImages.length} 张图片，点击选择</p>
+            <p className="text-xs text-[var(--muted-foreground)] mt-2">{contentImages.length} {t('imageCount')}</p>
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
 interface PaginationProps {
   currentPage: number;
@@ -7,7 +8,8 @@ interface PaginationProps {
   extraParams?: Record<string, string>;
 }
 
-export function Pagination({ currentPage, totalPages, basePath, extraParams }: PaginationProps) {
+export async function Pagination({ currentPage, totalPages, basePath, extraParams }: PaginationProps) {
+  const t = await getTranslations('pagination');
   if (totalPages <= 1) return null;
 
   const buildUrl = (page: number) => {
@@ -36,7 +38,7 @@ export function Pagination({ currentPage, totalPages, basePath, extraParams }: P
   }
 
   return (
-    <nav className="flex items-center justify-center gap-1 mt-8" aria-label="分页">
+    <nav className="flex items-center justify-center gap-1 mt-8" aria-label={t('pagination')}>
       {currentPage > 1 && (
         <Link
           href={buildUrl(currentPage - 1)}

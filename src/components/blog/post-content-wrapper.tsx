@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { PasswordGate } from '@/components/password-gate';
 import { CommentSection } from '@/components/blog/comment-section';
 import Link from 'next/link';
@@ -23,6 +24,7 @@ export function PostContentWrapper({
     htmlContent: string;
     published_at: string | null;
   } | null>(null);
+  const t = useTranslations('home');
 
   if (needsPassword && !postData) {
     return (
@@ -62,7 +64,7 @@ export function PostContentWrapper({
       </div>
       <div className="max-w-4xl mx-auto mt-12 pt-8 border-t border-[var(--border)]">
         <Link href="/" className="text-sm text-[var(--primary)] hover:underline">
-          ← 返回首页
+          {t('backToHome')}
         </Link>
       </div>
     </article>
