@@ -244,3 +244,21 @@ quick-press/
 - [Supabase](https://supabase.com/)
 - [Tiptap](https://tiptap.dev/)
 - [tailwind-nextjs-starter-blog](https://github.com/timlrx/tailwind-nextjs-starter-blog)
+
+## 国际化（i18n）
+
+界面使用 [next-intl](https://next-intl.dev) 进行国际化。支持的语言：
+
+- `en` — 英文（**默认**）
+- `zh` — 中文
+
+语言通过 `NEXT_LOCALE` Cookie 解析（回退到 `Accept-Language` 请求头），**不会改变 URL**，
+因此现有链接、API 路由和 Supabase 认证回调均不受影响。
+
+- 通过站点页头与管理后台顶部的语言选择器切换语言（`src/components/locale-switcher.tsx`）。
+- 翻译字典位于 `src/messages/{en,zh}.json`。
+- 服务端组件使用 `getTranslations` / `getLocale`；客户端组件使用 `useTranslations` / `useLocale`。
+- 编辑器工具栏同样本地化——`WysiwygEditor` 会接收当前 `locale`。
+
+新增语言：在 `src/i18n/routing.ts` 的 `locales` 中添加，创建 `src/messages/<locale>.json`，
+并补充 `localeNames` 即可。

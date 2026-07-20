@@ -2,18 +2,20 @@ import { redirect } from 'next/navigation';
 import { register } from '@/server/actions/auth.actions';
 import { getRegistrationMode } from '@/server/actions/site-config.actions';
 import { AuthLayout } from '@/components/auth/auth-layout';
+import { getTranslations } from 'next-intl/server';
 
 export default async function RegisterPage(props: { searchParams?: Promise<{ error?: string }> }) {
   const searchParams = await props.searchParams;
   const error = searchParams?.error;
   const mode = await getRegistrationMode();
+  const t = await getTranslations('auth');
 
   if (mode === 'closed') {
     redirect('/login?reason=closed');
   }
 
   return (
-    <AuthLayout title={mode === 'invite' ? '邀请注册' : '注册'}>
+    <AuthLayout title={mode === 'invite' ? t('inviteRegister') : t('register')}>
       {error && (
         <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           {error}
@@ -22,7 +24,7 @@ export default async function RegisterPage(props: { searchParams?: Promise<{ err
       <form action={register} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-            昵称
+            {t('name')}
           </label>
           <input
             id="name"
@@ -33,7 +35,7 @@ export default async function RegisterPage(props: { searchParams?: Promise<{ err
         </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-            邮箱
+            {t('email')}
           </label>
           <input
             id="email"
@@ -45,7 +47,7 @@ export default async function RegisterPage(props: { searchParams?: Promise<{ err
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-            密码
+            {t('password')}
           </label>
           <input
             id="password"
@@ -59,7 +61,7 @@ export default async function RegisterPage(props: { searchParams?: Promise<{ err
         {mode === 'invite' && (
           <div>
             <label htmlFor="code" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-              邀请码
+              {t('inviteCode')}
             </label>
             <input
               id="code"
@@ -74,11 +76,11 @@ export default async function RegisterPage(props: { searchParams?: Promise<{ err
           type="submit"
           className="w-full py-2 px-4 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:opacity-90 transition-opacity"
         >
-          注册
+          {t('submitRegister')}
         </button>
         <p className="text-sm text-center text-[var(--muted-foreground)]">
-          已有账号？
-          <a href="/login" className="text-[var(--primary)] hover:underline ml-1">登录</a>
+          {t('hasAccount')}
+          <a href="/login" className="text-[var(--primary)] hover:underline ml-1">{t('loginLink')}</a>
         </p>
       </form>
     </AuthLayout>

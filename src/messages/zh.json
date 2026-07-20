@@ -1,0 +1,51 @@
+{
+  "common": {
+    "home": "首页",
+    "loading": "加载中...",
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确定",
+    "delete": "删除",
+    "edit": "编辑",
+    "search": "搜索",
+    "backToSite": "返回前台",
+    "logout": "退出登录",
+    "language": "语言"
+  },
+  "nav": {
+    "home": "首页"
+  },
+  "auth": {
+    "login": "登录",
+    "register": "注册",
+    "inviteRegister": "邀请注册",
+    "email": "邮箱",
+    "password": "密码",
+    "name": "昵称",
+    "inviteCode": "邀请码",
+    "submitLogin": "登录",
+    "submitRegister": "注册",
+    "noAccount": "还没有账号？",
+    "hasAccount": "已有账号？",
+    "loginLink": "登录",
+    "registerLink": "注册",
+    "openMenu": "打开菜单"
+  },
+  "admin": {
+    "dashboard": "仪表盘",
+    "posts": "文章",
+    "pages": "页面",
+    "tags": "标签",
+    "comments": "评论",
+    "themes": "主题",
+    "media": "媒体",
+    "users": "用户",
+    "settings": "设置",
+    "expandMenu": "展开菜单",
+    "collapseMenu": "折叠菜单",
+    "roleAdmin": "管理员",
+    "roleEditor": "编辑",
+    "roleAuthor": "作者",
+    "roleSubscriber": "订阅者"
+  }
+}

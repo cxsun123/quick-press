@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useLocale } from 'next-intl';
 import { WysiwygEditor } from '@chengxinsun26/editor';
 import { createPage, updatePage } from '@/server/actions/page.actions';
 import { useRouter } from 'next/navigation';
@@ -20,6 +21,7 @@ interface PageEditorProps {
 
 export function PageEditor({ initialData, onDone }: PageEditorProps) {
   const router = useRouter();
+  const locale = useLocale();
   const [title, setTitle] = useState(initialData?.title || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
   const [content, setContent] = useState(initialData?.content || '');
@@ -104,6 +106,7 @@ export function PageEditor({ initialData, onDone }: PageEditorProps) {
           onChange={setContent}
           showSource={showSource}
           onToggleSource={() => setShowSource(!showSource)}
+          locale={locale as 'en' | 'zh'}
           customTools={[
             {
               id: 'insert-media',

@@ -1,15 +1,21 @@
 import Link from 'next/link';
 import { getPages } from '@/server/actions/page.actions';
 import { getSiteConfig } from '@/server/actions/site-config.actions';
+import { getTranslations } from 'next-intl/server';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
 }
 
 export async function PublicLayout({ children }: PublicLayoutProps) {
-  const [allPages, siteTitle] = await Promise.all([getPages(), getSiteConfig('site_title')]);
+  const [allPages, siteTitle, t] = await Promise.all([
+    getPages(),
+    getSiteConfig('site_title'),
+    getTranslations('nav'),
+  ]);
   const pages = allPages.filter(p => p.status === 'published');
-  const title = siteTitle || 'i_blog';
+  const title = siteTitle || 'quick-press';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,7 +26,7 @@ export async function PublicLayout({ children }: PublicLayoutProps) {
           </Link>
           <nav className="flex items-center gap-4">
             <Link href="/" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-              首页
+              {t('home')}
             </Link>
             {pages.map((page) => (
               <Link
@@ -32,6 +38,7 @@ export async function PublicLayout({ children }: PublicLayoutProps) {
               </Link>
             ))}
           </nav>
+          <LocaleSwitcher />
         </div>
       </header>
       <main className="flex-1 bg-[var(--background-secondary)]">{children}</main>

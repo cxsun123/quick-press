@@ -1,0 +1,51 @@
+{
+  "common": {
+    "home": "Home",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "backToSite": "Back to site",
+    "logout": "Log out",
+    "language": "Language"
+  },
+  "nav": {
+    "home": "Home"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Register",
+    "inviteRegister": "Invite registration",
+    "email": "Email",
+    "password": "Password",
+    "name": "Display name",
+    "inviteCode": "Invite code",
+    "submitLogin": "Log in",
+    "submitRegister": "Register",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "registerLink": "Register",
+    "openMenu": "Open menu"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "posts": "Posts",
+    "pages": "Pages",
+    "tags": "Tags",
+    "comments": "Comments",
+    "themes": "Themes",
+    "media": "Media",
+    "users": "Users",
+    "settings": "Settings",
+    "expandMenu": "Expand menu",
+    "collapseMenu": "Collapse menu",
+    "roleAdmin": "Admin",
+    "roleEditor": "Editor",
+    "roleAuthor": "Author",
+    "roleSubscriber": "Subscriber"
+  }
+}

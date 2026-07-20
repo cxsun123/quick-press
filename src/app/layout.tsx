@@ -4,10 +4,12 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { ClientProviders } from "@/components/blog/client-providers";
 import { getSiteTheme } from "@/server/actions/site-config.actions";
 import { getSiteConfig } from "@/server/actions/site-config.actions";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = await getSiteConfig('site_title');
-  return { title: title || 'i_blog', description: 'A modern blog CMS' };
+  return { title: title || 'quick-press', description: 'A modern blog CMS' };
 }
 
 export default async function RootLayout({
@@ -16,10 +18,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { mode, theme } = await getSiteTheme();
+  const locale = await getLocale();
 
-  // Compute initial classes for SSR to avoid flash
-  // Only set dark class when mode is explicitly 'dark' or theme is 'night'
-  // For 'system' mode, let client-side resolve it
   const isExplicitDark = mode === 'dark' || theme === 'night';
   const htmlClasses = [
     isExplicitDark ? 'dark' : '',
@@ -27,11 +27,13 @@ export default async function RootLayout({
   ].filter(Boolean).join(' ');
 
   return (
-    <html lang="zh-CN" className={htmlClasses} data-theme-mode={mode} suppressHydrationWarning>
+    <html lang={locale} className={htmlClasses} data-theme-mode={mode} suppressHydrationWarning>
       <body>
-        <ClientProviders>
-          <ThemeProvider>{children}</ThemeProvider>
-        </ClientProviders>
+        <NextIntlClientProvider>
+          <ClientProviders>
+            <ThemeProvider>{children}</ThemeProvider>
+          </ClientProviders>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -2,29 +2,43 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { getSiteConfig } from '@/server/actions/site-config.actions';
 import { canManageUsers, type Role } from '@/server/auth/roles';
 import { Sidebar } from '@/components/admin/sidebar';
 import { Menu } from 'lucide-react';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: keyof typeof navLabels;
   adminOnly?: boolean;
   exact?: boolean;
 }
 
+const navLabels = {
+  dashboard: 'dashboard',
+  posts: 'posts',
+  pages: 'pages',
+  tags: 'tags',
+  comments: 'comments',
+  themes: 'themes',
+  media: 'media',
+  users: 'users',
+  settings: 'settings',
+} as const;
+
 const navItems: NavItem[] = [
-  { href: '/admin', label: '仪表盘', exact: true },
-  { href: '/admin/posts', label: '文章' },
-  { href: '/admin/pages', label: '页面' },
-  { href: '/admin/tags', label: '标签' },
-  { href: '/admin/comments', label: '评论' },
-  { href: '/admin/themes', label: '主题' },
-  { href: '/admin/media', label: '媒体' },
-  { href: '/admin/users', label: '用户', adminOnly: true },
-  { href: '/admin/settings', label: '设置', adminOnly: true },
+  { href: '/admin', labelKey: 'dashboard', exact: true },
+  { href: '/admin/posts', labelKey: 'posts' },
+  { href: '/admin/pages', labelKey: 'pages' },
+  { href: '/admin/tags', labelKey: 'tags' },
+  { href: '/admin/comments', labelKey: 'comments' },
+  { href: '/admin/themes', labelKey: 'themes' },
+  { href: '/admin/media', labelKey: 'media' },
+  { href: '/admin/users', labelKey: 'users', adminOnly: true },
+  { href: '/admin/settings', labelKey: 'settings', adminOnly: true },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -78,9 +92,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const filteredNavItems = navItems.filter(
-    (item) => !item.adminOnly || canManageUsers(role),
-  );
+  const t = useTranslations('admin');
+
+  const filteredNavItems = navItems
+    .filter((item) => !item.adminOnly || canManageUsers(role))
+    .map((item) => ({ ...item, label: t(item.labelKey) }));
 
   return (
     <div className="min-h-screen flex bg-[var(--background-secondary)]">
@@ -104,6 +120,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <span className="ml-2 text-sm font-medium text-[var(--foreground)]">{siteTitle}</span>
+          <div className="ml-auto">
+            <LocaleSwitcher />
+          </div>
         </div>
         <div className={`p-6 ${isEditorRoute ? 'max-w-full' : 'max-w-5xl mx-auto'}`}>{children}</div>
       </main>

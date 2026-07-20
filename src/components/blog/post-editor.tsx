@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useLocale } from 'next-intl';
 import { WysiwygEditor } from '@chengxinsun26/editor';
 import { savePost } from '@/server/actions/post.actions';
 import { getTags, getCategories } from '@/server/actions/taxonomy.actions';
@@ -30,6 +31,7 @@ interface PostEditorProps {
 
 export function PostEditor({ initialData }: PostEditorProps) {
   const router = useRouter();
+  const locale = useLocale();
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [status, setStatus] = useState(initialData?.status || 'draft');
@@ -192,6 +194,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
                 onChange={setContent}
                 showSource={showSource}
                 onToggleSource={() => setShowSource(!showSource)}
+                locale={locale as 'en' | 'zh'}
                 customTools={[
                   {
                     id: 'insert-media',

@@ -1,12 +1,14 @@
 import { login } from '@/server/actions/auth.actions';
 import { AuthLayout } from '@/components/auth/auth-layout';
+import { getTranslations } from 'next-intl/server';
 
 export default async function LoginPage(props: { searchParams?: Promise<{ error?: string }> }) {
   const searchParams = await props.searchParams;
   const error = searchParams?.error;
+  const t = await getTranslations('auth');
 
   return (
-    <AuthLayout title="登录">
+    <AuthLayout title={t('login')}>
       {error && (
         <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           {error}
@@ -15,7 +17,7 @@ export default async function LoginPage(props: { searchParams?: Promise<{ error?
       <form action={login} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-            邮箱
+            {t('email')}
           </label>
           <input
             id="email"
@@ -27,7 +29,7 @@ export default async function LoginPage(props: { searchParams?: Promise<{ error?
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-[var(--foreground)] mb-1">
-            密码
+            {t('password')}
           </label>
           <input
             id="password"
@@ -41,12 +43,12 @@ export default async function LoginPage(props: { searchParams?: Promise<{ error?
           type="submit"
           className="w-full py-2 px-4 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-lg hover:opacity-90 transition-opacity"
         >
-          登录
+          {t('submitLogin')}
         </button>
         <p className="text-sm text-center text-[var(--muted-foreground)]">
-          还没有账号？
+          {t('noAccount')}
           <a href="/register" className="text-[var(--primary)] hover:underline ml-1">
-            注册
+            {t('registerLink')}
           </a>
         </p>
       </form>

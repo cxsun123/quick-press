@@ -244,3 +244,24 @@ quick-press/
 - [Supabase](https://supabase.com/)
 - [Tiptap](https://tiptap.dev/)
 - [tailwind-nextjs-starter-blog](https://github.com/timlrx/tailwind-nextjs-starter-blog)
+
+## Internationalization (i18n)
+
+The UI is internationalized with [next-intl](https://next-intl.dev). Supported locales:
+
+- `en` — English (**default**)
+- `zh` — 中文
+
+Locale is resolved via the `NEXT_LOCALE` cookie (falling back to the `Accept-Language`
+header) and does **not** change URLs, so existing links, API routes and Supabase auth
+callbacks keep working unchanged.
+
+- Switch language with the language selector in the site header and admin top bar
+  (`src/components/locale-switcher.tsx`).
+- Translation dictionaries live in `src/messages/{en,zh}.json`.
+- Server components use `getTranslations` / `getLocale`; client components use
+  `useTranslations` / `useLocale`.
+- The editor toolbar is localized too — `WysiwygEditor` receives the current `locale`.
+
+To add a language: add it to `src/i18n/routing.ts` `locales`, create
+`src/messages/<locale>.json`, and extend `localeNames`.

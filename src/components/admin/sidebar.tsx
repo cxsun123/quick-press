@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, FileText, File, Tag, MessageSquare,
   Palette, Image, Users, Settings, PanelLeftClose, PanelLeftOpen,
@@ -39,6 +40,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function Sidebar({ collapsed, mobileOpen, onToggle, navItems, role, siteTitle }: SidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations('admin');
 
   return (
     <>
@@ -72,7 +74,7 @@ export function Sidebar({ collapsed, mobileOpen, onToggle, navItems, role, siteT
             type="button"
             onClick={onToggle}
             className="ml-auto p-1.5 rounded-md hover:bg-[var(--accent)] text-[var(--foreground)] transition-colors shrink-0"
-            title={collapsed ? '展开菜单' : '折叠菜单'}
+            title={collapsed ? t('expandMenu') : t('collapseMenu')}
           >
             {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
           </button>
@@ -114,7 +116,7 @@ export function Sidebar({ collapsed, mobileOpen, onToggle, navItems, role, siteT
         <div className="p-3 border-t border-[var(--border)] space-y-2 shrink-0">
           {role && (!collapsed || mobileOpen) && (
             <div className="text-xs text-[var(--muted-foreground)] px-1">
-              {role === 'admin' ? '管理员' : role === 'editor' ? '编辑' : role === 'author' ? '作者' : '订阅者'}
+              {t(role === 'admin' ? 'roleAdmin' : role === 'editor' ? 'roleEditor' : role === 'author' ? 'roleAuthor' : 'roleSubscriber')}
             </div>
           )}
           <Link
@@ -123,14 +125,14 @@ export function Sidebar({ collapsed, mobileOpen, onToggle, navItems, role, siteT
               collapsed && !mobileOpen ? 'text-center' : ''
             }`}
           >
-            {collapsed && !mobileOpen ? '←' : '← 返回前台'}
+            {collapsed && !mobileOpen ? '←' : '← ' + t('backToSite')}
           </Link>
           <form action="/api/logout" method="post" className={collapsed && !mobileOpen ? 'text-center' : ''}>
             <button
               type="submit"
               className="text-sm text-red-500 hover:text-red-600 transition-colors"
             >
-              {collapsed && !mobileOpen ? '✕' : '退出登录'}
+               {collapsed && !mobileOpen ? '✕' : t('logout')}
             </button>
           </form>
         </div>
