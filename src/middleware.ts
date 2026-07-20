@@ -1,12 +1,21 @@
-import createIntlMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { routing } from '@/i18n/routing';
 
-const intlMiddleware = createIntlMiddleware(routing);
-
 export async function middleware(request: NextRequest) {
-  const response = intlMiddleware(request);
+  const response = NextResponse.next({ request });
+
+  if (!request.cookies.has('NEXT_LOCALE')) {
+    const header = request.headers.get('accept-language') || '';
+    const preferred = header.split(',')[0]?.split('-')[0]?.trim();
+    const locale = routing.locales.includes(preferred as any)
+      ? preferred
+      : routing.defaultLocale;
+    response.cookies.set('NEXT_LOCALE', locale, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+    });
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
