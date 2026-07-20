@@ -219,6 +219,20 @@
   "postCard": {
     "pinned": "置顶"
   },
+  "themes": {
+    "defaultName": "默认主题",
+    "defaultDesc": "蓝色系，清晰简洁",
+    "starterName": "阅读主题",
+    "starterDesc": "暖色调，衬线字体，优化阅读体验",
+    "developerName": "开发者主题",
+    "developerDesc": "冷灰色，代码友好",
+    "minimalName": "极简主题",
+    "minimalDesc": "干净简约，专注阅读",
+    "nightName": "夜间主题",
+    "nightDesc": "深蓝黑色，护眼模式",
+    "customName": "自定义",
+    "customDesc": "自由定制颜色和字体"
+  },
   "home": {
     "noPosts": "暂无文章",
     "filterArchive": "归档：",

@@ -229,6 +229,20 @@
   "postCard": {
     "pinned": "Pinned"
   },
+  "themes": {
+    "defaultName": "Default",
+    "defaultDesc": "Blue tone, clean and simple",
+    "starterName": "Reading",
+    "starterDesc": "Warm tone, serif font, reading-optimized",
+    "developerName": "Developer",
+    "developerDesc": "Cool gray, code-friendly",
+    "minimalName": "Minimal",
+    "minimalDesc": "Clean and minimal, focus on reading",
+    "nightName": "Night",
+    "nightDesc": "Deep blue-black, eye-care mode",
+    "customName": "Custom",
+    "customDesc": "Free customization of colors and fonts"
+  },
   "home": {
     "noPosts": "No posts yet",
     "filterArchive": "Archive: ",

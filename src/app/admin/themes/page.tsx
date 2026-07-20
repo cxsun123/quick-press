@@ -24,6 +24,7 @@ const MODE_OPTIONS: { id: ThemeMode; key: string; icon: typeof Sun }[] = [
 export default function ThemesPage() {
   const t = useTranslations('admin');
   const tc = useTranslations('common');
+  const themeT = useTranslations('themes');
   const { mode, resolved, theme: currentTheme, setMode, setTheme } = useTheme();
   const [uploaded, setUploaded] = useState<Theme[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -90,8 +91,8 @@ export default function ThemesPage() {
                   ? 'border-[var(--ring)] ring-2 ring-[var(--ring)] bg-[var(--accent)]'
                   : 'border-[var(--border)] hover:bg-[var(--accent)]'
               }`}>
-              <div className="text-sm font-medium text-[var(--foreground)]">{th.name}</div>
-              <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{th.desc}</div>
+              <div className="text-sm font-medium text-[var(--foreground)]">{themeT(th.id + 'Name')}</div>
+              <div className="text-xs text-[var(--muted-foreground)] mt-0.5">{themeT(th.id + 'Desc')}</div>
             </button>
           ))}
         </div>
