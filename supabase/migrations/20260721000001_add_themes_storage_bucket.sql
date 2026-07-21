@@ -3,7 +3,7 @@
 -- ============================================
 insert into storage.buckets (id, name, public)
 values ('themes', 'themes', true)
-on conflict (id) do nothing;
+on conflict (id) do update set public = excluded.public;
 
 -- Storage RLS 策略
 do $$

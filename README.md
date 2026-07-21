@@ -88,6 +88,8 @@ supabase db push
 
 ```
 
+> **💡 Note**: The steps above do **not require `supabase start`** (which downloads ~1GB of Docker images). Installing the CLI + `link` + `db push` is all you need — ~50MB disk space.
+
 - Verify the buckets were created:
 
 The migration automatically creates the `media` and `themes` Storage buckets.
@@ -278,14 +280,13 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 
 ### 2. Initialize the local database
 
+> 💡 `supabase start` downloads ~1GB of Docker images and starts PostgreSQL, Auth, and other containers — expect 3–5GB disk usage. This step is only needed for local development; skip it if you only need remote deployment.
+
 ```bash
 # Local dev: start Supabase and apply migrations
 supabase start
 supabase db reset
 
-# Production: link the remote project and push migrations
-supabase link --project-ref <project_ref>
-supabase db push
 ```
 
 The migration automatically creates the `media` and `themes` Storage buckets.

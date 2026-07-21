@@ -90,6 +90,8 @@ supabase db push
 ```
 
 
+> **💡 注意**：上述步骤**不需要运行 `supabase start`**（本地启动 Supabase 需下载约 1GB Docker 镜像），只装 CLI + `link` + `db push` 即可远程初始化，占用空间 < 50MB。
+
 - 验证 bucket 是否创建成功：
 
 会自动创建 `media` 和 `themes` 两个 Storage bucket。
@@ -284,14 +286,13 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY =your-publishable-key
 
 ### 2. 初始化本地数据库
 
+> 💡 `supabase start` 会下载约 1GB Docker 镜像并启动 PostgreSQL、Auth 等多个容器，占用 3–5GB 磁盘空间。如果只是远程部署不需要执行此步。
+
 ```bash
 # 本地开发：启动 Supabase 并应用迁移
 supabase start
 supabase db reset
 
-# 生产环境：关联远程项目并推送迁移
-supabase link --project-ref <project_ref>
-supabase db push
 ```
 
 迁移会自动创建 `media` 和 `themes` 两个 Storage bucket。
