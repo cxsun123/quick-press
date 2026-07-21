@@ -211,69 +211,276 @@ alter table site_config enable row level security;
 alter table media enable row level security;
 
 -- Posts
-create policy "Posts public read" on posts for select using (status = 'published');
-create policy "Posts admin all" on posts for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Posts public read' and tablename = 'posts'
+  ) then
+    create policy "Posts public read" on posts for select using (status = 'published');
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Posts admin all' and tablename = 'posts'
+  ) then
+    create policy "Posts admin all" on posts for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Pages
-create policy "Pages public read" on pages for select using (status = 'published');
-create policy "Pages admin all" on pages for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Pages public read' and tablename = 'pages'
+  ) then
+    create policy "Pages public read" on pages for select using (status = 'published');
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Pages admin all' and tablename = 'pages'
+  ) then
+    create policy "Pages admin all" on pages for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Tags
-create policy "Tags public read" on tags for select using (true);
-create policy "Tags admin all" on tags for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Tags public read' and tablename = 'tags'
+  ) then
+    create policy "Tags public read" on tags for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Tags admin all' and tablename = 'tags'
+  ) then
+    create policy "Tags admin all" on tags for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Categories
-create policy "Categories public read" on categories for select using (true);
-create policy "Categories admin all" on categories for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Categories public read' and tablename = 'categories'
+  ) then
+    create policy "Categories public read" on categories for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Categories admin all' and tablename = 'categories'
+  ) then
+    create policy "Categories admin all" on categories for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Post Tags
-create policy "Post tags public read" on post_tags for select using (true);
-create policy "Post tags admin all" on post_tags for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Post tags public read' and tablename = 'post_tags'
+  ) then
+    create policy "Post tags public read" on post_tags for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Post tags admin all' and tablename = 'post_tags'
+  ) then
+    create policy "Post tags admin all" on post_tags for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Post Categories
-create policy "Post categories public read" on post_categories for select using (true);
-create policy "Post categories admin all" on post_categories for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Post categories public read' and tablename = 'post_categories'
+  ) then
+    create policy "Post categories public read" on post_categories for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Post categories admin all' and tablename = 'post_categories'
+  ) then
+    create policy "Post categories admin all" on post_categories for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Comments
-create policy "Comments public read" on comments for select using (status = 'approved');
-create policy "Comments insert" on comments for insert with check (true);
-create policy "Comments admin" on comments for update using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Comments public read' and tablename = 'comments'
+  ) then
+    create policy "Comments public read" on comments for select using (status = 'approved');
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Comments insert' and tablename = 'comments'
+  ) then
+    create policy "Comments insert" on comments for insert with check (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Comments admin' and tablename = 'comments'
+  ) then
+    create policy "Comments admin" on comments for update using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- User Profiles
-create policy "Profiles public read" on user_profiles for select using (true);
-create policy "Profiles insert own" on user_profiles for insert with check (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Profiles public read' and tablename = 'user_profiles'
+  ) then
+    create policy "Profiles public read" on user_profiles for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Profiles insert own' and tablename = 'user_profiles'
+  ) then
+    create policy "Profiles insert own" on user_profiles for insert with check (
   auth.uid() = user_id
 );
-create policy "Profiles self" on user_profiles for all using (
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Profiles self' and tablename = 'user_profiles'
+  ) then
+    create policy "Profiles self" on user_profiles for all using (
   auth.uid() = user_id
 );
+  end if;
+end;
+$$;
 
 -- Site Config
-create policy "Site config public read" on site_config for select using (true);
-create policy "Site config admin" on site_config for all using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Site config public read' and tablename = 'site_config'
+  ) then
+    create policy "Site config public read" on site_config for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Site config admin' and tablename = 'site_config'
+  ) then
+    create policy "Site config admin" on site_config for all using (
   auth.role() = 'authenticated'
 );
+  end if;
+end;
+$$;
 
 -- Media
-create policy "Media public read" on media for select using (true);
-create policy "Media auth insert" on media for insert with check (auth.role() = 'authenticated');
-create policy "Media self" on media for delete using (
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Media public read' and tablename = 'media'
+  ) then
+    create policy "Media public read" on media for select using (true);
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Media auth insert' and tablename = 'media'
+  ) then
+    create policy "Media auth insert" on media for insert with check (auth.role() = 'authenticated');
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'Media self' and tablename = 'media'
+  ) then
+    create policy "Media self" on media for delete using (
   auth.uid() = uploader_id
 );
+  end if;
+end;
+$$;
 
 -- ============================================
 -- 默认数据
@@ -295,15 +502,51 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trg_posts_updated_at before update on posts
-  for each row execute function update_updated_at();
-create trigger trg_pages_updated_at before update on pages
-  for each row execute function update_updated_at();
-create trigger trg_tags_updated_at before update on tags
-  for each row execute function update_updated_at();
-create trigger trg_categories_updated_at before update on categories
-  for each row execute function update_updated_at();
-create trigger trg_comments_updated_at before update on comments
-  for each row execute function update_updated_at();
-create trigger trg_user_profiles_updated_at before update on user_profiles
-  for each row execute function update_updated_at();
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_posts_updated_at' and tgrelid = 'posts'::regclass) then
+    create trigger trg_posts_updated_at before update on posts
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_pages_updated_at' and tgrelid = 'pages'::regclass) then
+    create trigger trg_pages_updated_at before update on pages
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_tags_updated_at' and tgrelid = 'tags'::regclass) then
+    create trigger trg_tags_updated_at before update on tags
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_categories_updated_at' and tgrelid = 'categories'::regclass) then
+    create trigger trg_categories_updated_at before update on categories
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_comments_updated_at' and tgrelid = 'comments'::regclass) then
+    create trigger trg_comments_updated_at before update on comments
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;
+do $$
+begin
+  if not exists (select 1 from pg_trigger where tgname = 'trg_user_profiles_updated_at' and tgrelid = 'user_profiles'::regclass) then
+    create trigger trg_user_profiles_updated_at before update on user_profiles
+      for each row execute function update_updated_at();
+  end if;
+end;
+$$;

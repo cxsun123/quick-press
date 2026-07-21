@@ -36,11 +36,29 @@ values ('media', 'media', true)
 on conflict (id) do nothing;
 
 -- Storage RLS 策略
-create policy "media_upload" on storage.objects
-  for insert to authenticated with check (bucket_id = 'media');
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'media_upload' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "media_upload" on storage.objects
+      for insert to authenticated with check (bucket_id = 'media');
+  end if;
+end;
+$$;
 
-create policy "media_read" on storage.objects
-  for select to public using (bucket_id = 'media');
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'media_read' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "media_read" on storage.objects
+      for select to public using (bucket_id = 'media');
+  end if;
+end;
+$$;
 
 -- ============================================
 -- 默认站点配置
