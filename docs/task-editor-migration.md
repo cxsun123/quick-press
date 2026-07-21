@@ -16,7 +16,7 @@
 - [x] 1.5 验证 editor 项目独立 build 通过
 - [x] 1.6 发布 `@chengxinsun26/editor@0.1.0` 到 npm
 
-## Part 2：改造 i_blog
+## Part 2：改造 quick-press
 
 - [x] 2.1 安装 `@chengxinsun26/editor@^0.1.0`
 - [x] 2.2 修改 `next.config.ts`（transpilePackages）

@@ -14,8 +14,8 @@ let createdTagId: string | null = null;
 test.describe('公共页面', () => {
   test('首页渲染', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('欢迎来到 i_blog');
-    await expect(page).toHaveTitle('i_blog');
+    await expect(page.locator('h1')).toContainText('欢迎来到 quick-press');
+    await expect(page).toHaveTitle('quick-press');
   });
 
   test('登录页面渲染', async ({ page }) => {

@@ -24,21 +24,23 @@ export async function PublicLayout({ children }: PublicLayoutProps) {
           <Link href="/" className="font-bold text-lg text-[var(--foreground)]">
             {title}
           </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-              {t('home')}
-            </Link>
-            {pages.map((page) => (
-              <Link
-                key={page.id}
-                href={`/pages/${page.slug}`}
-                className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-              >
-                {page.title}
+          <div className="flex items-center gap-4 ml-auto">
+            <nav className="flex items-center gap-4">
+              <Link href="/" className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+                {t('home')}
               </Link>
-            ))}
-          </nav>
-          <LocaleSwitcher />
+              {pages.map((page) => (
+                <Link
+                  key={page.id}
+                  href={`/pages/${page.slug}`}
+                  className="text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                >
+                  {page.title}
+                </Link>
+              ))}
+            </nav>
+            <LocaleSwitcher />
+          </div>
         </div>
       </header>
       <main className="flex-1 bg-[var(--background-secondary)]">{children}</main>

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
               tools: {},
             },
             serverInfo: {
-              name: 'i_blog_mcp',
+              name: 'quick-press_mcp',
               version: '0.1.0',
             },
           },

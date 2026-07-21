@@ -9,7 +9,11 @@ import { getLocale, getMessages } from "next-intl/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = await getSiteConfig('site_title');
-  return { title: title || 'quick-press', description: 'A modern blog CMS' };
+  return {
+    title: title || 'quick-press',
+    description: 'A modern blog CMS',
+    icons: { icon: '/favicon.ico' },
+  };
 }
 
 export default async function RootLayout({

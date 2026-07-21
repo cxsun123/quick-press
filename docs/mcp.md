@@ -1,16 +1,16 @@
-# i_blog MCP 配置文档
+# quick-press MCP 配置文档
 
-MCP (Model Context Protocol) 协议允许 AI Agent（如 Claude Code）直接通过标准接口操作 i_blog，
+MCP (Model Context Protocol) 协议允许 AI Agent（如 Claude Code）直接通过标准接口操作 quick-press，
 无需学习 REST API。
 
 ## 前置条件
 
 - Node.js 18+
-- i_blog API Key（管理后台 → 设置 → API Keys 获取）
+- quick-press API Key（管理后台 → 设置 → API Keys 获取）
 
 ## 安装
 
-i_blog 内置 MCP Server，位于 `scripts/mcp-server.mjs`。
+quick-press 内置 MCP Server，位于 `scripts/mcp-server.mjs`。
 
 ## 配置
 

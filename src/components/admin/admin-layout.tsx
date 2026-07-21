@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [role, setRole] = useState<Role | null>(null);
-  const [siteTitle, setSiteTitle] = useState('i_blog');
+  const [siteTitle, setSiteTitle] = useState('quick-press');
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

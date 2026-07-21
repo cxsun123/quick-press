@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# i_blog E2E 全量测试
+# quick-press E2E 全量测试
 # 使用 playwright-cli 进行浏览器自动化测试
 set -e
 
@@ -83,7 +83,7 @@ do_fill() {
 
 # ===== 启动浏览器 =====
 echo "=========================================="
-echo "  i_blog E2E 全量测试"
+echo "  quick-press E2E 全量测试"
 echo "  时间: $(date '+%Y-%m-%d %H:%M:%S')"
 echo "  测试用户: $TEST_EMAIL"
 echo "=========================================="
@@ -98,7 +98,7 @@ section "1. 公共页面测试"
 
 test_case "首页标题显示"
 do_snapshot
-check_snapshot "欢迎来到 i_blog"
+check_snapshot "欢迎来到 quick-press"
 
 test_case "登录页面渲染"
 do_goto "/login"

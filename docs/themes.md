@@ -1,8 +1,8 @@
-# i_blog 主题配置指导
+# quick-press 主题配置指导
 
 ## 概述
 
-i_blog 的主题系统基于 **CSS 变量（Custom Properties）**，不依赖任何 CSS 预处理器或框架。
+quick-press 的主题系统基于 **CSS 变量（Custom Properties）**，不依赖任何 CSS 预处理器或框架。
 任何水平的 CSS 用户都可以通过修改变量值来定制博客外观。
 
 ## 快速开始

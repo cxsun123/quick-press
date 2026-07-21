@@ -1,5 +1,5 @@
 {
-  "name": "i_blog",
+  "name": "quick-press",
   "version": "0.1.0",
   "private": true,
   "description": "A modern blog CMS built with Next.js and Supabase",
@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@chengxinsun26/editor": "^0.3.10",
+    "@chengxinsun26/editor": "^0.3.11",
     "@supabase/ssr": "^0.12.1",
     "@supabase/supabase-js": "^2.110.5",
     "@tailwindcss/typography": "^0.5.20",

@@ -51,6 +51,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
   const [summary, setSummary] = useState(initialData?.summary || '');
   const [keywords, setKeywords] = useState<string[]>(initialData?.keywords || []);
   const [extracting, setExtracting] = useState(false);
+  const [summaryAuto, setSummaryAuto] = useState(!initialData?.summary);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [passwordSavedVersion, setPasswordSavedVersion] = useState(0);
 
@@ -84,6 +85,19 @@ export function PostEditor({ initialData }: PostEditorProps) {
     getTags().then(setTags);
     getCategories().then(setCategories);
   }, []);
+
+  useEffect(() => {
+    if (summaryAuto && content && !extracting) {
+      const plainText = content
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .replace(/\[([^\]]*)\]\(.*?\)/g, '$1')
+        .replace(/[#*`\[\]()>|\\_~]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const truncated = plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
+      if (truncated !== summary) setSummary(truncated);
+    }
+  }, [content, extracting]);
 
   useEffect(() => {
     savedRef.current = false;
@@ -144,6 +158,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
       const { extractSummary } = await import('@/server/actions/ai.actions');
       const result = await extractSummary(content);
       setSummary(result.summary);
+      setSummaryAuto(false);
       setKeywords(result.keywords);
     } catch (e: any) {
       alert(e.message || tc('loading'));
@@ -225,7 +240,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
           selectedTags={selectedTags}
           onTagsChange={setSelectedTags}
           summary={summary}
-          onSummaryChange={setSummary}
+          onSummaryChange={(s) => { setSummary(s); setSummaryAuto(false); }}
           keywords={keywords}
           onKeywordsChange={setKeywords}
           onExtractSummary={handleExtractSummary}

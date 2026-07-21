@@ -1,5 +1,5 @@
 -- ============================================
--- i_blog — 数据库初始化
+-- quick-press — 数据库初始化
 -- ============================================
 
 -- 启用 pg_trgm 全文搜索
@@ -279,7 +279,7 @@ create policy "Media self" on media for delete using (
 -- 默认数据
 -- ============================================
 insert into site_config (key, value) values
-  ('site_title', 'i_blog'),
+  ('site_title', 'quick-press'),
   ('site_description', 'A modern blog CMS'),
   ('registration_mode', 'open')
 on conflict (key) do nothing;

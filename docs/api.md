@@ -1,8 +1,8 @@
-# i_blog API 文档
+# quick-press API 文档
 
 ## 概述
 
-i_blog 提供 RESTful API 和 Server Actions 两种接口。
+quick-press 提供 RESTful API 和 Server Actions 两种接口。
 
 - **RESTful API**：适用于外部客户端、AI Agent、第三方集成
 - **Server Actions**：适用于前端页面交互（表单提交等）

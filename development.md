@@ -1,33 +1,9 @@
-# i_blog — 开发与部署指南
+# quick-press — 开发补充文档
 
-## 本地开发环境
+> 本文档涵盖本地调试、数据库管理、部署细节等 README 之外的内容。
+> 快速入门请阅读 [README.zh-CN.md](README.zh-CN.md)。
 
-### 前置依赖
-
-- **Node.js** >= 20（推荐 22 LTS）
-- **pnpm** >= 11.13（`npm install -g pnpm`）
-- **Docker Desktop**（Supabase 本地服务依赖）
-- **Supabase CLI** >= 2.109（`brew install supabase/tap/supabase`）
-
-### 首次搭建
-
-```bash
-# 1. 安装依赖
-pnpm install
-
-# 2. 初始化 Supabase（已初始化，首次项目需执行）
-supabase init
-
-# 3. 启动 Supabase 本地服务（PostgreSQL + Auth + Storage + Studio）
-supabase start
-
-# 4. 启动 Next.js 开发服务器（默认端口 3000）
-pnpm dev
-```
-
-首次 `supabase start` 需要下载约 1GB Docker 镜像，后续启动秒级完成。
-
-### 服务拓扑
+## 服务拓扑
 
 ```
 ┌──────────────────────────────────────────────────┐
@@ -49,23 +25,6 @@ pnpm dev
 │  └────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────┘
 ```
-
-### 日常开发流程
-
-```bash
-# 1. 确保 Docker 运行中
-
-# 2. 启动 Supabase 本地服务
-supabase start
-
-# 3. 启动 Next.js 开发服务器
-pnpm dev
-
-# 4. 打开浏览器
-open http://localhost:3000
-```
-
-`pnpm dev` 支持热更新（HMR），修改代码后浏览器自动刷新。
 
 ### 查看服务状态
 
@@ -180,89 +139,22 @@ supabase db dump --local
 
 ---
 
-## 项目结构
+## 部署补充
 
-```
-src/
-├── app/                    # Next.js App Router
-│   ├── (public)/           # 博客前端页面（SSR）
-│   ├── (auth)/             # 登录/注册
-│   ├── admin/              # 管理后台（CSR）
-│   └── api/                # API 路由
-├── server/                 # 服务端三层架构
-│   ├── actions/            # Server Actions（薄封装→调用 services→revalidate）
-│   ├── services/           # 业务逻辑编排
-│   ├── repositories/       # 数据访问（直接调 Supabase）
-│   ├── auth/               # 角色与权限
-│   ├── utils/              # 工具函数（slugify 等）
-│   └── db/                 # Supabase 客户端
-├── components/
-│   ├── blog/               # 博客前端组件
-│   ├── admin/              # 管理后台组件
-│   └── ui/                 # shadcn/ui 组件
-├── models/                 # 共享类型定义
-├── hooks/                  # React Hooks
-├── plugins/                # 插件
-├── styles/                 # 全局样式
-└── lib/supabase/client.ts  # 浏览器端 Supabase 客户端
-```
-
----
-
-## 部署指南
-
-项目使用两套独立服务：**Vercel**（Next.js 前端 + API）+ **Supabase**（数据库 + Auth + Storage）。
-
-### 1. Supabase 生产部署
-
-#### 1.1 创建生产项目
-
-1. 访问 [supabase.com/dashboard](https://supabase.com/dashboard) → **New project**
-2. 填写项目名称、数据库密码、选择区域（建议选新加坡或日本以降低延迟）
-3. 创建成功后，在 **Project Settings → API** 中查看：
-   - **Project URL**（`https://<project_ref>.supabase.co`）
-   - **anon public key**（`sb_publishable_xxx`）
-   - **service_role key**（`eyJxxx`，保密）
-
-#### 1.2 关联 CLI 与远程项目
-
-```bash
-# 关联远程 Supabase 项目
-supabase link --project-ref <project_ref>
-
-# 验证关联
-supabase projects list
-```
-
-`project_ref` 即 Project URL 中的子域名部分（如 `qadhixjbcttztndyyjdz`）。
-
-#### 1.3 推送数据库 schema
-
-```bash
-# 将所有本地迁移应用到远程数据库
-supabase db push
-
-# 验证远程 schema
-supabase db dump --linked
-```
-
-> `supabase db push` 会按时间戳顺序执行 `supabase/migrations/` 下所有未应用过的迁移。
-> **生产环境**：部署时运行 `supabase db push` 推送迁移即可。
-
-#### 1.4 启用 pg_trgm 扩展
+### 1.4 启用 pg_trgm 扩展
 
 ```bash
 supabase db query "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ```
 
-#### 1.5 配置 Auth 设置
+### 1.5 配置 Auth 设置
 
 在 Supabase Studio 远程 → **Authentication → Settings**：
 - **Site URL**: `https://<vercel-domain>.vercel.app`
 - **Redirect URLs**: 添加 `https://<vercel-domain>.vercel.app/**`
 - 根据需要调整 `enable_signup` 等
 
-#### 1.6 创建 Storage bucket
+### 1.6 创建 Storage bucket
 
 ```bash
 # 通过 Supabase CLI
@@ -271,104 +163,38 @@ supabase storage create media --public
 # 或通过 Studio：Storage → New bucket → 名称 media → 公开
 ```
 
-#### 1.7 插入默认数据
+### 1.7 插入默认数据
 
 ```sql
 -- 如果 db push 未包含默认数据，手动执行
 INSERT INTO site_config (key, value) VALUES
-  ('site_title', 'i_blog'),
+  ('site_title', 'quick-press'),
   ('site_description', 'A modern blog CMS'),
   ('registration_mode', 'open')
 ON CONFLICT (key) DO NOTHING;
 ```
 
----
+### 2.2 环境变量安全规则
 
-### 2. Vercel 部署
-
-#### 2.1 连接 Git 仓库
-
-1. 登录 [vercel.com](https://vercel.com)
-2. 点击 **Add New → Project**
-3. 导入 `i_blog` 的 Git 仓库（GitHub / GitLab / Bitbucket）
-4. Framework preset 自动选择 **Next.js**
-
-#### 2.2 配置环境变量
-
-在 Vercel 项目设置 → **Environment Variables** 中逐项添加（不要提交到 Git）：
-
-| 变量 | 示例值 | 说明 | 来源 |
-|------|--------|------|------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://qadhixjbcttztndyyjdz.supabase.co` | Supabase 项目 URL | Supabase Dashboard → API |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `sb_publishable_bP42nWtMK5viSFiZdp9jtQ_C1kSlzy7` | 公开 anon key（可暴露给前端） | Supabase Dashboard → API |
-| `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | 服务角色密钥（**严禁**暴露给前端，仅服务端使用） | Supabase Dashboard → API |
-| `NEXT_PUBLIC_SITE_TITLE` | `i_blog` | 站点标题，显示在浏览器标签栏 | 自定义 |
-
-**各变量说明：**
-
-- **`NEXT_PUBLIC_SUPABASE_URL`** — 所有 Supabase 客户端请求的目标地址。以 `https://` 开头，`.supabase.co` 结尾。前缀 `NEXT_PUBLIC_` 表示此变量在浏览器端也可访问。
-- **`NEXT_PUBLIC_SUPABASE_ANON_KEY`** — Supabase 的公开 API key。前端 `createBrowserClient()` 和服务器端 `createClient()` 均使用此 key。RLS 策略控制访问权限，此 key 本身没有直接数据访问能力。
-- **`SUPABASE_SERVICE_ROLE_KEY`** — 绕过所有 RLS 策略的管理员 key。只在服务端使用（`createAdminClient()`），**绝不能**在前端代码中引用或暴露。如果泄露，攻击者可直接操作数据库。
-- **`NEXT_PUBLIC_SITE_TITLE`** — 纯前端变量，用于 `<title>` 标签和页面标题显示。
-
-**重要安全规则：**
+`SUPABASE_SERVICE_ROLE_KEY` 绕过所有 RLS 策略，**绝不能**在前端代码中引用或暴露：
 
 ```typescript
 // ❌ 错误：服务端 key 暴露给浏览器
-const supabase = createBrowserClient(
-  url,
-  anonKey,
-  // 这里绝对不能传 serviceRoleKey
-);
+const supabase = createBrowserClient(url, anonKey, serviceRoleKey);
 
 // ✅ 正确：仅服务端使用
 import { createAdminClient } from '@/server/db/client';
 const adminClient = await createAdminClient(); // 内部使用 SUPABASE_SERVICE_ROLE_KEY
 ```
 
-#### 2.3 部署
-
-- **自动部署**：推送代码到 `main` 分支自动触发
-- **预览部署**：创建 PR 时自动生成预览 URL，可用于测试
-- **手动部署**：
-
-```bash
-# 安装 Vercel CLI
-npm install -g vercel
-
-# 部署到生产
-vercel --prod
-
-# 部署到预览
-vercel
-```
-
-#### 2.4 构建配置
-
-默认 Next.js 构建即可。如需自定义，创建 `vercel.json`：
-
-```json
-{
-  "buildCommand": "pnpm build",
-  "installCommand": "pnpm install",
-  "outputDirectory": ".next"
-}
-```
-
-#### 2.5 域名绑定（可选）
-
-1. 在 Vercel 项目 → **Settings → Domains**
-2. 输入自定义域名（如 `blog.example.com`）
-3. 按提示配置 DNS（CNAME 指向 `cname.vercel-dns.com`）
-
-#### 2.6 Vercel 环境变量配置截图指引
+### 2.6 Vercel 环境变量配置截图指引
 
 ```
 Vercel Dashboard → 选择项目
   → Settings
     → Environment Variables
       → Key:   NEXT_PUBLIC_SUPABASE_URL
-      → Value: https://qadhixjbcttztndyyjdz.supabase.co
+      → Value: https://<project_ref>.supabase.co
       → Environments: Production, Preview, Development
       → Add
 
@@ -379,16 +205,14 @@ Vercel Dashboard → 选择项目
 
       → Key:   SUPABASE_SERVICE_ROLE_KEY
       → Value: eyJxxx...
-      → Environments: Production, Preview（建议不要勾选 Preview）
+      → Environments: Production, Preview（建议不勾选 Preview）
       → Add
 
       → Key:   NEXT_PUBLIC_SITE_TITLE
-      → Value: i_blog
+      → Value: quick-press
       → Environments: Production, Preview, Development
       → Add
 ```
-
----
 
 ### 3. Docker 部署（备用）
 
@@ -396,35 +220,19 @@ Vercel Dashboard → 选择项目
 
 ```bash
 # 构建并启动
-docker-compose up -d --build
+docker compose up -d --build
 
 # 指定端口（默认 3000）
-PORT=8080 docker-compose up -d
+PORT=8080 docker compose up -d
 
 # 查看日志
-docker-compose logs -f
+docker compose logs -f
 
 # 停止
-docker-compose down
+docker compose down
 ```
 
-确保 `.env` 文件包含生产 Supabase 凭据（与 Vercel 相同的变量）。
-
----
-
-## 环境变量
-
-项目使用三个环境文件（均不提交到 Git，`.env.local` 已配置为本地 Supabase）：
-
-| 文件 | 用途 | 优先级 |
-|------|------|--------|
-| `.env.local` | 本地开发（本地 Supabase） | 最高 |
-| `.env.production` | 模拟生产构建（远程 Supabase） | `next build` 时 |
-| `.env` | 默认配置 / Docker 部署 | 最低 |
-
-文件加载优先级（高 → 低）：`.env.local` > `.env.production` > `.env`
-
-**Vercel 部署时不需要这些文件**，环境变量在 Dashboard 中配置。
+确保 `.env` 文件包含生产 Supabase 凭据。
 
 ---
 

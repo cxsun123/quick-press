@@ -1,4 +1,4 @@
-# i_blog — 项目指南
+# quick-press — 项目指南
 
 基于 Next.js + Supabase + Tiptap 的现代化博客 CMS，对标 WordPress 功能集。
 
@@ -30,13 +30,20 @@ src/lib/auth/*                    src/models/ (共享类型)
 - [x] 搜索页面
 - [x] 分页组件
 - [x] 侧边栏 (最近文章、归档、分类、标签)
-- [x] 主题系统 (浅色/深色/系统 + 6 种内置主题)
+- [x] 主题系统 (浅色/深色/系统 + 5 种内置主题)
+- [x] WYSIWYG 编辑器（Tiptap，含工具栏、颜色选择器、表格操作）
+- [x] 全文搜索（PostgreSQL pg_trgm）
+- [x] Docker 一键部署
+- [x] 站点设置（博客名称、注册模式、主题风格）
+- [x] AI 摘要（OpenAI 兼容 API 自动提取摘要和关键字）
+- [x] 密码保护（文章支持公开/私密/密码保护 + 分享链接）
+- [x] MCP 集成（Claude Code/Cursor 等 AI 客户端通过 MCP 协议管理文章）
 - [x] 本地 Supabase 开发环境
 
 ## 项目结构
 
 ```
-i_blog/                      ← git repo
+quick-press/                 ← git repo
 ├── src/
 │   ├── app/                 ← Next.js App Router
 │   │   ├── (public)/        ← 公共页面（SSR）
@@ -65,7 +72,7 @@ i_blog/                      ← git repo
 │   ├── migrations/          ← 数据库迁移文件
 │   │   └── 20260717143300_init.sql
 │   └── init.sql             ← 初始 schema（参考用）
-├── development.md           ← 开发与部署指南
+├── development.md           ← 开发补充文档（调试、数据库、FAQ）
 ├── design_v0.2.md           ← 设计文档
 ├── Dockerfile
 ├── docker-compose.yml
@@ -164,7 +171,6 @@ fix(toolbar): dropdown clipped by overflow container
 
 ## 剩余工作
 
-- [ ] 编辑器集成（Tiptap WYSIWYG，从 markdown_visual_editor 迁移）
 - [ ] 自定义字段 / 文章版本
 - [ ] 小程序 (widgets) 系统
 - [ ] 自定义菜单
@@ -172,4 +178,4 @@ fix(toolbar): dropdown clipped by overflow container
 - [ ] 测试
 - [ ] Gravatar / 第三方 OAuth
 
-详情见 `design_v0.2.md` 和 `development.md`。
+详情见 `design_v0.2.md`。开发调试细节见 `development.md`。
