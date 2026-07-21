@@ -42,12 +42,8 @@
 
 ### 部署准备
 
-1. Fork 项目 quick-press 到你自己的 GitHub。
-2. Clone 到本地：
-
-```text
-git clone git@github.com:[你的-github-id]/quick-press.git
-```
+### Fork 项目 quick-press 到你自己的 GitHub
+登录github并fork本项目。
 
 ### Supabase 的注册与初始化
 
@@ -283,6 +279,16 @@ quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 - Node.js 20+
 - pnpm
 - Supabase 项目（免费套餐即可）
+- Clone本项目
+
+  Clone项目到本地并在终端切换到项目根目录。
+
+```text
+git clone git@github.com:[你的-github-id]/quick-press.git
+
+cd  quick-press
+
+```
 
 ### 1. 配置环境变量
 

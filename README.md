@@ -42,12 +42,10 @@ A modern, WordPress-class blog CMS built on **Next.js + Supabase + Tiptap**.
 
 ### Preparation
 
-1. Fork the quick-press repository to your GitHub account.
-2. Clone it locally:
+### Fork project
 
-```text
-git clone git@github.com:[your-github-id]/quick-press.git
-```
+Fork the quick-press repository to your GitHub account.
+
 
 ### Supabase Setup
 
@@ -281,6 +279,16 @@ The post list supports filtering and bulk-updating visibility.
 - Node.js 20+
 - pnpm
 - A Supabase project (free tier is fine)
+- Clone this project
+
+```text
+git clone git@github.com:[your-github-id]/quick-press.git
+
+cd quick-press
+
+```
+
+
 
 ### 1. Configure environment variables
 
