@@ -58,7 +58,7 @@
 | 字段 | 填什么 |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | 进入项目后，在 Supabase 首页，点击顶部 Connect，弹出面板内复制该环境变量。 |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 同上（Supabase Connect 面板中标记为 `publishable key` / `anon key`）。 |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | 同上（Supabase Connect 面板中标记为 `publishable key` / `anon key`）。 |
 | `SUPABASE_SERVICE_ROLE_KEY` | 进入项目后，左菜单底部 Project Settings → API Keys，点击面板上方的标签 **"Legacy anon, service role API Keys"**，复制 service role 的值。 |
 
 #### 第 3 步：初始化数据库表结构（只做一次）
@@ -300,7 +300,7 @@ cp .env.example .env
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-anon-key
 ```
 
 ### 2. 初始化本地数据库

@@ -60,7 +60,7 @@ Fork the quick-press repository to your GitHub account.
 | Variable | Where to find |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | In the project dashboard, click **Connect** at the top, copy from the modal. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same as above (labeled `publishable key` / `anon key` in the Supabase Connect panel). |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Same as above (labeled `publishable key` / `anon key` in the Supabase Connect panel). |
 | `SUPABASE_SERVICE_ROLE_KEY` | Project Settings → API Keys. Switch to the **"Legacy anon, service role API Keys"** tab. Copy the `service_role` key. |
 
 #### Step 3: Initialize the database schema (one-time)
@@ -300,7 +300,7 @@ Fill in your Supabase config in `.env`:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-anon-key
 ```
 
 ### 2. Initialize the local database

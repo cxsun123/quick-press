@@ -132,7 +132,7 @@ supabase db push                 # 推送到远程
 | 变量 | 说明 |
 |------|------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase 项目 URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 公开 anon key |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | 公开 anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | 服务角色密钥（仅服务端） |
 | `NEXT_PUBLIC_SITE_TITLE` | 站点标题 |
 

@@ -199,7 +199,7 @@ Vercel Dashboard → 选择项目
       → Environments: Production, Preview, Development
       → Add
 
-      → Key:   NEXT_PUBLIC_SUPABASE_ANON_KEY
+      → Key:   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
       → Value: sb_publishable_xxx
       → Environments: Production, Preview, Development
       → Add
