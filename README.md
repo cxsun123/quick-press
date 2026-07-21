@@ -68,16 +68,30 @@ git clone git@github.com:[your-github-id]/quick-press.git
 
 #### Step 3: Initialize the database schema (one-time)
 
+Choose one of two options:
+
+**Option A: Supabase Studio SQL Editor (recommended, no CLI needed)**
+
+1. Open [Supabase Dashboard](https://supabase.com/dashboard) → your project → **SQL Editor**
+2. Copy the entire content of [`supabase/init.sql`](../../supabase/init.sql) into the editor
+3. Click **Run**
+
+**Option B: Supabase CLI (for automation workflows)**
+
 - Install [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) locally:
 
 ```bash
+
 npm install supabase --save-dev
+
 # or: pnpm add -D supabase / yarn add -D supabase / bun add -D supabase
+
 ```
 
-- Run the following commands to push the schema to your remote Supabase project:
+- Push to your remote project:
 
 ```bash
+
 supabase login
 
 supabase projects list   # the second column is your project-ref
@@ -90,12 +104,16 @@ supabase db push
 
 > **💡 Note**: The steps above do **not require `supabase start`** (which downloads ~1GB of Docker images). Installing the CLI + `link` + `db push` is all you need — ~50MB disk space.
 
-- Verify the buckets were created:
 
-The migration automatically creates the `media` and `themes` Storage buckets.
+**Verify the Storage buckets were created (run in CLI or SQL Editor):**
+
 
 ```bash
+
 supabase db query "select * from storage.buckets;"
+
+-- In SQL Editor: select * from storage.buckets;
+
 ```
 
 Expected output: two buckets — `media` and `themes`.
@@ -283,8 +301,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 > 💡 `supabase start` downloads ~1GB of Docker images and starts PostgreSQL, Auth, and other containers — expect 3–5GB disk usage. This step is only needed for local development; skip it if you only need remote deployment.
 
 ```bash
+
 # Local dev: start Supabase and apply migrations
 supabase start
+
 supabase db reset
 
 ```
@@ -294,8 +314,11 @@ The migration automatically creates the `media` and `themes` Storage buckets.
 ### 3. Start the app
 
 ```bash
+
 pnpm install
+
 pnpm dev
+
 ```
 
 Visit http://localhost:3000
@@ -310,6 +333,7 @@ docker build -t quick-press .
 
 # Run (custom port)
 docker run -p 3000:3000 --env-file .env quick-press
+
 ```
 
 Or with docker-compose:

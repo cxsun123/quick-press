@@ -68,14 +68,24 @@ git clone git@github.com:[你的-github-id]/quick-press.git
 
 #### 第 3 步：初始化数据库表结构（只做一次）
 
-- 本地安装[Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started),
+两种途径任选其一：
+
+**途径 A：Supabase Studio SQL Editor（推荐，无需安装 CLI）**
+
+1. 打开 [Supabase Dashboard](https://supabase.com/dashboard) → 进入项目 → **SQL Editor**
+2. 复制 [`supabase/init.sql`](../../supabase/init.sql) 的全部内容粘贴到编辑器
+3. 点击 **Run** 执行
+
+**途径 B：Supabase CLI（适合自动化流程）**
+
+- 本地安装 [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)：
 
 ```bash
 npm install supabase --save-dev 
 # or: pnpm add -D supabase / yarn add -D supabase / bun add -D supabase
 ```
 
-- 执行以下命令，将数据库结构推送到远程Supabase项目：
+- 推送到远程项目：
 
 ```bash
 
@@ -89,15 +99,19 @@ supabase db push
 
 ```
 
-
 > **💡 注意**：上述步骤**不需要运行 `supabase start`**（本地启动 Supabase 需下载约 1GB Docker 镜像），只装 CLI + `link` + `db push` 即可远程初始化，占用空间 < 50MB。
 
-- 验证 bucket 是否创建成功：
 
-会自动创建 `media` 和 `themes` 两个 Storage bucket。
+**验证 Storage bucket 是否创建成功**
+
+CLI 或 SQL Editor 执行：
 
 ```bash
+
 supabase db query "select * from storage.buckets;"
+
+-- 或在 SQL Editor 中直接执行:  select * from storage.buckets;
+
 ```
 
 预期输出两个 bucket：`media` 和 `themes`。
@@ -289,8 +303,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY =your-publishable-key
 > 💡 `supabase start` 会下载约 1GB Docker 镜像并启动 PostgreSQL、Auth 等多个容器，占用 3–5GB 磁盘空间。如果只是远程部署不需要执行此步。
 
 ```bash
+
 # 本地开发：启动 Supabase 并应用迁移
 supabase start
+
 supabase db reset
 
 ```
@@ -300,8 +316,11 @@ supabase db reset
 ### 3. 启动服务
 
 ```bash
+
 pnpm install
+
 pnpm dev
+
 ```
 
 访问 http://localhost:3000
