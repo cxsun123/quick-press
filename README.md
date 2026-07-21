@@ -350,8 +350,9 @@ quick-press/
 │   ├── plugins/              # Blog plugins
 │   └── lib/supabase/         # Browser-side Supabase client
 ├── supabase/
-│   ├── migrations/           # Database migrations
-│   └── init.sql              # Initial schema
+│   ├── migrations/           # DB migrations (README + future changes)
+│   │   └── README.md
+│   └── init.sql              # Full initialization schema (for new DBs)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── development.md            # Dev supplement (debugging, DB, CLI, FAQ)

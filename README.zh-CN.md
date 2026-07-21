@@ -358,8 +358,9 @@ quick-press/
 │   ├── plugins/              # 博客插件
 │   └── lib/supabase/         # 浏览器端 Supabase 客户端
 ├── supabase/
-│   ├── migrations/           # 数据库迁移
-│   └── init.sql              # 初始 schema
+│   ├── migrations/           # 数据库迁移（README + 后续变更）
+│   │   └── README.md
+│   └── init.sql              # 完整初始化 schema（新数据库使用）
 ├── Dockerfile
 ├── docker-compose.yml
 ├── development.md            # 开发补充文档（调试、数据库、FAQ）

@@ -1,5 +1,7 @@
 -- ============================================
 -- quick-press — 数据库初始化
+-- 包含完整 schema、RLS 策略、Storage bucket
+-- 用于新数据库一键初始化
 -- ============================================
 
 -- 启用 pg_trgm 全文搜索
@@ -195,6 +197,10 @@ create index if not exists idx_media_uploader on media(uploader_id);
 create index if not exists idx_posts_title_search on posts using gin (title gin_trgm_ops);
 create index if not exists idx_posts_content_search on posts using gin (content gin_trgm_ops);
 
+-- 可见度与分享
+create index if not exists idx_posts_visibility on posts(visibility);
+create unique index if not exists idx_posts_share_token on posts(share_token) where share_token is not null;
+
 -- ============================================
 -- RLS
 -- ============================================
@@ -210,70 +216,197 @@ alter table user_profiles enable row level security;
 alter table site_config enable row level security;
 alter table media enable row level security;
 
+-- 表级权限（修复：缺少 GRANT 导致 anon/authenticated 无权限）
+grant usage on schema public to anon, authenticated, service_role;
+grant all on all tables in schema public to anon, authenticated, service_role;
+grant all on all sequences in schema public to anon, authenticated, service_role;
+
 -- Posts
-create policy "Posts public read" on posts for select using (status = 'published');
+drop policy if exists "Posts public read" on posts;
+create policy "Posts public read" on posts for select using (
+  status = 'published'
+  and (visibility = 'public' or visibility is null or visibility = '')
+);
+drop policy if exists "Posts admin all" on posts;
 create policy "Posts admin all" on posts for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Pages
+drop policy if exists "Pages public read" on pages;
 create policy "Pages public read" on pages for select using (status = 'published');
+drop policy if exists "Pages admin all" on pages;
 create policy "Pages admin all" on pages for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Tags
+drop policy if exists "Tags public read" on tags;
 create policy "Tags public read" on tags for select using (true);
+drop policy if exists "Tags admin all" on tags;
 create policy "Tags admin all" on tags for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Categories
+drop policy if exists "Categories public read" on categories;
 create policy "Categories public read" on categories for select using (true);
+drop policy if exists "Categories admin all" on categories;
 create policy "Categories admin all" on categories for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Post Tags
+drop policy if exists "Post tags public read" on post_tags;
 create policy "Post tags public read" on post_tags for select using (true);
+drop policy if exists "Post tags admin all" on post_tags;
 create policy "Post tags admin all" on post_tags for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Post Categories
+drop policy if exists "Post categories public read" on post_categories;
 create policy "Post categories public read" on post_categories for select using (true);
+drop policy if exists "Post categories admin all" on post_categories;
 create policy "Post categories admin all" on post_categories for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Comments
+drop policy if exists "Comments public read" on comments;
 create policy "Comments public read" on comments for select using (status = 'approved');
+drop policy if exists "Comments insert" on comments;
 create policy "Comments insert" on comments for insert with check (true);
+drop policy if exists "Comments admin" on comments;
 create policy "Comments admin" on comments for update using (
   auth.role() = 'authenticated'
 );
 
 -- User Profiles
+drop policy if exists "Profiles public read" on user_profiles;
 create policy "Profiles public read" on user_profiles for select using (true);
+drop policy if exists "Profiles insert own" on user_profiles;
 create policy "Profiles insert own" on user_profiles for insert with check (
   auth.uid() = user_id
 );
+drop policy if exists "Profiles self" on user_profiles;
 create policy "Profiles self" on user_profiles for all using (
   auth.uid() = user_id
 );
 
 -- Site Config
+drop policy if exists "Site config public read" on site_config;
 create policy "Site config public read" on site_config for select using (true);
+drop policy if exists "Site config admin" on site_config;
 create policy "Site config admin" on site_config for all using (
+  auth.role() = 'authenticated'
+) with check (
   auth.role() = 'authenticated'
 );
 
 -- Media
+drop policy if exists "Media public read" on media;
 create policy "Media public read" on media for select using (true);
+drop policy if exists "Media auth insert" on media;
 create policy "Media auth insert" on media for insert with check (auth.role() = 'authenticated');
+drop policy if exists "Media self" on media;
 create policy "Media self" on media for delete using (
   auth.uid() = uploader_id
 );
+
+-- Themes（RLS + 公开读）
+alter table themes enable row level security;
+drop policy if exists "Themes public read" on themes;
+create policy "Themes public read" on themes for select using (true);
+drop policy if exists "Themes admin all" on themes;
+create policy "Themes admin all" on themes for all using (
+  auth.role() = 'authenticated'
+) with check (
+  auth.role() = 'authenticated'
+);
+
+-- ============================================
+-- Storage buckets + RLS 策略
+-- ============================================
+insert into storage.buckets (id, name, public)
+values ('media', 'media', true)
+on conflict (id) do update set public = excluded.public;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'media_upload' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "media_upload" on storage.objects
+      for insert to authenticated with check (bucket_id = 'media');
+  end if;
+end;
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'media_read' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "media_read" on storage.objects
+      for select to public using (bucket_id = 'media');
+  end if;
+end;
+$$;
+
+insert into storage.buckets (id, name, public)
+values ('themes', 'themes', true)
+on conflict (id) do update set public = excluded.public;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'themes_upload' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "themes_upload" on storage.objects
+      for insert to authenticated with check (bucket_id = 'themes');
+  end if;
+end;
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'themes_read' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "themes_read" on storage.objects
+      for select to public using (bucket_id = 'themes');
+  end if;
+end;
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where policyname = 'themes_delete' and tablename = 'objects' and schemaname = 'storage'
+  ) then
+    create policy "themes_delete" on storage.objects
+      for delete to authenticated using (bucket_id = 'themes');
+  end if;
+end;
+$$;
 
 -- ============================================
 -- 默认数据
@@ -281,7 +414,8 @@ create policy "Media self" on media for delete using (
 insert into site_config (key, value) values
   ('site_title', 'quick-press'),
   ('site_description', 'A modern blog CMS'),
-  ('registration_mode', 'open')
+  ('registration_mode', 'open'),
+  ('ai_max_content_length', '100000')
 on conflict (key) do nothing;
 
 -- ============================================

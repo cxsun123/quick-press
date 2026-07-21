@@ -126,6 +126,7 @@ pnpm dev --inspect
 supabase migration new <description>
 
 # 编辑 supabase/migrations/<timestamp>_<description>.sql
+# 参考 supabase/migrations/README.md 了解迁移管理方式
 
 # 应用到本地数据库
 supabase db reset

@@ -69,9 +69,9 @@ quick-press/                 ← git repo
 │   └── lib/supabase/        ← 仅 client.ts（浏览器端）
 ├── supabase/
 │   ├── config.toml          ← Supabase 本地配置
-│   ├── migrations/          ← 数据库迁移文件
-│   │   └── 20260717143300_init.sql
-│   └── init.sql             ← 初始 schema（参考用）
+│   ├── migrations/          ← 数据库迁移（README + 后续变更）
+│   │   └── README.md
+│   └── init.sql             ← 完整初始化 schema（新数据库使用）
 ├── development.md           ← 开发补充文档（调试、数据库、FAQ）
 ├── design_v0.2.md           ← 设计文档
 ├── Dockerfile
@@ -122,7 +122,7 @@ pnpm dev                       # 启动 Next.js 开发服务器（localhost:3000
 
 ```bash
 supabase migration new <name>  # 创建迁移文件
-# 编辑 supabase/migrations/<timestamp>_<name>.sql
+# 编辑 supabase/migrations/<timestamp>_<description>.sql
 supabase db reset               # 应用到本地
 supabase db push                 # 推送到远程
 ```
