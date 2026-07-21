@@ -2,12 +2,11 @@
 
 基于 Next.js + Supabase + Tiptap 的现代化博客 CMS，对标 WordPress 功能集。
 
-🌐 **在线示例**: <https://quick-press-mj0u00iob-chengxin.vercel.app>
+🌐 **在线示例**: <https://blog.tech616.me>
 
-<p align="right">
-  <a href="README.md">English</a> |
-  <a href="README.zh-CN.md">简体中文</a>
-</p>
+
+<a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a>
+
 
 ## 功能特性
 

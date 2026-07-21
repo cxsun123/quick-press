@@ -2,12 +2,11 @@
 
 A modern, WordPress-class blog CMS built on **Next.js + Supabase + Tiptap**.
 
-🌐 **Live demo**: <https://quick-press-mj0u00iob-chengxin.vercel.app>
+🌐 **Live demo**: <https://blog.tech616.me>
 
-<p align="right">
-  <a href="README.md">English</a> |
-  <a href="README.zh-CN.md">简体中文</a>
-</p>
+
+<a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a>
+
 
 ## Features
 
