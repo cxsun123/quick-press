@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { findFontOption } from "@/lib/fonts";
@@ -7,6 +7,11 @@ import { getSiteTheme, getSiteConfig } from "@/server/actions/site-config.action
 import { getFontFamily } from "@/server/services/site-config.service";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = await getSiteConfig('site_title');
