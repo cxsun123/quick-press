@@ -53,7 +53,8 @@ Fork the quick-press repository to your GitHub account.
 
 1. Go to <https://supabase.com>, sign up and log in.
 2. Click **New Project**, enter a project name (e.g. `quick-press`), set a database password — **save the password**.
-3. Wait for the database to initialize (about 1–2 minutes).
+3. **Select the Region** — choose a region close to your target audience and **remember it**. You will use the same region for Vercel later. (For Asia users, `Singapore (ap-southeast-1)` is recommended.)
+4. Wait for the database to initialize (about 1–2 minutes).
 
 #### Step 2: Get three environment variables from Supabase
 
@@ -119,8 +120,9 @@ Expected output: two buckets — `media` and `themes`.
 
 1. Go to <https://vercel.com>, sign up and log in.
 2. Click **Add New → Project**, import the quick-press repository from GitHub.
-3. In the **Environment Variables** section, add the three Supabase variables from Step 2.
-4. Deploy.
+3. **Select the Region** — in **Project Settings → Functions**, set **Function Region** to the **same region** as your Supabase project (e.g. `Singapore (sin1)`). This keeps your database queries fast.
+4. In the **Environment Variables** section, add the three Supabase variables from Step 2.
+5. Deploy.
 
 ### First-Time Setup
 

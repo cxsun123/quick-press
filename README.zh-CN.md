@@ -51,7 +51,8 @@
 
 1. 打开 <https://supabase.com>，注册并登录。
 2. 点击 **New Project**，填写项目名（如 `quick-press`），设置一个数据库密码，**密码记下来**。
-3. 等待数据库初始化完成（约 1–2 分钟）。
+3. **选择区域** — 选择离你的目标用户最近的区域，**记住这个区域**，后续 Vercel 也要选同一个。国内用户推荐 **新加坡（`ap-southeast-1`）**。
+4. 等待数据库初始化完成（约 1–2 分钟）。
 
 #### 第 2 步：从 Supabase 管理界面获得三个变量
 
@@ -115,8 +116,9 @@ supabase db query "select * from storage.buckets;"
 
 1. 打开 <https://vercel.com>，注册并登录。
 2. 点击 **Add New → Project**，导入 quick-press 仓库。
-3. 在 **Environment Variables** 中添加上一步的三个 Supabase 变量。
-4. 部署。
+3. **选择区域** — 在 **Project Settings → Functions** 中，将 **Function Region** 设为和 Supabase **相同的区域**（如新加坡 `sin1`），避免跨区网络延迟。
+4. 在 **Environment Variables** 中添加上一步的三个 Supabase 变量。
+5. 部署。
 
 
 ### 首次使用设置
