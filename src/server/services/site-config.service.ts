@@ -27,3 +27,15 @@ export async function saveSiteTheme(mode: string, theme: string) {
   await configRepo.upsertConfig('theme_mode', mode);
   await configRepo.upsertConfig('blog_theme', theme);
 }
+
+export async function getFontFamily(): Promise<string> {
+  return (await configRepo.findConfig('font_family')) || '';
+}
+
+export async function getBgImage(): Promise<{ url: string; opacity: number }> {
+  const [url, opacity] = await Promise.all([
+    configRepo.findConfig('bg_image_url'),
+    configRepo.findConfig('bg_image_opacity'),
+  ]);
+  return { url: url || '', opacity: opacity ? parseInt(opacity) : 100 };
+}

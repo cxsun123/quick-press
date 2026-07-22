@@ -72,7 +72,8 @@
     "mediaLibrary": "媒体库",
     "chooseFile": "选择文件",
     "public": "公开",
-    "private": "私密"
+    "private": "私密",
+    "fileTooLarge": "文件大小超过 500KB 限制，请选择更小的图片。"
   },
   "nav": {
     "home": "首页",
@@ -171,7 +172,15 @@
     "saving": "保存中...",
     "language": "界面语言",
     "logout": "退出登录",
-    "backToSite": "返回前台"
+    "backToSite": "返回前台",
+    "fontFamily": "字体选择",
+    "bgImage": "背景图片",
+    "uploadBgImage": "上传背景图片",
+    "bgOpacity": "透明度",
+    "removeBgImage": "清除背景",
+    "noBgImage": "暂未设置背景图片，上传一张图片来自定义站点背景。",
+    "previewSite": "预览首页",
+    "bgImageLimit": "不超过 500KB"
   },
   "post": {
     "titlePlaceholder": "请输入文章标题",

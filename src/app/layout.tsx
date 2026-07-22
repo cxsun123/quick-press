@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { findFontOption } from "@/lib/fonts";
 import { ClientProviders } from "@/components/blog/client-providers";
-import { getSiteTheme } from "@/server/actions/site-config.actions";
-import { getSiteConfig } from "@/server/actions/site-config.actions";
+import { getSiteTheme, getSiteConfig } from "@/server/actions/site-config.actions";
+import { getFontFamily } from "@/server/services/site-config.service";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
@@ -24,6 +25,7 @@ export default async function RootLayout({
   const { mode, theme } = await getSiteTheme();
   const locale = await getLocale();
   const messages = await getMessages();
+  const fontId = await getFontFamily();
 
   const isExplicitDark = mode === 'dark' || theme === 'night';
   const htmlClasses = [
@@ -31,8 +33,15 @@ export default async function RootLayout({
     `theme-${theme}`,
   ].filter(Boolean).join(' ');
 
+  const fontOpt = findFontOption(fontId);
+
+  const htmlStyle = {
+    '--font-body': fontOpt.fontBody,
+    '--font-heading': fontOpt.fontHeading,
+  } as React.CSSProperties;
+
   return (
-    <html lang={locale} className={htmlClasses} data-theme-mode={mode} suppressHydrationWarning>
+    <html lang={locale} className={htmlClasses} data-theme-mode={mode} style={htmlStyle} suppressHydrationWarning>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ClientProviders>

@@ -53,9 +53,23 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+}
+
+body.has-bg-image::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: var(--background);
+  opacity: calc(1 - var(--bg-opacity, 1));
+  pointer-events: none;
+  z-index: -1;
+}
+
+body.has-bg-image main {
+  background-color: transparent !important;
 }
 
 h1, h2, h3, h4, h5, h6 {

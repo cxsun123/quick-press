@@ -68,16 +68,12 @@
     "inUse": "In use",
     "current": "Current",
     "clickToSelect": "Click to select",
-    "preview": "Preview",
-    "adding": "Adding...",
-    "inUse": "In use",
-    "enable": "Enable",
-    "all": "All",
     "mediaLibrary": "Media Library",
     "customColor": "Custom",
     "chooseFile": "Choose file",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "fileTooLarge": "File size exceeds 500KB limit. Please choose a smaller image."
   },
   "nav": {
     "home": "Home",
@@ -125,7 +121,6 @@
     "editPost": "Edit post",
     "editPage": "Edit page",
     "newPost": "New post",
-    "newPage": "New page",
     "postManagement": "Post management",
     "pageManagement": "Page management",
     "commentManagement": "Comment management",
@@ -177,7 +172,15 @@
     "saving": "Saving...",
     "language": "Language",
     "logout": "Log out",
-    "backToSite": "Back to site"
+    "backToSite": "Back to site",
+    "fontFamily": "Font family",
+    "bgImage": "Background image",
+    "uploadBgImage": "Upload background image",
+    "bgOpacity": "Opacity",
+    "removeBgImage": "Remove background",
+    "noBgImage": "No background image set. Upload an image to customize your site background.",
+    "previewSite": "Preview site",
+    "bgImageLimit": "Max 500KB"
   },
   "post": {
     "titlePlaceholder": "Enter post title",
