@@ -21,6 +21,12 @@ create table if not exists posts (
   status varchar(20) default 'draft' check (status in ('draft', 'published', 'scheduled')),
   is_pinned boolean default false,
   meta jsonb default '{}',
+  visibility varchar(20) default 'public' check (visibility in ('public', 'private', 'password')),
+  password_hash varchar(255),
+  password_plaintext varchar(255),
+  summary text,
+  keywords text[],
+  share_token varchar(64),
   published_at timestamptz,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
