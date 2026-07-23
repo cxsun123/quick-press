@@ -117,7 +117,7 @@ supabase db query "select * from storage.buckets;"
 1. 打开 <https://vercel.com>，注册并登录。
 2. 点击 **Add New → Project**，导入 quick-press 仓库。
 3. **选择区域** — 在 **Project Settings → Functions** 中，将 **Function Region** 设为和 Supabase **相同的区域**（如新加坡 `sin1`），避免跨区网络延迟。
-4. 在 **Environment Variables** 中添加上一步的三个 Supabase 变量。
+4. 在 **Environment Variables** 中添加上一步的三个 Supabase 变量，以及 `SEARXNG_URL`（`publish_full` 封面图搜索回退所用，从 <https://searx.space/> 选取公共实例，例如 `https://searx.tiekoetter.com`）。
 5. 部署。
 
 
@@ -251,6 +251,8 @@ quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.i
   }
 }
 ```
+
+> **`publish_full` 封面图回退** 使用 [SearXNG](https://searxng.org/) 进行图片搜索。请在**服务端**设置环境变量 `SEARXNG_URL`（本地为 `.env.local`，生产环境为 Vercel 项目变量），取值从 <https://searx.space/> 选取公共实例，例如 `SEARXNG_URL=https://searx.tiekoetter.com`。若未设置，封面图仅回退到页面的 `og:image` / 正文首图。
 
 #### 支持的 MCP 工具
 

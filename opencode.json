@@ -6,16 +6,16 @@
        "type": "local",
        "command": ["npx", "-y", "mcp-searxng"],
        "environment": {
-         "SEARXNG_URL": "http://localhost:8899"
+         "SEARXNG_URL": "https://searx.tiekoetter.com/"
        }
      },
       "quick-press": {
         "enabled": true,
         "type": "remote",
-        "url": "http://localhost:3000/api/mcp",
+        "url": "https://blog.tech616.me/api/mcp",
         "oauth": false,
         "headers": {
-          "Authorization": "Bearer sk-mcp-f506ca085964511532d3456bc1320a684adc1823dabe4fd88353204ebeca1465"
+          "Authorization": "Bearer sk-mcp-22901bea7fbf4a34eea9754c4f92f226d423ed9d3d3e8741365f31bdf99f1aaf"
         }
      }
   }

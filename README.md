@@ -121,7 +121,7 @@ Expected output: two buckets — `media` and `themes`.
 1. Go to <https://vercel.com>, sign up and log in.
 2. Click **Add New → Project**, import the quick-press repository from GitHub.
 3. **Select the Region** — in **Project Settings → Functions**, set **Function Region** to the **same region** as your Supabase project (e.g. `Singapore (sin1)`). This keeps your database queries fast.
-4. In the **Environment Variables** section, add the three Supabase variables from Step 2.
+4. In the **Environment Variables** section, add the three Supabase variables from Step 2, plus `SEARXNG_URL` (a public SearXNG instance from <https://searx.space/>, e.g. `https://searx.tiekoetter.com`) used by `publish_full` for cover image search fallback.
 5. Deploy.
 
 ### First-Time Setup
@@ -252,6 +252,8 @@ Edit `opencode.json` (project-level) or `~/.opencode/opencode.json` (global):
   }
 }
 ```
+
+> **`publish_full` cover image fallback** uses [SearXNG](https://searxng.org/) for image search. Set the `SEARXNG_URL` environment variable on the **server** (`.env.local` for local dev, or Vercel project env for production) to a public instance from <https://searx.space/>, e.g. `SEARXNG_URL=https://searx.tiekoetter.com`. If unset, cover image falls back to the page's `og:image` / first content image only.
 
 #### Supported MCP Tools
 
