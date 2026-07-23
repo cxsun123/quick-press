@@ -233,15 +233,18 @@ quick-press supports the [Model Context Protocol (MCP)](https://modelcontextprot
 
 Generate a key in **Admin → Settings → MCP API Key**.
 
-#### Configure Claude Code
+#### Configure in opencode / Claude Code
 
-Edit `~/.claude/settings.json` or the project root `.mcp.json`:
+Edit `opencode.json` (project-level) or `~/.opencode/opencode.json` (global):
 
 ```json
 {
-  "mcpServers": {
+  "mcp": {
     "quick-press": {
+      "enabled": true,
+      "type": "remote",
       "url": "https://your-domain.com/api/mcp",
+      "oauth": false,
       "headers": {
         "Authorization": "Bearer sk-mcp-xxxxxxxxxxxx"
       }
@@ -250,17 +253,58 @@ Edit `~/.claude/settings.json` or the project root `.mcp.json`:
 }
 ```
 
-#### Supported MCP tools
+#### Supported MCP Tools
 
-| Tool | Function |
-|------|----------|
+| Tool | Description |
+|---|---|
+| `publish_full` | **One-click publish** — give a URL, AI auto-rewrites, extracts summary/keywords, matches categories/tags, uploads cover image, publishes |
 | `create_draft` | Create a post draft |
 | `publish_post` | Publish or update a post |
-| `list_posts` | List all posts |
-| `get_post` | Get post details |
-| `delete_post` | Delete a post |
-| `search_posts` | Search posts |
-| `get_stats` | Get blog stats (post/comment counts) |
+| `list_posts` | List all posts (filterable by status/visibility) |
+| `get_post` | Get post details by ID |
+| `delete_post` | Delete a post permanently |
+| `search_posts` | Search posts by keyword |
+| `get_stats` | Get blog statistics (post/comment counts) |
+| `upload_media` | Upload an image (from URL or base64, auto-compress) |
+| `extract_summary` | Extract summary & keywords from text via AI |
+
+#### Usage Examples
+
+**One-click publish from a URL:**
+```
+Tool: publish_full
+Arguments: {
+  "url": "https://example.com/some-article",
+  "visibility": "public"
+}
+```
+
+The AI will automatically:
+1. Fetch and clean the article HTML
+2. Rewrite the content and extract title, summary, keywords
+3. Match or create categories and tags from your existing ones
+4. Download and upload the cover image (from og:image)
+5. Publish the post
+
+**Publish with custom cover image:**
+```
+Tool: publish_full
+Arguments: {
+  "url": "https://example.com/article",
+  "imageUrl": "https://example.com/cover.jpg",
+  "visibility": "public"
+}
+```
+
+**Publish raw text directly (skip AI rewrite):**
+```
+Tool: publish_full
+Arguments: {
+  "text": "Article content in markdown...",
+  "title": "My Article Title",
+  "skipRewrite": true
+}
+```
 
 ### Post Visibility
 

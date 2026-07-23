@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+     "searxng": {
+       "enabled": true,
+       "type": "local",
+       "command": ["npx", "-y", "mcp-searxng"],
+       "environment": {
+         "SEARXNG_URL": "http://localhost:8899"
+       }
+     },
+      "quick-press": {
+        "enabled": true,
+        "type": "remote",
+        "url": "http://localhost:3000/api/mcp",
+        "oauth": false,
+        "headers": {
+          "Authorization": "Bearer sk-mcp-f506ca085964511532d3456bc1320a684adc1823dabe4fd88353204ebeca1465"
+        }
+     }
+  }
+}
+

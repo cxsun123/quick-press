@@ -15,6 +15,7 @@
   "type": "module",
   "dependencies": {
     "@chengxinsun26/editor": "^0.3.11",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/ssr": "^0.12.1",
     "@supabase/supabase-js": "^2.110.5",
     "@tailwindcss/typography": "^0.5.20",
@@ -25,6 +26,7 @@
     "next-intl": "^4.13.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "sharp": "^0.35.3",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },

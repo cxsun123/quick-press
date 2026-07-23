@@ -232,15 +232,18 @@ quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 
 在 **管理后台 → 设置 → MCP API Key** 中生成 Key。
 
-#### 配置 Claude Code
+#### 配置 opencode / Claude Code
 
-编辑 `~/.claude/settings.json` 或项目根目录 `.mcp.json`：
+编辑项目根目录 `opencode.json` 或全局 `~/.opencode/opencode.json`：
 
 ```json
 {
-  "mcpServers": {
+  "mcp": {
     "quick-press": {
+      "enabled": true,
+      "type": "remote",
       "url": "https://your-domain.com/api/mcp",
+      "oauth": false,
       "headers": {
         "Authorization": "Bearer sk-mcp-xxxxxxxxxxxx"
       }
@@ -253,13 +256,54 @@ quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 
 | 工具 | 功能 |
 |------|------|
+| `publish_full` | **一键发布** — 给一个 URL，AI 自动改写文章、提取摘要/关键词、匹配分类/标签、上传封面图、发布 |
 | `create_draft` | 创建文章草稿 |
 | `publish_post` | 发布或更新文章 |
-| `list_posts` | 查看所有文章 |
+| `list_posts` | 查看所有文章（按状态/可见度筛选） |
 | `get_post` | 获取文章详情 |
 | `delete_post` | 删除文章 |
 | `search_posts` | 搜索文章 |
 | `get_stats` | 获取博客统计（文章数/评论数） |
+| `upload_media` | 上传图片（支持 URL 或 base64，自动压缩） |
+| `extract_summary` | AI 从文本中提取摘要和关键词 |
+
+#### 使用示例
+
+**给定 URL 一键发布：**
+```
+工具: publish_full
+参数: {
+  "url": "https://mp.weixin.qq.com/s/xxxxx",
+  "visibility": "public"
+}
+```
+
+AI 会自动完成：
+1. 抓取并清洗文章 HTML
+2. 根据原文撰写新文章，提取标题、摘要、关键词
+3. 自动匹配已有分类和标签，无匹配时给出建议
+4. 下载封面图（从 og:image）、压缩后上传
+5. 发布文章
+
+**直接发布文本（跳过 AI 改写）：**
+```
+工具: publish_full
+参数: {
+  "text": "Markdown 格式的正文...",
+  "title": "文章标题",
+  "skipRewrite": true
+}
+```
+
+**指定封面图发布：**
+```
+工具: publish_full
+参数: {
+  "url": "https://example.com/article",
+  "imageUrl": "https://example.com/cover.jpg",
+  "visibility": "public"
+}
+```
 
 ### 文章可见度
 

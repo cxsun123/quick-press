@@ -1,135 +1,123 @@
 import { NextRequest } from 'next/server';
-import * as configService from '@/server/services/site-config.service';
-import { getToolDefinitions, executeTool } from '@/server/services/mcp.service';
+import { createAdminClient } from '@/server/db/client';
+import { executeTool, getToolDefinitions } from '@/server/services/mcp.service';
 
-interface JsonRpcRequest {
-  jsonrpc: string;
-  id?: number | string;
-  method: string;
-  params?: any;
+// ---- Auth ----
+
+function isApiKey(token: string): boolean {
+  return token.startsWith('sk-');
 }
 
-async function authenticate(req: NextRequest): Promise<boolean> {
+async function authenticate(req: NextRequest): Promise<{ authorized: boolean; error?: Response }> {
   const authHeader = req.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) return false;
-  const token = authHeader.slice(7);
-  if (!token) return false;
-  const storedKey = await configService.getSiteConfig('mcp_api_key');
-  return token === storedKey && !!storedKey;
+  if (!authHeader) {
+    return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Authentication required' } }, { status: 401 }) };
+  }
+  const scheme = authHeader.slice(0, authHeader.indexOf(' '));
+  if (scheme.toLowerCase() !== 'bearer') {
+    return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Bearer token required' } }, { status: 401 }) };
+  }
+  const token = authHeader.slice(scheme.length + 1).trim();
+  if (!token) {
+    return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Empty token' } }, { status: 401 }) };
+  }
+  if (isApiKey(token)) {
+    const supabase = createAdminClient();
+    const { data } = await supabase.from('site_config').select('value').eq('key', 'mcp_api_key').single();
+    if (!data?.value || token !== data.value) {
+      return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Invalid API key' } }, { status: 401 }) };
+    }
+    return { authorized: true };
+  }
+  const supabase = createAdminClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user) {
+    return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Invalid OAuth token' } }, { status: 401 }) };
+  }
+  return { authorized: true };
 }
 
-function jsonRpcError(id: number | string | null, code: number, message: string) {
-  return { jsonrpc: '2.0', id, error: { code, message } };
-}
-
-function sseEvent(data: unknown): string {
-  return `data: ${JSON.stringify(data)}\n\n`;
-}
+// ---- POST: Streamable HTTP (JSON responses) ----
 
 export async function POST(req: NextRequest) {
-  const authenticated = await authenticate(req);
-  if (!authenticated) {
-    return new Response(sseEvent(jsonRpcError(null, -32001, 'Unauthorized')), {
-      status: 401,
-      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-    });
-  }
+  const { authorized, error } = await authenticate(req);
+  if (!authorized) return error!;
 
-  let body: JsonRpcRequest;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response(sseEvent(jsonRpcError(null, -32700, 'Parse error')), {
-      status: 400,
-      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-    });
+  let body: any;
+  try { body = await req.json(); } catch {
+    return Response.json({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }, { status: 400 });
   }
 
   const { id, method, params } = body;
 
-  if (!id) {
-    // Notification (no response expected)
-    if (method === 'notifications/initialized') {
-      return new Response(null, { status: 202 });
-    }
+  if (id === undefined || id === null) {
+    if (method === 'notifications/initialized') return new Response(null, { status: 202 });
     return new Response(null, { status: 202 });
   }
 
   try {
     switch (method) {
       case 'initialize':
-        return new Response(sseEvent({
-          jsonrpc: '2.0',
-          id,
-          result: {
-            protocolVersion: '2025-03-26',
-            capabilities: {
-              tools: {},
-            },
-            serverInfo: {
-              name: 'quick-press_mcp',
-              version: '0.1.0',
-            },
-          },
-        }), {
-          headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        return Response.json({
+          jsonrpc: '2.0', id,
+          result: { protocolVersion: '2025-03-26', capabilities: { tools: {} }, serverInfo: { name: 'quick-press_mcp', version: '0.1.0' } },
         });
-
       case 'tools/list':
-        return new Response(sseEvent({
-          jsonrpc: '2.0',
-          id,
-          result: { tools: getToolDefinitions() },
-        }), {
-          headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-        });
-
+        return Response.json({ jsonrpc: '2.0', id, result: { tools: getToolDefinitions() } });
       case 'tools/call': {
         const { name, arguments: args } = params || {};
-        if (!name) {
-          return new Response(sseEvent(jsonRpcError(id, -32602, 'Missing tool name')), {
-            status: 400,
-            headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-          });
-        }
-        const result = await executeTool(name, args || {});
-        return new Response(sseEvent({
-          jsonrpc: '2.0',
-          id,
-          result: {
-            content: [
-              {
-                type: 'text',
-                text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
-              },
-            ],
-          },
-        }), {
-          headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
+        if (!name) return Response.json({ jsonrpc: '2.0', id, error: { code: -32602, message: 'Missing tool name' } }, { status: 400 });
+        const toolResult = await executeTool(name, args || {});
+        return Response.json({
+          jsonrpc: '2.0', id,
+          result: { content: [{ type: 'text', text: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult) }] },
         });
       }
-
       default:
-        return new Response(sseEvent(jsonRpcError(id, -32601, `Method not found: ${method}`)), {
-          status: 404,
-          headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-        });
+        return Response.json({ jsonrpc: '2.0', id, error: { code: -32601, message: `Method not found: ${method}` } }, { status: 404 });
     }
   } catch (e: any) {
-    return new Response(sseEvent(jsonRpcError(id, -32603, e.message || 'Internal error')), {
-      status: 500,
-      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' },
-    });
+    return Response.json({ jsonrpc: '2.0', id: id ?? null, error: { code: -32603, message: e.message || 'Internal error' } }, { status: 500 });
   }
 }
 
-// MCP clients may use OPTIONS for CORS preflight
+// ---- GET: Streamable HTTP server→client ----
+
+export async function GET(req: NextRequest) {
+  const { authorized, error } = await authenticate(req);
+  if (!authorized) return error!;
+
+  const stream = new ReadableStream({
+    start(controller) {
+      const encoder = new TextEncoder();
+      controller.enqueue(encoder.encode(': connected\n\n'));
+      const keepAlive = setInterval(() => {
+        try { controller.enqueue(encoder.encode(': keepalive\n\n')); } catch {}
+      }, 30000);
+      req.signal.addEventListener('abort', () => { clearInterval(keepAlive); try { controller.close(); } catch {} });
+    },
+  });
+
+  return new Response(stream, {
+    headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' },
+  });
+}
+
+// ---- DELETE / OPTIONS ----
+
+export async function DELETE(req: NextRequest) {
+  const { authorized, error } = await authenticate(req);
+  if (!authorized) return error!;
+  return new Response(null, { status: 204 });
+}
+
 export async function OPTIONS() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, Mcp-Session-Id, Mcp-Protocol-Version, Last-Event-ID, Accept',
+      'Access-Control-Expose-Headers': 'Mcp-Session-Id',
     },
   });
 }
