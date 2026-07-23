@@ -401,7 +401,7 @@ const handlers: Record<string, ToolHandler> = {
           if (rawSrc.startsWith('data:')) continue;
           // Skip AD/tracking domains
           const srcLower = rawSrc.toLowerCase();
-          if (AD_DOMAINS.some(d => srcLower.includes(d))) continue;
+          if (AD_DOMAINS.some((d: string) => srcLower.includes(d))) continue;
           // Skip small images by width/height attributes
           const widthMatch = imgIdx[0].match(/width=["']?(\d+)/i);
           const heightMatch = imgIdx[0].match(/height=["']?(\d+)/i);
@@ -411,9 +411,9 @@ const handlers: Record<string, ToolHandler> = {
           // Skip by alt text keywords
           const altMatch = imgIdx[0].match(/alt=["']([^"']*)["']/i);
           const alt = altMatch?.[1] || '';
-          if (SKIP_ALT.some(k => alt.toLowerCase().includes(k))) continue;
+          if (SKIP_ALT.some((k: string) => alt.toLowerCase().includes(k))) continue;
           // Skip by URL patterns (avatars, icons, logos)
-          if (SKIP_URL_PATTERNS.some(p => srcLower.includes(p))) continue;
+          if (SKIP_URL_PATTERNS.some((p: string) => srcLower.includes(p))) continue;
           // Skip duplicate of cover image
           let imgUrl: string;
           try { imgUrl = new URL(rawSrc, url).href; } catch { imgUrl = rawSrc; }
@@ -473,7 +473,7 @@ const handlers: Record<string, ToolHandler> = {
     }
 
     if (!keywords.length) {
-      keywords = title.split(/\s+/).filter(w => w.length > 1).slice(0, 5);
+      keywords = title.split(/\s+/).filter((w: any) => w.length > 1).slice(0, 5);
     }
 
     // Step 3: Handle cover image
@@ -616,7 +616,7 @@ const handlers: Record<string, ToolHandler> = {
     if (coverImageUrl) {
       const coverMarkdown = `![${title}](${coverImageUrl})`;
       const lines = finalContent.split('\n');
-      let insertIdx = lines.findIndex(l => l.startsWith('## '));
+      let insertIdx = lines.findIndex((l: any) => l.startsWith('## '));
       if (insertIdx === -1) insertIdx = 0;
       lines.splice(insertIdx, 0, coverMarkdown, '');
       finalContent = lines.join('\n');
@@ -667,7 +667,7 @@ const handlers: Record<string, ToolHandler> = {
           if (newTag) tagNameMap.set(name, newTag.id);
         }
       }
-      tagIds = aiTags.map(n => tagNameMap.get(n)).filter(Boolean) as string[];
+      tagIds = aiTags.map((n: string) => tagNameMap.get(n)).filter(Boolean) as string[];
     }
 
     /**
@@ -682,7 +682,7 @@ const handlers: Record<string, ToolHandler> = {
           if (newCat) catNameMap.set(name, newCat.id);
         }
       }
-      categoryIds = aiCategories.map(n => catNameMap.get(n)).filter(Boolean) as string[];
+      categoryIds = aiCategories.map((n: string) => catNameMap.get(n)).filter(Boolean) as string[];
     }
 
     // Step 6: Create & publish post
@@ -751,10 +751,10 @@ ${rawText.slice(0, 50000)}
 ---
 
 ## Existing Categories (pick up to 3 best matches first; if none fit, suggest new names)
-${existingCategories.length ? existingCategories.map(c => '- ' + c).join('\n') : '(none - suggest new)'}
+${existingCategories.length ? existingCategories.map((c: string) => '- ' + c).join('\n') : '(none - suggest new)'}
 
 ## Existing Tags (pick up to 5 best matches first; if none fit, suggest new names)
-${existingTags.length ? existingTags.map(t => '- ' + t).join('\n') : '(none - suggest new)'}
+${existingTags.length ? existingTags.map((t: string) => '- ' + t).join('\n') : '(none - suggest new)'}
 
 ## Requirements
 1. Output article MUST be in the same language as the source article
@@ -840,9 +840,9 @@ Schema:
     title: result.title || '',
     content: result.content || '',
     summary: (result.summary || '').trim(),
-    categories: Array.isArray(result.categories) ? result.categories.slice(0, 3).map((c: string) => c.trim()).filter(Boolean) : [],
-    tags: Array.isArray(result.tags) ? result.tags.slice(0, 5).map((t: string) => t.trim()).filter(Boolean) : [],
-    keywords: Array.isArray(result.keywords) ? result.keywords.slice(0, 5).map((k: string) => k.trim()).filter(Boolean) : [],
+    categories: Array.isArray(result.categories) ? result.categories.slice(0, 3).map((c: any) => c.trim()).filter(Boolean) : [],
+    tags: Array.isArray(result.tags) ? result.tags.slice(0, 5).map((t: any) => t.trim()).filter(Boolean) : [],
+    keywords: Array.isArray(result.keywords) ? result.keywords.slice(0, 5).map((k: any) => k.trim()).filter(Boolean) : [],
   };
 }
 
