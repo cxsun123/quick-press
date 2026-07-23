@@ -190,7 +190,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className={showSource ? 'max-w-7xl mx-auto' : 'max-w-4xl mx-auto'}>
           <input
             type="text"
             value={title}
@@ -200,7 +200,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
           />
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className={showSource ? 'max-w-7xl mx-auto' : 'max-w-4xl mx-auto'}>
           <div className="min-h-[500px] border border-[var(--border)] rounded-lg overflow-hidden">
               <WysiwygEditor
                 content={content}
