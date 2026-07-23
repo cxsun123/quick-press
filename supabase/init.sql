@@ -424,6 +424,28 @@ insert into site_config (key, value) values
   ('ai_max_content_length', '100000')
 on conflict (key) do nothing;
 
+-- 默认分类（树状结构）
+insert into categories (name, slug, parent_id, sort_order) values
+  ('学习成长', 'learning-growth', null, 1),
+  ('科研技术', 'research-tech', null, 2),
+  ('代码工程', 'code-engineering', null, 3),
+  ('工具效率', 'tools-efficiency', null, 4),
+  ('生活杂谈', 'life-chat', null, 5)
+on conflict (name) do nothing;
+
+-- 默认标签
+insert into tags (name, slug, color) values
+  ('科学', 'science', '#10B981'),
+  ('IT技术', 'it-tech', '#3B82F6'),
+  ('AI', 'ai', '#8B5CF6'),
+  ('资源', 'resources', '#F59E0B'),
+  ('随笔', 'essay', '#6B7280'),
+  ('美食', 'food', '#EF4444'),
+  ('宠物', 'pets', '#EC4899'),
+  ('游戏', 'games', '#6366F1'),
+  ('明星', 'celebrity', '#F97316')
+on conflict (name) do nothing;
+
 -- ============================================
 -- 触发器
 -- ============================================

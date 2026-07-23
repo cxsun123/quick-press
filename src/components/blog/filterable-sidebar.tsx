@@ -4,19 +4,13 @@ import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useCallback, useEffect } from 'react';
 import { startGlobalLoading } from '@/hooks/use-loading';
+import type { CategoryTreeNode } from '@/models/category.model';
 
 interface Tag {
   id: string;
   name: string;
   slug: string;
   color: string;
-  count: number;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
   count: number;
 }
 
@@ -33,7 +27,7 @@ interface Archive {
 }
 
 interface FilterableSidebarProps {
-  categories: Category[];
+  categories: CategoryTreeNode[];
   tags: Tag[];
   recentPosts: RecentPost[];
   archives: Archive[];
@@ -119,6 +113,24 @@ export function FilterableSidebar({
   const goToArchive = (month: string) => navigate(`/?month=${month}`);
   const goToPost = (slug: string) => navigate(`/blog/${slug}`);
 
+  const renderCategoryTree = (nodes: CategoryTreeNode[], depth = 0) => {
+    return nodes.map((cat) => (
+      <li key={cat.id}>
+        <button
+          onClick={() => goToCategory(cat.slug)}
+          className="w-full flex items-center justify-between text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors text-left cursor-pointer"
+          style={{ paddingLeft: depth * 16 }}
+        >
+          <span>{cat.name}</span>
+          <span className="text-xs text-[var(--muted-foreground)]">({cat.count})</span>
+        </button>
+        {cat.children.length > 0 && (
+          <ul>{renderCategoryTree(cat.children, depth + 1)}</ul>
+        )}
+      </li>
+    ));
+  };
+
   return (
     <>
       <aside className="space-y-6">
@@ -146,17 +158,7 @@ export function FilterableSidebar({
           <section className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
             <h3 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('categories')}</h3>
             <ul className="space-y-1.5">
-              {categories.map((cat) => (
-                <li key={cat.id}>
-                  <button
-                    onClick={() => goToCategory(cat.slug)}
-                    className="w-full flex items-center justify-between text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors text-left cursor-pointer"
-                  >
-                    <span>{cat.name}</span>
-                    <span className="text-xs text-[var(--muted-foreground)]">({cat.count})</span>
-                  </button>
-                </li>
-              ))}
+              {renderCategoryTree(categories)}
             </ul>
           </section>
         )}

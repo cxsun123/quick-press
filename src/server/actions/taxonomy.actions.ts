@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import * as taxonomyService from '@/server/services/taxonomy.service';
 
-export async function createTag(formData: FormData): Promise<{ error?: string }> {
+export async function createTag(formData: FormData): Promise<{ error?: string; id?: string }> {
   const result = await taxonomyService.createTag(formData);
   revalidatePath('/admin/tags');
   return result;
@@ -19,7 +19,7 @@ export async function getTags() {
   return taxonomyService.getTags();
 }
 
-export async function createCategory(formData: FormData): Promise<{ error?: string }> {
+export async function createCategory(formData: FormData): Promise<{ error?: string; id?: string }> {
   const result = await taxonomyService.createCategory(formData);
   revalidatePath('/admin/tags');
   return result;
@@ -37,6 +37,10 @@ export async function getCategories() {
 
 export async function getCategoriesWithCount() {
   return taxonomyService.getCategoriesWithCount();
+}
+
+export async function getCategoriesTree() {
+  return taxonomyService.getCategoriesTree();
 }
 
 export async function getTagsWithCount() {

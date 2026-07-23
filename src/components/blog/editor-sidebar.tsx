@@ -8,7 +8,8 @@ import type { PostStatus, PostVisibility } from '@/models/post.model';
 import { VisibilityPanel } from '@/components/blog/visibility-panel';
 import { SummaryPanel } from '@/components/blog/summary-panel';
 import { CoverPicker } from '@/components/blog/cover-picker';
-import { createTag } from '@/server/actions/taxonomy.actions';
+import { createTag, createCategory } from '@/server/actions/taxonomy.actions';
+import type { CategoryTreeNode } from '@/models/category.model';
 
 interface EditorSidebarProps {
   open: boolean;
@@ -35,7 +36,6 @@ interface EditorSidebarProps {
   extracting: boolean;
   slug?: string;
   postId?: string;
-  onTagsRefresh?: () => void;
   coverImageUrl?: string | null;
   contentImages?: string[];
   onCoverImageChange?: (url: string | null) => void;
@@ -43,6 +43,19 @@ interface EditorSidebarProps {
   showSource?: boolean;
   onToggleSource?: () => void;
   previewUrl?: string;
+  onTagsRefresh?: () => void;
+  onCategoriesRefresh?: () => void;
+}
+
+function flattenTree(nodes: CategoryTreeNode[], depth = 0): { id: string; name: string; depth: number }[] {
+  const result: { id: string; name: string; depth: number }[] = [];
+  for (const node of nodes) {
+    result.push({ id: node.id, name: node.name, depth });
+    if (node.children.length) {
+      result.push(...flattenTree(node.children, depth + 1));
+    }
+  }
+  return result;
 }
 
 export function EditorSidebar({
@@ -73,11 +86,12 @@ export function EditorSidebar({
   coverImageUrl,
   contentImages,
   onCoverImageChange,
-  onTagsRefresh,
   showSource,
   onToggleSource,
   passwordSavedVersion,
   previewUrl,
+  onTagsRefresh,
+  onCategoriesRefresh,
 }: EditorSidebarProps) {
   const t = useTranslations('post');
   const tc = useTranslations('common');
@@ -86,9 +100,25 @@ export function EditorSidebar({
   const [newTagColor, setNewTagColor] = useState('#3B82F6');
   const [addingTag, setAddingTag] = useState(false);
 
+  const [catSearch, setCatSearch] = useState('');
+  const [showAddCat, setShowAddCat] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatParentId, setNewCatParentId] = useState('');
+  const [addingCat, setAddingCat] = useState(false);
+  const [categoryTree, setCategoryTree] = useState<CategoryTreeNode[]>([]);
+
   const filteredTags = tagSearch
     ? tags.filter((t) => t.name.toLowerCase().includes(tagSearch.toLowerCase()))
     : tags;
+
+  const filteredCategories = catSearch
+    ? categories.filter((c) => c.name.toLowerCase().includes(catSearch.toLowerCase()))
+    : categories;
+
+  const loadTree = async () => {
+    const { getCategoriesTree } = await import('@/server/actions/taxonomy.actions');
+    setCategoryTree(await getCategoriesTree());
+  };
 
   const handleAddTag = async () => {
     const name = newTagName.trim();
@@ -105,6 +135,9 @@ export function EditorSidebar({
         setNewTagName('');
         setTagSearch('');
         onTagsRefresh?.();
+        if (result?.id) {
+          onTagsChange([...selectedTags, result.id]);
+        }
       }
     } catch (e: any) {
       alert(e.message || 'Failed to create tag');
@@ -118,6 +151,43 @@ export function EditorSidebar({
       handleAddTag();
     }
   };
+
+  const handleAddCategory = async () => {
+    const name = newCatName.trim();
+    if (!name) return;
+    setAddingCat(true);
+    try {
+      const form = new FormData();
+      form.set('name', name);
+      if (newCatParentId) form.set('parent_id', newCatParentId);
+      const result = await createCategory(form);
+      if (result?.error) {
+        alert(result.error);
+      } else {
+        setNewCatName('');
+        setNewCatParentId('');
+        setCatSearch('');
+        setShowAddCat(false);
+        onCategoriesRefresh?.();
+        loadTree();
+        if (result?.id) {
+          onCategoriesChange([...selectedCategories, result.id]);
+        }
+      }
+    } catch (e: any) {
+      alert(e.message || 'Failed to create category');
+    }
+    setAddingCat(false);
+  };
+
+  const handleCatKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCategory();
+    }
+  };
+
+  const flatParentOptions = flattenTree(categoryTree);
 
   return (
     <>
@@ -211,11 +281,84 @@ export function EditorSidebar({
 
             <div className="border-t border-[var(--border)]" />
 
-            {/* Categories */}
+            {/* Categories - WordPress style */}
             <div>
-              <div className="text-xs text-[var(--muted-foreground)] mb-2">{t('categories')}</div>
-              <div className="flex flex-wrap gap-1">
-                {categories.map((cat) => {
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-[var(--muted-foreground)]">{t('categories')}</span>
+                <button
+                  type="button"
+                  onClick={() => { setShowAddCat(!showAddCat); if (!showAddCat) loadTree(); }}
+                  className="text-[10px] text-[var(--primary)] hover:underline flex items-center gap-0.5"
+                >
+                  <Plus className="h-3 w-3" />
+                  {t('newCategory')}
+                </button>
+              </div>
+
+              {showAddCat && (
+                <div className="mb-2 p-2 rounded-md border border-[var(--border)] bg-[var(--muted)]/30 space-y-2">
+                  <input
+                    type="text"
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    onKeyDown={handleCatKeyDown}
+                    placeholder={t('newCategoryNamePlaceholder')}
+                    className="w-full px-2 py-1 text-xs rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]"
+                  />
+                  <select
+                    value={newCatParentId}
+                    onChange={(e) => setNewCatParentId(e.target.value)}
+                    className="w-full px-2 py-1 text-xs rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] focus:outline-none focus:border-[var(--ring)]"
+                  >
+                    <option value="">{t('topCategory')}</option>
+                    {flatParentOptions.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {'\u00A0\u00A0'.repeat(opt.depth)}{opt.depth > 0 ? '└ ' : ''}{opt.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={handleAddCategory}
+                      disabled={addingCat || !newCatName.trim()}
+                      className="flex-1 px-2 py-1 text-xs rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50 transition-opacity"
+                    >
+                      {addingCat ? tc('adding') : tc('add')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowAddCat(false); setNewCatName(''); setNewCatParentId(''); }}
+                      className="px-2 py-1 text-xs rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]"
+                    >
+                      {tc('cancel')}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="relative mb-2">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-[var(--muted-foreground)]" />
+                <input
+                  type="text"
+                  value={catSearch}
+                  onChange={(e) => setCatSearch(e.target.value)}
+                  placeholder={t('categoryPlaceholder')}
+                  className="w-full pl-7 pr-6 py-1 text-xs rounded-md border border-[var(--border)] bg-transparent text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]"
+                />
+                {catSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setCatSearch('')}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-1 max-h-[120px] overflow-y-auto">
+                {filteredCategories.map((cat) => {
                   const active = selectedCategories.includes(cat.id);
                   return (
                     <button
@@ -238,6 +381,9 @@ export function EditorSidebar({
                     </button>
                   );
                 })}
+                {filteredCategories.length === 0 && (
+                  <span className="text-xs text-[var(--muted-foreground)]">{t('noMatchCategories')}</span>
+                )}
               </div>
             </div>
 

@@ -5,31 +5,54 @@ import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
 import {
   getTags, createTag, deleteTag,
-  getCategories, createCategory, deleteCategory,
+  getCategoriesTree, createCategory, deleteCategory,
 } from '@/server/actions/taxonomy.actions';
 import { TagColorPicker } from '@/components/admin/tag-color-picker';
+import { ChevronRight, ChevronDown, Plus, X } from 'lucide-react';
+import type { CategoryTreeNode } from '@/models/category.model';
 
 interface Tag { id: string; name: string; slug: string; color: string; }
-interface Category { id: string; name: string; slug: string; parent_id: string | null; }
 
 export default function TagsPage() {
   const t = useTranslations('admin');
   const tc = useTranslations('common');
   const [tags, setTags] = useState<Tag[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryTree, setCategoryTree] = useState<CategoryTreeNode[]>([]);
+  const [flatCategories, setFlatCategories] = useState<{ id: string; name: string; parent_id: string | null }[]>([]);
   const [tab, setTab] = useState<'tags' | 'categories'>('tags');
   const [tagName, setTagName] = useState('');
   const [tagColor, setTagColor] = useState('#3B82F6');
   const [catName, setCatName] = useState('');
+  const [catParentId, setCatParentId] = useState<string>('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     setTags(await getTags());
-    setCategories(await getCategories());
+    const tree = await getCategoriesTree();
+    setCategoryTree(tree);
+    const flat: { id: string; name: string; parent_id: string | null }[] = [];
+    const flatten = (nodes: CategoryTreeNode[], depth = 0) => {
+      for (const n of nodes) {
+        flat.push({ id: n.id, name: n.name, parent_id: n.parent_id });
+        if (n.children.length) flatten(n.children, depth + 1);
+      }
+    };
+    flatten(tree);
+    setFlatCategories(flat);
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const handleCreateTag = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,12 +90,14 @@ export default function TagsPage() {
     setError('');
     const form = new FormData();
     form.set('name', catName);
+    if (catParentId) form.set('parent_id', catParentId);
     const res = await createCategory(form);
     setBusy(false);
     if (res.error) {
       setError(res.error);
     } else {
       setCatName('');
+      setCatParentId('');
       await load();
     }
   };
@@ -86,6 +111,53 @@ export default function TagsPage() {
     } else {
       await load();
     }
+  };
+
+  const renderCategoryTree = (nodes: CategoryTreeNode[], depth = 0) => {
+    return nodes.map((cat) => (
+      <div key={cat.id}>
+        <div
+          className="flex items-center justify-between px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)]"
+          style={{ marginLeft: depth * 24 }}
+        >
+          <div className="flex items-center gap-2">
+            {cat.children.length > 0 ? (
+              <button
+                type="button"
+                onClick={() => toggleExpand(cat.id)}
+                className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              >
+                {expanded.has(cat.id) ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </button>
+            ) : (
+              <span className="w-4" />
+            )}
+            <span className="text-[var(--foreground)]">{cat.name}</span>
+            {cat.count > 0 && (
+              <span className="text-xs text-[var(--muted-foreground)]">({cat.count})</span>
+            )}
+            {depth === 0 && (
+              <span className="text-[10px] text-[var(--muted-foreground)] bg-[var(--muted)] px-1.5 py-0.5 rounded">
+                {t('topCategory')}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={() => handleDeleteCategory(cat.id, cat.name)}
+            className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600"
+          >
+            {tc('delete')}
+          </button>
+        </div>
+        {expanded.has(cat.id) && cat.children.length > 0 && (
+          <div>{renderCategoryTree(cat.children, depth + 1)}</div>
+        )}
+      </div>
+    ));
   };
 
   return (
@@ -146,25 +218,26 @@ export default function TagsPage() {
             <input name="name" placeholder={tc('add') + ' ' + tc('category')} required value={catName}
               onChange={(e) => setCatName(e.target.value)}
               className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:border-[var(--ring)]" />
+            <select
+              value={catParentId}
+              onChange={(e) => setCatParentId(e.target.value)}
+              className="px-3 py-2 text-sm border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:border-[var(--ring)]"
+            >
+              <option value="">{t('topCategory')}</option>
+              {flatCategories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
             <button type="submit" disabled={busy}
               className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] disabled:opacity-50">
               {busy ? tc('adding') : tc('add')}
             </button>
           </form>
-          {categories.length === 0 ? (
+          {categoryTree.length === 0 ? (
             <div className="text-center py-8 text-[var(--muted-foreground)]">{tc('noCategories')}</div>
           ) : (
             <div className="space-y-2">
-              {categories.map((cat) => (
-                <div key={cat.id}
-                  className="flex items-center justify-between px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background)]">
-                  <span className="text-[var(--foreground)]">{cat.name}</span>
-                  <button onClick={() => handleDeleteCategory(cat.id, cat.name)}
-                    className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600">
-                    {tc('delete')}
-                  </button>
-                </div>
-              ))}
+              {renderCategoryTree(categoryTree)}
             </div>
           )}
         </div>

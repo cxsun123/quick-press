@@ -12,3 +12,7 @@ export interface Category {
 export interface CategoryWithCount extends Category {
   count: number;
 }
+
+export interface CategoryTreeNode extends CategoryWithCount {
+  children: CategoryTreeNode[];
+}

@@ -247,7 +247,6 @@ export function PostEditor({ initialData }: PostEditorProps) {
           extracting={extracting}
           slug={postSlug || initialData?.slug}
           postId={initialData?.id}
-          onTagsRefresh={() => getTags().then(setTags)}
           coverImageUrl={coverImageUrl}
           contentImages={contentImages}
           onCoverImageChange={setCoverImageUrl}
@@ -255,6 +254,8 @@ export function PostEditor({ initialData }: PostEditorProps) {
           onToggleSource={() => setShowSource(!showSource)}
           passwordSavedVersion={passwordSavedVersion}
           previewUrl={(postSlug || initialData?.slug) ? `/blog/${postSlug || initialData?.slug}?preview=true` : undefined}
+          onTagsRefresh={() => getTags().then(setTags)}
+          onCategoriesRefresh={() => getCategories().then(setCategories)}
         />
       </div>
 

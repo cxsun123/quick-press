@@ -22,6 +22,12 @@ export async function insertTag(tag: { name: string; slug: string; color: string
   if (error) throw error;
 }
 
+export async function findTagByName(name: string) {
+  const supabase = createAdminClient();
+  const { data } = await supabase.from('tags').select('id, name, slug, color').eq('name', name).single();
+  return data;
+}
+
 export async function removeTag(id: string) {
   const supabase = createAdminClient();
   const { error } = await supabase.from('tags').delete().eq('id', id);
