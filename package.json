@@ -33,6 +33,9 @@
     "turndown": "^7.2.4",
     "zod": "^4.4.3"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@parcel/watcher", "@swc/core", "tesseract.js"]
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^10.0.1",
