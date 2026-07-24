@@ -128,6 +128,9 @@ Expected output: two buckets — `media` and `themes`.
 
 #### 1. Register the admin account
 
+> **Before registering, disable email confirmation in Supabase:**
+> Go to your Supabase project → **Authentication** → **Sign In / Providers** → under **User Signups**, uncheck **Confirm email**. Otherwise the registration email will fail (no SMTP configured by default).
+
 - The site starts with open registration.
 - Go to `https://[your-domain]/login` and register.
 - 🎯 **The first registered user automatically becomes admin.** No manual configuration needed.

@@ -125,6 +125,9 @@ supabase db query "select * from storage.buckets;"
 
 #### 1. 注册管理员账号
 
+> **注册前建议取消邮件确认：**
+> 进入 Supabase → 进入项目 → 点击左菜单 **Authentication** → 点击 **Sign In / Providers** → 在 **User Signups** 部分，**取消勾选 Confirm email**。否则注册邮件会发送失败（默认未配置 SMTP）。
+
 - 刚部署的项目默认开放注册。
 - 访问 `https://[你的域名]/login` 自主注册。
 - 🎯 **第一个注册成功的账号自动成为管理员**，无需手动配置。
