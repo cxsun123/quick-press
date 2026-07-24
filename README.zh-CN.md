@@ -269,6 +269,30 @@ quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.i
 | `upload_media` | 上传图片（支持 URL 或 base64，自动压缩） |
 | `extract_summary` | AI 从文本中提取摘要和关键词 |
 
+#### 自动触发（一键发布）
+
+AI 客户端（opencode / Claude Code / Cursor / ChatGPT Desktop）接入此 MCP server 后，会通过 `tools/list` **自动发现** `publish_full` 工具。工具描述里已包含触发词（创建 / 发布 / 转载 / 文章 / 博文 / POST / URL），因此你只需用**自然语言**描述意图即可触发——无需额外配置。
+
+| 自然语言 prompt | 效果 |
+|---|---|
+| `发布这篇文章: https://...` | AI 改写并发布（语言与原文一致） |
+| `用这个URL生成中文文章: https://...` | 中文输出（覆盖原文语言） |
+| `把这篇英文博客翻译成日文发布: https://...` | 日文输出 |
+| `转载这篇文章: https://...` | 改写并发布 |
+| `/publish_from_url https://...` | MCP Prompt 命名入口（确定性触发） |
+
+**指定新文章语言。** 默认输出语言与原文一致。若要覆盖，直接告诉 Agent 目标语言（如 `中文`、`English`、`日本語`、`한국어`），Agent 会向 `publish_full` 传入 `language` 参数：
+
+```
+工具: publish_full
+参数: {
+  "url": "https://example.com/article",
+  "language": "中文"
+}
+```
+
+AI 模型本身理解自然语言语种名，无需枚举语言码。
+
 #### 使用示例
 
 **给定 URL 一键发布：**

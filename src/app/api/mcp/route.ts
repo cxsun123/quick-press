@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { createAdminClient } from '@/server/db/client';
-import { executeTool, getToolDefinitions } from '@/server/services/mcp.service';
+import { executeTool, getToolDefinitions, getPromptDefinitions, getPrompt } from '@/server/services/mcp.service';
+
+export const bodySizeLimit = '4mb';
 
 // ---- Auth ----
 
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
       case 'initialize':
         return Response.json({
           jsonrpc: '2.0', id,
-          result: { protocolVersion: '2025-03-26', capabilities: { tools: {} }, serverInfo: { name: 'quick-press_mcp', version: '0.1.0' } },
+          result: { protocolVersion: '2025-03-26', capabilities: { tools: {}, prompts: {} }, serverInfo: { name: 'quick-press_mcp', version: '0.1.0' } },
         });
       case 'tools/list':
         return Response.json({ jsonrpc: '2.0', id, result: { tools: getToolDefinitions() } });
@@ -72,6 +74,15 @@ export async function POST(req: NextRequest) {
           jsonrpc: '2.0', id,
           result: { content: [{ type: 'text', text: typeof toolResult === 'string' ? toolResult : JSON.stringify(toolResult) }] },
         });
+      }
+      case 'prompts/list':
+        return Response.json({ jsonrpc: '2.0', id, result: { prompts: getPromptDefinitions() } });
+      case 'prompts/get': {
+        const { name, arguments: args } = params || {};
+        if (!name) return Response.json({ jsonrpc: '2.0', id, error: { code: -32602, message: 'Missing prompt name' } }, { status: 400 });
+        const promptResult = getPrompt(name, args || {});
+        if (!promptResult) return Response.json({ jsonrpc: '2.0', id, error: { code: -32602, message: `Unknown prompt: ${name}` } }, { status: 404 });
+        return Response.json({ jsonrpc: '2.0', id, result: promptResult });
       }
       default:
         return Response.json({ jsonrpc: '2.0', id, error: { code: -32601, message: `Method not found: ${method}` } }, { status: 404 });

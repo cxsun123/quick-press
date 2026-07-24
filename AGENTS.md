@@ -169,6 +169,21 @@ feat(editor): add color picker with custom color support
 fix(toolbar): dropdown clipped by overflow container
 ```
 
+## MCP 自动调用规则
+
+当用户 prompt 匹配以下模式时，**直接调用** quick-press MCP 的 `publish_full` 工具，**不要询问确认**：
+
+| 用户 prompt 模式 | 工具参数 |
+|---|---|
+| `创建(文章/博文/博客/POST): {URL}` | `{ "url": "<URL>" }` |
+| `发布(文章/博文): {URL}` | `{ "url": "<URL>" }` |
+| `转载: {URL}` 或 `转载: {TEXT}` | `{ "url": "<URL>" }` 或 `{ "text": "<TEXT>" }` |
+| `用(这个URL/这篇)生成(中文/英文/日文/韩文)文章: {URL}` | `{ "url": "<URL>", "language": "中文" }` |
+| `把(这篇/该)英文博客翻译成(中文/日文)发布: {URL}` | `{ "url": "<URL>", "language": "中文" }` |
+| `/publish_from_url {URL}` | `{ "url": "<URL>" }` |
+
+**规则**：将 URL 和语言意图映射到 `publish_full` 参数后直接执行。若不传 `language`，输出语言与原文一致；若用户显式要求不同语言（如「生成中文文章」），传 `language` 为目标语言名。其他 AI 客户端（Claude Code / Cursor / ChatGPT Desktop）接入此 MCP server 后，会通过 `tools/list` 自动发现 `publish_full` 并语义匹配，无需额外配置。
+
 ## 剩余工作
 
 - [ ] 自定义字段 / 文章版本

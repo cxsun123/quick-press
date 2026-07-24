@@ -121,7 +121,7 @@ Expected output: two buckets — `media` and `themes`.
 1. Go to <https://vercel.com>, sign up and log in.
 2. Click **Add New → Project**, import the quick-press repository from GitHub.
 3. **Select the Region** — in **Project Settings → Functions**, set **Function Region** to the **same region** as your Supabase project (e.g. `Singapore (sin1)`). This keeps your database queries fast.
-4. In the **Environment Variables** section, add the three Supabase variables from Step 2, plus `SEARXNG_URL` (a public SearXNG instance from <https://searx.space/>, e.g. `https://searx.tiekoetter.com`) used by `publish_full` for cover image search fallback.
+4. In the **Environment Variables** section, add the three Supabase variables from Step 2.
 5. Deploy.
 
 ### First-Time Setup
@@ -253,7 +253,7 @@ Edit `opencode.json` (project-level) or `~/.opencode/opencode.json` (global):
 }
 ```
 
-> **`publish_full` cover image fallback** uses [SearXNG](https://searxng.org/) for image search. Set the `SEARXNG_URL` environment variable on the **server** (`.env.local` for local dev, or Vercel project env for production) to a public instance from <https://searx.space/>, e.g. `SEARXNG_URL=https://searx.tiekoetter.com`. If unset, cover image falls back to the page's `og:image` / first content image only.
+> **`publish_full` cover image search** uses [SearXNG](https://searxng.org/) for image search. Configure SearXNG instance URLs in **Admin → Settings → Image Search** (comma-separated for fallback). Leave empty to skip cover image search. If no search URL is configured, cover falls back to the page's `og:image` / first content image only.
 
 #### Supported MCP Tools
 
@@ -269,6 +269,31 @@ Edit `opencode.json` (project-level) or `~/.opencode/opencode.json` (global):
 | `get_stats` | Get blog statistics (post/comment counts) |
 | `upload_media` | Upload an image (from URL or base64, auto-compress) |
 | `extract_summary` | Extract summary & keywords from text via AI |
+
+#### Automatic Triggering (One-Click Publish)
+
+Once an AI client (opencode / Claude Code / Cursor / ChatGPT Desktop) is connected to this MCP server, it **auto-discovers** the `publish_full` tool via `tools/list`. The tool's description contains trigger keywords (create / publish / 文章 / 博文 / POST / URL), so you can trigger it with **natural language** — just include a URL and the intent to publish. No extra configuration needed.
+
+| Natural language prompt | Effect |
+|---|---|
+| `Publish this article: https://...` | Rewrite + publish (same language as source) |
+| `Create a post from this URL: https://...` | Same as above |
+| `Generate a Chinese article from this: https://...` | Rewrite into Chinese |
+| `Translate and publish this in Japanese: https://...` | Rewrite into Japanese |
+| `用这个URL生成中文文章: https://...` | Rewrite into Chinese (same behavior) |
+| `/publish_from_url https://...` | MCP Prompt — deterministic named entry |
+
+**Specifying the output language.** By default the published article keeps the source language. To override, tell the agent the target language (e.g. "中文", "English", "日本語", "한국어") — the agent then calls `publish_full` with the `language` argument:
+
+```
+Tool: publish_full
+Arguments: {
+  "url": "https://example.com/article",
+  "language": "中文"
+}
+```
+
+Any AI model understands natural language names, so no language-code enum is required.
 
 #### Usage Examples
 
