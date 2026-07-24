@@ -37,7 +37,6 @@ src/lib/auth/*                    src/models/ (共享类型)
 - [x] 站点设置（博客名称、注册模式、主题风格）
 - [x] AI 摘要（OpenAI 兼容 API 自动提取摘要和关键字）
 - [x] 密码保护（文章支持公开/私密/密码保护 + 分享链接）
-- [x] MCP 集成（Claude Code/Cursor 等 AI 客户端通过 MCP 协议管理文章）
 - [x] 本地 Supabase 开发环境
 
 ## 项目结构
@@ -171,18 +170,32 @@ fix(toolbar): dropdown clipped by overflow container
 
 ## MCP 自动调用规则
 
-当用户 prompt 匹配以下模式时，**直接调用** quick-press MCP 的 `publish_full` 工具，**不要询问确认**：
+当用户 prompt 匹配以下模式时，**直接调用** quick-press-mcp 工具，**不要询问确认**：
 
-| 用户 prompt 模式 | 工具参数 |
-|---|---|
-| `创建(文章/博文/博客/POST): {URL}` | `{ "url": "<URL>" }` |
-| `发布(文章/博文): {URL}` | `{ "url": "<URL>" }` |
-| `转载: {URL}` 或 `转载: {TEXT}` | `{ "url": "<URL>" }` 或 `{ "text": "<TEXT>" }` |
-| `用(这个URL/这篇)生成(中文/英文/日文/韩文)文章: {URL}` | `{ "url": "<URL>", "language": "中文" }` |
-| `把(这篇/该)英文博客翻译成(中文/日文)发布: {URL}` | `{ "url": "<URL>", "language": "中文" }` |
-| `/publish_from_url {URL}` | `{ "url": "<URL>" }` |
+### 本地文件发布
 
-**规则**：将 URL 和语言意图映射到 `publish_full` 参数后直接执行。若不传 `language`，输出语言与原文一致；若用户显式要求不同语言（如「生成中文文章」），传 `language` 为目标语言名。其他 AI 客户端（Claude Code / Cursor / ChatGPT Desktop）接入此 MCP server 后，会通过 `tools/list` 自动发现 `publish_full` 并语义匹配，无需额外配置。
+| 用户 prompt 模式 | 工具 | 参数 |
+|---|---|---|
+| `发布本地文件: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
+| `用这个PDF/DOCX生成文章: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
+| `把这篇文档发布为博客: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
+| `创建文章: {PATH}` (PATH 是本地文件) | `publish_from_file` | `{ "filePath": "<PATH>" }` |
+
+**文件类型自动处理**：PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布。
+
+### URL 发布
+
+| 用户 prompt 模式 | 工具 | 参数 |
+|---|---|---|
+| `创建文章: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
+| `发布文章: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
+| `转载: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
+| `用这篇生成中文文章: {URL}` | `publish_full` | `{ "url": "<URL>", "language": "中文" }` |
+| `把英文博客翻译成中文发布: {URL}` | `publish_full` | `{ "url": "<URL>", "language": "中文" }` |
+
+**规则**：判断 PATH 是本地文件还是 URL，选择对应工具。若用户显式要求不同语言，传 `language` 参数。
+
+**重要**：对于 PDF/DOCX/PPT 等文件，直接调用 `publish_from_file` + `filePath`，不要尝试 `pdftotext`、`python3` 等命令行工具。MCP 工具已内置文件解析。
 
 ## 剩余工作
 

@@ -21,9 +21,11 @@ const EXT_TYPE_MAP: Record<string, FileType> = {
   '.ppt': 'PPT', '.pptx': 'PPT',
 };
 
-const TEXT_EXTENSIONS = new Set(['.md', '.markdown', '.html', '.htm', '.txt']);
-const MAX_TEXT_SIZE = 500 * 1024;          // 500KB
-const MAX_BINARY_SIZE = 3 * 1024 * 1024;  // 3MB
+const TEXT_EXTENSIONS = new Set(['.md', '.markdown', '.txt']);
+const HTML_EXTENSIONS = new Set(['.html', '.htm']);
+const MAX_HTML_SIZE = 2 * 1024 * 1024;          // 2MB (HTML structure-heavy)
+const MAX_TEXT_SIZE = 500 * 1024;               // 500KB (MD/TXT are pure text)
+const MAX_BINARY_SIZE = 3 * 1024 * 1024;       // 3MB
 export const MAX_TEXT_LENGTH = 100_000;    // 100K chars (export for MCP handler)
 
 // ---- Magic Bytes Detection ----
@@ -207,9 +209,10 @@ const NO_REWRITE_EXTENSIONS = new Set(['.md', '.txt', '.html', '.htm']);
 
 export async function parseFile(buffer: Buffer, fileName: string): Promise<ParseResult> {
   const ext = path.extname(fileName).toLowerCase();
-  const maxSize = TEXT_EXTENSIONS.has(ext) ? MAX_TEXT_SIZE : MAX_BINARY_SIZE;
+  const maxSize = HTML_EXTENSIONS.has(ext) ? MAX_HTML_SIZE : TEXT_EXTENSIONS.has(ext) ? MAX_TEXT_SIZE : MAX_BINARY_SIZE;
   if (buffer.length > maxSize) {
-    throw new Error(`文件过大: ${(buffer.length / 1024 / 1024).toFixed(1)}MB，${ext} 类型上限 ${maxSize === MAX_TEXT_SIZE ? '500KB' : '3MB'}`);
+    const limit = HTML_EXTENSIONS.has(ext) ? '2MB' : TEXT_EXTENSIONS.has(ext) ? '500KB' : '3MB';
+    throw new Error(`文件过大: ${(buffer.length / 1024 / 1024).toFixed(1)}MB，${ext} 类型上限 ${limit}`);
   }
 
   const type = detectFileType(fileName, buffer);

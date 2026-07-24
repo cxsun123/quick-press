@@ -226,110 +226,11 @@ admin 登录后可在 **管理后台 → 设置** 中修改：
 
 ### MCP 集成
 
-quick-press 支持 [Model Context Protocol (MCP)](https://modelcontextprotocol.io)，允许 AI 客户端通过 MCP 协议管理文章。
+AI 客户端通过本地 **MCP Client** 连接，读取本地文件并转发请求。
 
-#### 获取 MCP Key
+安装和配置见：**[github.com/cxsun123/quick-press-mcp](https://github.com/cxsun123/quick-press-mcp)**
 
-在 **管理后台 → 设置 → MCP API Key** 中生成 Key。
-
-#### 配置 opencode / Claude Code
-
-编辑项目根目录 `opencode.json` 或全局 `~/.opencode/opencode.json`：
-
-```json
-{
-  "mcp": {
-    "quick-press": {
-      "enabled": true,
-      "type": "remote",
-      "url": "https://your-domain.com/api/mcp",
-      "oauth": false,
-      "headers": {
-        "Authorization": "Bearer sk-mcp-xxxxxxxxxxxx"
-      }
-    }
-  }
-}
-```
-
-> **`publish_full` 封面图回退** 使用 [SearXNG](https://searxng.org/) 进行图片搜索。请在**服务端**设置环境变量 `SEARXNG_URL`（本地为 `.env.local`，生产环境为 Vercel 项目变量），取值从 <https://searx.space/> 选取公共实例，例如 `SEARXNG_URL=https://searx.tiekoetter.com`。若未设置，封面图仅回退到页面的 `og:image` / 正文首图。
-
-#### 支持的 MCP 工具
-
-| 工具 | 功能 |
-|------|------|
-| `publish_full` | **一键发布** — 给一个 URL，AI 自动改写文章、提取摘要/关键词、匹配分类/标签、上传封面图、发布 |
-| `create_draft` | 创建文章草稿 |
-| `publish_post` | 发布或更新文章 |
-| `list_posts` | 查看所有文章（按状态/可见度筛选） |
-| `get_post` | 获取文章详情 |
-| `delete_post` | 删除文章 |
-| `search_posts` | 搜索文章 |
-| `get_stats` | 获取博客统计（文章数/评论数） |
-| `upload_media` | 上传图片（支持 URL 或 base64，自动压缩） |
-| `extract_summary` | AI 从文本中提取摘要和关键词 |
-
-#### 自动触发（一键发布）
-
-AI 客户端（opencode / Claude Code / Cursor / ChatGPT Desktop）接入此 MCP server 后，会通过 `tools/list` **自动发现** `publish_full` 工具。工具描述里已包含触发词（创建 / 发布 / 转载 / 文章 / 博文 / POST / URL），因此你只需用**自然语言**描述意图即可触发——无需额外配置。
-
-| 自然语言 prompt | 效果 |
-|---|---|
-| `发布这篇文章: https://...` | AI 改写并发布（语言与原文一致） |
-| `用这个URL生成中文文章: https://...` | 中文输出（覆盖原文语言） |
-| `把这篇英文博客翻译成日文发布: https://...` | 日文输出 |
-| `转载这篇文章: https://...` | 改写并发布 |
-| `/publish_from_url https://...` | MCP Prompt 命名入口（确定性触发） |
-
-**指定新文章语言。** 默认输出语言与原文一致。若要覆盖，直接告诉 Agent 目标语言（如 `中文`、`English`、`日本語`、`한국어`），Agent 会向 `publish_full` 传入 `language` 参数：
-
-```
-工具: publish_full
-参数: {
-  "url": "https://example.com/article",
-  "language": "中文"
-}
-```
-
-AI 模型本身理解自然语言语种名，无需枚举语言码。
-
-#### 使用示例
-
-**给定 URL 一键发布：**
-```
-工具: publish_full
-参数: {
-  "url": "https://mp.weixin.qq.com/s/xxxxx",
-  "visibility": "public"
-}
-```
-
-AI 会自动完成：
-1. 抓取并清洗文章 HTML
-2. 根据原文撰写新文章，提取标题、摘要、关键词
-3. 自动匹配已有分类和标签，无匹配时给出建议
-4. 下载封面图（从 og:image）、压缩后上传
-5. 发布文章
-
-**直接发布文本（跳过 AI 改写）：**
-```
-工具: publish_full
-参数: {
-  "text": "Markdown 格式的正文...",
-  "title": "文章标题",
-  "skipRewrite": true
-}
-```
-
-**指定封面图发布：**
-```
-工具: publish_full
-参数: {
-  "url": "https://example.com/article",
-  "imageUrl": "https://example.com/cover.jpg",
-  "visibility": "public"
-}
-```
+> `publish_full` 封面图搜索使用 [SearXNG](https://searxng.org/)。在 **管理后台 → 设置 → Image Search** 中配置实例地址（逗号分隔）。未设置时回退到 `og:image` / 正文首图。
 
 ### 文章可见度
 

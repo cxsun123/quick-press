@@ -227,111 +227,11 @@ Switch themes or upload custom CSS in **Admin → Themes**.
 
 ### MCP Integration
 
-quick-press supports the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), allowing AI clients to manage posts over MCP.
+AI clients connect through a local **MCP Client** that reads local files and forwards requests.
 
-#### Get an MCP Key
+Install and configure from: **[github.com/cxsun123/quick-press-mcp](https://github.com/cxsun123/quick-press-mcp)**
 
-Generate a key in **Admin → Settings → MCP API Key**.
-
-#### Configure in opencode / Claude Code
-
-Edit `opencode.json` (project-level) or `~/.opencode/opencode.json` (global):
-
-```json
-{
-  "mcp": {
-    "quick-press": {
-      "enabled": true,
-      "type": "remote",
-      "url": "https://your-domain.com/api/mcp",
-      "oauth": false,
-      "headers": {
-        "Authorization": "Bearer sk-mcp-xxxxxxxxxxxx"
-      }
-    }
-  }
-}
-```
-
-> **`publish_full` cover image search** uses [SearXNG](https://searxng.org/) for image search. Configure SearXNG instance URLs in **Admin → Settings → Image Search** (comma-separated for fallback). Leave empty to skip cover image search. If no search URL is configured, cover falls back to the page's `og:image` / first content image only.
-
-#### Supported MCP Tools
-
-| Tool | Description |
-|---|---|
-| `publish_full` | **One-click publish** — give a URL, AI auto-rewrites, extracts summary/keywords, matches categories/tags, uploads cover image, publishes |
-| `create_draft` | Create a post draft |
-| `publish_post` | Publish or update a post |
-| `list_posts` | List all posts (filterable by status/visibility) |
-| `get_post` | Get post details by ID |
-| `delete_post` | Delete a post permanently |
-| `search_posts` | Search posts by keyword |
-| `get_stats` | Get blog statistics (post/comment counts) |
-| `upload_media` | Upload an image (from URL or base64, auto-compress) |
-| `extract_summary` | Extract summary & keywords from text via AI |
-
-#### Automatic Triggering (One-Click Publish)
-
-Once an AI client (opencode / Claude Code / Cursor / ChatGPT Desktop) is connected to this MCP server, it **auto-discovers** the `publish_full` tool via `tools/list`. The tool's description contains trigger keywords (create / publish / 文章 / 博文 / POST / URL), so you can trigger it with **natural language** — just include a URL and the intent to publish. No extra configuration needed.
-
-| Natural language prompt | Effect |
-|---|---|
-| `Publish this article: https://...` | Rewrite + publish (same language as source) |
-| `Create a post from this URL: https://...` | Same as above |
-| `Generate a Chinese article from this: https://...` | Rewrite into Chinese |
-| `Translate and publish this in Japanese: https://...` | Rewrite into Japanese |
-| `用这个URL生成中文文章: https://...` | Rewrite into Chinese (same behavior) |
-| `/publish_from_url https://...` | MCP Prompt — deterministic named entry |
-
-**Specifying the output language.** By default the published article keeps the source language. To override, tell the agent the target language (e.g. "中文", "English", "日本語", "한국어") — the agent then calls `publish_full` with the `language` argument:
-
-```
-Tool: publish_full
-Arguments: {
-  "url": "https://example.com/article",
-  "language": "中文"
-}
-```
-
-Any AI model understands natural language names, so no language-code enum is required.
-
-#### Usage Examples
-
-**One-click publish from a URL:**
-```
-Tool: publish_full
-Arguments: {
-  "url": "https://example.com/some-article",
-  "visibility": "public"
-}
-```
-
-The AI will automatically:
-1. Fetch and clean the article HTML
-2. Rewrite the content and extract title, summary, keywords
-3. Match or create categories and tags from your existing ones
-4. Download and upload the cover image (from og:image)
-5. Publish the post
-
-**Publish with custom cover image:**
-```
-Tool: publish_full
-Arguments: {
-  "url": "https://example.com/article",
-  "imageUrl": "https://example.com/cover.jpg",
-  "visibility": "public"
-}
-```
-
-**Publish raw text directly (skip AI rewrite):**
-```
-Tool: publish_full
-Arguments: {
-  "text": "Article content in markdown...",
-  "title": "My Article Title",
-  "skipRewrite": true
-}
-```
+> `publish_full` cover image search uses [SearXNG](https://searxng.org/). Configure instances in **Admin → Settings → Image Search** (comma-separated). Falls back to `og:image` / first content image if unset.
 
 ### Post Visibility
 

@@ -130,39 +130,46 @@ const TOOL_DEFINITIONS = [
   {
     name: 'publish_full',
     description:
-      'One-click publish. Use this whenever the user wants to 创建/发布/转载/重写 a 文章/博文/博客/POST from a URL or text. ' +
-      'AI auto-rewrites the article, extracts summary/keywords, matches categories/tags from existing ones, uploads the cover image, and publishes. ' +
-      'Arguments: url (article link) or text (raw content). Optional language to override the output language.',
+      'One-click publish from URL or text. 从 URL 或文本一键发布文章。' +
+      'When user says 创建文章/发布文章/转载/重写: use this tool with url or text. ' +
+      '当用户说「创建文章」「发布文章」「转载」「用这篇生成中文文章」时使用此工具。' +
+      'AI auto-rewrites, extracts summary/keywords, matches categories/tags, uploads cover image, and publishes.',
     inputSchema: {
       type: 'object',
       properties: {
-        url: { type: 'string', description: 'Article URL to fetch and rewrite' },
-        text: { type: 'string', description: 'Raw text to rewrite into article' },
+        url: { type: 'string', description: 'Article URL to fetch and rewrite / 文章链接' },
+        text: { type: 'string', description: 'Raw text to rewrite into article / 原始文本' },
         visibility: { type: 'string', enum: ['public', 'private', 'password'], description: 'Post visibility (default: public)' },
-        imageUrl: { type: 'string', description: 'Direct image URL to use as cover (e.g. from original article)' },
-        imageQuery: { type: 'string', description: 'Keywords to search for cover image' },
+        imageUrl: { type: 'string', description: 'Direct image URL to use as cover' },
+        imageQuery: { type: 'string', description: 'Keywords to search for cover image / 封面图搜索关键词' },
         imageCount: { type: 'number', description: 'Number of images to search (1-3, default 1)' },
-        skipRewrite: { type: 'boolean', description: 'Skip AI rewrite, use provided text directly' },
-        language: { type: 'string', description: 'Output language for the published article. Default (auto/omitted): same language as the source. Override with e.g. "中文", "English", "日本語", "한국어" when the user explicitly requests a different language.' },
+        skipRewrite: { type: 'boolean', description: 'Skip AI rewrite / 跳过 AI 重写' },
+        language: { type: 'string', description: 'Output language, e.g. "中文", "English" / 输出语言' },
       },
     },
   },
   {
     name: 'publish_from_file',
     description:
-      'Publish article from local file content. AI client reads local file, base64-encodes, sends here. ' +
-      'Supported: MD/HTML/TXT (skip rewrite by default) and PDF/DOC/DOCX/ODT/RTF/PPT/PPTX (AI rewrite by default).',
+      'Publish article from local file. 从本地文件发布文章。' +
+      'Built-in file parsing — just provide the filePath, no need to extract text manually. ' +
+      '工具内置文件解析能力，无需手动提取文本，只需要提供文件路径即可。' +
+      'When user says 发布文件/用PDF生成文章/把文档发布为博客: use this tool with filePath. ' +
+      '当用户说「发布文件」「用PDF生成文章」「把这篇文档发布为博客」时使用此工具。' +
+      'Do NOT use pdftotext or python3 — this tool handles file parsing internally. ' +
+      '不要尝试 pdftotext 或 python3 等命令行工具，此工具已内置文件解析。' +
+      'Supported: PDF, DOC, DOCX, PPT, PPTX, ODT, RTF, MD, HTML, TXT.',
     inputSchema: {
       type: 'object',
       properties: {
-        fileContent: { type: 'string', description: 'File content (base64 encoded)' },
-        fileName: { type: 'string', description: 'Filename with extension, e.g. article.pdf' },
+        fileContent: { type: 'string', description: 'File content (base64) — auto-filled if filePath provided' },
+        fileName: { type: 'string', description: 'Filename with extension — auto-filled if filePath provided' },
         visibility: { type: 'string', enum: ['public', 'private', 'password'], description: 'Post visibility (default: public)' },
         imageUrl: { type: 'string', description: 'Direct image URL to use as cover' },
-        imageQuery: { type: 'string', description: 'Keywords to search for cover image' },
+        imageQuery: { type: 'string', description: 'Keywords to search for cover image / 封面图搜索关键词' },
         imageCount: { type: 'number', description: 'Number of images to search (1-3, default 1)' },
-        skipRewrite: { type: 'boolean', description: 'Skip AI rewrite. Default: MD/TXT/HTML = true, others = false' },
-        language: { type: 'string', description: 'Output language for the published article.' },
+        skipRewrite: { type: 'boolean', description: 'Skip AI rewrite / 跳过 AI 重写' },
+        language: { type: 'string', description: 'Output language / 输出语言' },
       },
       required: ['fileContent', 'fileName'],
     },
