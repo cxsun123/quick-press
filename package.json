@@ -14,7 +14,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@chengxinsun26/editor": "^0.3.11",
+    "@chengxinsun26/editor": "^0.3.12",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/ssr": "^0.12.1",
     "@supabase/supabase-js": "^2.110.5",
