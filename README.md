@@ -234,7 +234,27 @@ AI clients connect through a local **MCP Client** that reads local files and for
 
 Install and configure from: **[github.com/cxsun123/quick-press-mcp](https://github.com/cxsun123/quick-press-mcp)**
 
-> `publish_full` cover image search uses [SearXNG](https://searxng.org/). Configure instances in **Admin → Settings → Image Search** (comma-separated). Falls back to `og:image` / first content image if unset.
+#### Agent Configuration
+
+To let your AI agent (Claude Code / Cursor / OpenCode) publish articles via MCP, add these instructions to your agent's rules file (`AGENTS.md`, `.cursorrules`, or `CLAUDE.md`):
+
+```markdown
+## quick-press MCP — Article Publishing
+
+When the user asks to publish an article from a URL or local file, use the
+`publish` MCP tool directly. DO NOT fetch the URL yourself — the tool
+handles fetching and AI rewriting internally.
+
+- URL → publish({url: "<URL>"})
+- Local file (PDF/DOCX/MD etc.) → publish({filePath: "<PATH>"})
+- Specify language → publish({url: "<URL>", language: "中文"})
+
+The `source_type` field is auto-detected from url/filePath. Supported
+file types: PDF, DOC, DOCX, ODT, RTF, PPT, PPTX → AI rewrite;
+MD, HTML, TXT → publish as-is.
+```
+
+> Cover image search uses [SearXNG](https://searxng.org/). Configure instances in **Admin → Settings → Image Search** (comma-separated). Falls back to `og:image` / first content image if unset.
 
 ### Post Visibility
 

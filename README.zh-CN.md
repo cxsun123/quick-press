@@ -233,7 +233,25 @@ AI 客户端通过本地 **MCP Client** 连接，读取本地文件并转发请�
 
 安装和配置见：**[github.com/cxsun123/quick-press-mcp](https://github.com/cxsun123/quick-press-mcp)**
 
-> `publish_full` 封面图搜索使用 [SearXNG](https://searxng.org/)。在 **管理后台 → 设置 → Image Search** 中配置实例地址（逗号分隔）。未设置时回退到 `og:image` / 正文首图。
+#### Agent 配置
+
+要让 AI 代理（Claude Code / Cursor / OpenCode）通过 MCP 发布文章，在代理的规则文件（`AGENTS.md` / `.cursorrules` / `CLAUDE.md`）中添加以下指令：
+
+```markdown
+## quick-press MCP — 文章发布
+
+当用户要求从 URL 或本地文件发布文章时，直接调用 `publish` MCP 工具。
+不要自己抓取 URL 内容 — 工具内置抓取和 AI 重写。
+
+- URL → publish({url: "<URL>"})
+- 本地文件（PDF/DOCX/MD 等）→ publish({filePath: "<PATH>"})
+- 指定语言 → publish({url: "<URL>", language: "中文"})
+
+`source_type` 根据 url/filePath 自动判断。支持的文件类型：
+PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布。
+```
+
+> 封面图搜索使用 [SearXNG](https://searxng.org/)。在 **管理后台 → 设置 → Image Search** 中配置实例地址（逗号分隔）。未设置时回退到 `og:image` / 正文首图。
 
 ### 文章可见度
 
