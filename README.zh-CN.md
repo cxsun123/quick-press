@@ -372,6 +372,7 @@ quick-press/
 
 - [开发补充文档](development.md) — 调试指南、数据库迁移、CLI 速查、常见问题
 - [设计文档](design_v0.2.md) — 完整的功能设计与数据模型
+- [AGENTS.md](AGENTS.md) — AI 代理开发指南，包含 MCP 工具调用规则
 
 ### 参考
 

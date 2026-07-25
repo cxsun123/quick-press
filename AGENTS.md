@@ -1,6 +1,7 @@
 # quick-press — 项目指南
 
 基于 Next.js + Supabase + Tiptap 的现代化博客 CMS，对标 WordPress 功能集。
+本项目另有 [README.md](README.md)（中英文部署指南）和 [README.zh-CN.md](README.zh-CN.md)（中文版）。
 
 ## 当前状态 (Phase 1-5 完成，构建通过)
 

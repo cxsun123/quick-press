@@ -371,6 +371,7 @@ quick-press/
 
 - [Development Supplement](development.md) — debugging, database migrations, CLI cheat sheet, FAQ
 - [Design Document](design_v0.2.md) — full feature design and data model
+- [AGENTS.md](AGENTS.md) — AI agent development guide with MCP tool calling rules
 
 ### References
 
