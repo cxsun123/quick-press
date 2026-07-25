@@ -22,13 +22,15 @@ export async function POST(request: Request) {
   console.log('[upload] file:', file.name, file.size, file.type);
 
   let buffer = Buffer.from(await new Response(file.stream()).arrayBuffer());
+  console.log('[upload] raw buffer size:', buffer.length, 'first 8 hex:', buffer.slice(0, 8).toString('hex'));
   let filename = file.name;
   let contentType = file.type;
 
   const maxWidth = parseInt(formData.get('maxWidth') as string, 10) || 800;
+  console.log('[upload] maxWidth:', maxWidth);
   try {
     const metadata = await sharp(buffer).metadata();
-    console.log('[upload] image metadata:', metadata.width, 'x', metadata.height);
+    console.log('[upload] image metadata:', metadata.width, 'x', metadata.height, 'format:', metadata.format);
     if (metadata.width && metadata.width > maxWidth) {
       buffer = await sharp(buffer)
         .resize({ width: maxWidth, withoutEnlargement: true })
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
         .toBuffer();
       filename = filename.replace(/\.[^.]+$/, '.jpg');
       contentType = 'image/jpeg';
-      console.log('[upload] resized to', maxWidth);
+      console.log('[upload] after sharp size:', buffer.length, 'first 8 hex:', buffer.slice(0, 8).toString('hex'));
     }
   } catch (e) {
     console.error('[upload] Image compression failed:', e);
