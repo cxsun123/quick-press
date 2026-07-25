@@ -11,7 +11,7 @@ export async function uploadMedia(formData: FormData): Promise<void> {
   const file = formData.get('file') as File;
   if (!file) throw new Error('请选择文件');
 
-  let buffer = Buffer.from(await file.arrayBuffer());
+  let buffer = Buffer.from(await new Response(file.stream()).arrayBuffer());
   let filename = file.name;
   let contentType = file.type;
   let width: number | null = null;

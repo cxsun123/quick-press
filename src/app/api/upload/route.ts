@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   }
   console.log('[upload] file:', file.name, file.size, file.type);
 
-  let buffer = Buffer.from(await file.arrayBuffer());
+  let buffer = Buffer.from(await new Response(file.stream()).arrayBuffer());
   let filename = file.name;
   let contentType = file.type;
 
