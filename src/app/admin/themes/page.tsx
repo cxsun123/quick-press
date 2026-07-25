@@ -56,7 +56,7 @@ export default function ThemesPage() {
   const handleBgUpload = async () => {
     const file = bgFileRef.current?.files?.[0];
     if (!file) return;
-    if (file.size > 500 * 1024) {
+    if (file.size > 3 * 1024 * 1024) {
       alert(tc('fileTooLarge'));
       if (bgFileRef.current) bgFileRef.current.value = '';
       return;
