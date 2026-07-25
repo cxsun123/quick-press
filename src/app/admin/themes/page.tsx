@@ -65,6 +65,7 @@ export default function ThemesPage() {
     try {
       const form = new FormData();
       form.set('file', file);
+      form.set('maxWidth', '2048');
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
       console.log('[Theme] upload response:', data);

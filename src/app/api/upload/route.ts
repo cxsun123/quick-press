@@ -15,12 +15,13 @@ export async function POST(request: Request) {
   let filename = file.name;
   let contentType = file.type;
 
-  // Compress content image: resize to 800px only if larger
+  // Compress content image: resize only if larger than maxWidth
+  const maxWidth = parseInt(formData.get('maxWidth') as string, 10) || 800;
   try {
     const metadata = await sharp(buffer).metadata();
-    if (metadata.width && metadata.width > 800) {
+    if (metadata.width && metadata.width > maxWidth) {
       buffer = await sharp(buffer)
-        .resize({ width: 800, withoutEnlargement: true })
+        .resize({ width: maxWidth, withoutEnlargement: true })
         .jpeg({ quality: 80, mozjpeg: true })
         .toBuffer();
       filename = filename.replace(/\.[^.]+$/, '.jpg');
