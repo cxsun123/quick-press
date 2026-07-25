@@ -41,7 +41,7 @@ export function MediaPicker({ open, onClose, onSelect }: MediaPickerProps) {
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
       if (data.url) { onSelect(data.url); onClose(); return; }
-      alert(data.error || '上传失败');
+      alert((data.error || '上传失败') + (res.status !== 200 ? ' (' + res.status + ')' : ''));
     } catch (e: any) {
       alert(e.message || '上传失败');
     }
