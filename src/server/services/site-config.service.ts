@@ -15,6 +15,15 @@ export async function updateSiteConfig(key: string, value: string) {
   await configRepo.upsertConfig(key, value);
 }
 
+export async function updateSiteConfigs(data: Record<string, string>) {
+  const items = Object.entries(data).map(([key, value]) => ({ key, value }));
+  await configRepo.upsertConfigs(items);
+}
+
+export async function getAllSiteConfigs(): Promise<Record<string, string>> {
+  return configRepo.findAllConfigs();
+}
+
 export async function getSiteTheme(): Promise<{ mode: string; theme: string }> {
   const map = await configRepo.findThemeConfig();
   return {

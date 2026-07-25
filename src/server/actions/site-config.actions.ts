@@ -16,6 +16,15 @@ export async function updateSiteConfig(key: string, value: string) {
   await siteConfigService.updateSiteConfig(key, value);
 }
 
+export async function updateSiteConfigs(data: Record<string, string>) {
+  await siteConfigService.updateSiteConfigs(data);
+  revalidatePath('/', 'layout');
+}
+
+export async function getAllSiteConfigs(): Promise<Record<string, string>> {
+  return siteConfigService.getAllSiteConfigs();
+}
+
 export async function getSiteTheme(): Promise<{ mode: string; theme: string }> {
   return siteConfigService.getSiteTheme();
 }
@@ -32,6 +41,52 @@ export interface ImageSearchTestResult {
   latencyMs: number;
   message: string;
   needsAnubis: boolean;
+}
+
+export interface AiTestResult {
+  ok: boolean;
+  latencyMs: number;
+  message: string;
+  status: number | null;
+}
+
+export async function testAiConnection(url: string, apiKey: string, model: string): Promise<AiTestResult> {
+  const start = Date.now();
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages: [{ role: 'user', content: 'Hi' }],
+        max_tokens: 10,
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    const latencyMs = Date.now() - start;
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => '');
+      return { ok: false, latencyMs, message: errText.slice(0, 200) || response.statusText, status: response.status };
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    if (content) {
+      return { ok: true, latencyMs, message: '连接正常', status: response.status };
+    }
+    return { ok: true, latencyMs, message: '连接正常（返回格式异常）', status: response.status };
+  } catch (e: any) {
+    const latencyMs = Date.now() - start;
+    const message = e.name === 'TimeoutError' || e.message?.includes('timeout')
+      ? '连接超时'
+      : e.message || '网络错误';
+    return { ok: false, latencyMs, message, status: null };
+  }
 }
 
 export async function testImageSearchUrls(urls: string[]): Promise<ImageSearchTestResult[]> {

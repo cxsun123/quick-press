@@ -19,3 +19,19 @@ export async function upsertConfig(key: string, value: string) {
   const { error } = await supabase.from('site_config').upsert({ key, value }, { onConflict: 'key' });
   if (error) throw new Error(error.message);
 }
+
+export async function upsertConfigs(items: { key: string; value: string }[]) {
+  const supabase = createAdminClient();
+  const { error } = await supabase.from('site_config').upsert(items, { onConflict: 'key' });
+  if (error) throw new Error(error.message);
+}
+
+export async function findAllConfigs(): Promise<Record<string, string>> {
+  const supabase = await createClient();
+  const { data } = await supabase.from('site_config').select('key, value');
+  const map: Record<string, string> = {};
+  for (const row of data || []) {
+    map[row.key] = row.value;
+  }
+  return map;
+}
