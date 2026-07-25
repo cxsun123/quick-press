@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import * as siteConfigService from '@/server/services/site-config.service';
 import { solveAnubisChallenge } from '@/server/utils/anubis';
+import { aiRequest } from '@/server/utils/ai-client';
 
 export async function getSiteConfig(key: string) {
   return siteConfigService.getSiteConfig(key);
@@ -51,41 +52,66 @@ export interface AiTestResult {
 }
 
 export async function testAiConnection(url: string, apiKey: string, model: string): Promise<AiTestResult> {
-  const start = Date.now();
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: 'user', content: 'Hi' }],
-        max_tokens: 10,
-      }),
-      signal: AbortSignal.timeout(15000),
-    });
+    const testText = '人工智能正在改变世界。深度学习让计算机能够识别图像和理解语言，自动驾驶汽车已经上路测试。';
 
-    const latencyMs = Date.now() - start;
+    const prompt = `You are a blog metadata extractor. Extract metadata from the article below. Do NOT rewrite the content.
 
-    if (!response.ok) {
-      const errText = await response.text().catch(() => '');
-      return { ok: false, latencyMs, message: errText.slice(0, 200) || response.statusText, status: response.status };
+## Article Content
+---
+${testText}
+---
+
+## Existing Categories (pick up to 3 best matches first; if none fit, suggest new names)
+(none - suggest new)
+
+## Existing Tags (pick up to 5 best matches first; if none fit, suggest new names)
+(none - suggest new)
+
+## Requirements
+1. summary: One-sentence summary (~100 Chinese characters)
+2. keywords: Extract exactly 5 core keywords
+3. categories: Prefer matching existing categories above. Max 3.
+4. tags: Prefer matching existing tags above. Max 5.
+
+## Output Format
+Return ONLY a valid JSON object. No markdown fences, no extra text.
+Example: {"summary":"...","keywords":["k1","k2","k3","k4","k5"],"categories":["Cat1"],"tags":["Tag1"]}`;
+
+    const { text: content, latencyMs } = await aiRequest(url, apiKey, model, {
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 2000,
+      reasoning_effort: 'high',
+      stream: false,
+      thinking: { type: 'disabled' },
+    }, AbortSignal.timeout(30000));
+
+    if (!content) {
+      return { ok: false, latencyMs, message: '结果解析失败', status: null };
     }
 
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    if (content) {
-      return { ok: true, latencyMs, message: '连接正常', status: response.status };
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try { parsed = JSON.parse(jsonMatch[0]); } catch {}
+      }
     }
-    return { ok: true, latencyMs, message: '连接正常（返回格式异常）', status: response.status };
+
+    if (parsed && (parsed.summary || parsed.keywords || parsed.categories || parsed.tags)) {
+      return { ok: true, latencyMs, message: '连接正常', status: null };
+    }
+
+    return { ok: false, latencyMs, message: '结果解析失败', status: null };
   } catch (e: any) {
-    const latencyMs = Date.now() - start;
+    const latencyMs = typeof e.latencyMs === 'number' ? e.latencyMs : 0;
+    const status = typeof e.status === 'number' ? e.status : null;
     const message = e.name === 'TimeoutError' || e.message?.includes('timeout')
       ? '连接超时'
-      : e.message || '网络错误';
-    return { ok: false, latencyMs, message, status: null };
+      : e.message || 'AI 连接不通';
+    return { ok: false, latencyMs, message, status };
   }
 }
 

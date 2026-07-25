@@ -5,6 +5,7 @@ import { slugify, ensureUniqueSlug } from '@/server/utils/slug';
 import * as postRepo from '@/server/repositories/post.repository';
 import { extractSummary } from './ai.service';
 import * as configService from './site-config.service';
+import { aiRequest } from '@/server/utils/ai-client';
 import sharp from 'sharp';
 import { parseFile, convertHtmlToMarkdown, extractCoverFromContent } from '@/server/utils/file-parser';
 import { solveAnubisChallenge } from '@/server/utils/anubis';
@@ -911,32 +912,11 @@ Schema:
   "keywords": ["Keyword1", "Keyword2", "Keyword3", "Keyword4", "Keyword5"]
 }`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      max_tokens: 20000,
-      reasoning_effort: 'none',
-    }),
-    signal: AbortSignal.timeout(180000),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text().catch(() => '');
-    console.error(`[aiRewrite] ERROR body: ${errText.slice(0, 500)}`);
-    throw new Error(`AI API 返回错误 (${response.status}): ${errText.slice(0, 200)}`);
-  }
-
-  const data = await response.json();
-  let text = '';
-  const msg = data.choices?.[0]?.message;
-  // Prefer content over reasoning_content (thinking process)
-  if (msg?.content) text = msg.content;
-  if (!text && msg?.reasoning_content) text = msg.reasoning_content;
-  if (!text && data.choices?.[0]?.text) text = data.choices[0].text;
+  const { text } = await aiRequest(url, apiKey, model, {
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.7,
+    max_tokens: 20000,
+  }, AbortSignal.timeout(180000));
 
   if (!text) throw new Error('AI 返回为空（content 和 reasoning_content 均为空，请增大 max_tokens 或减少输入长度）');
 
@@ -1026,30 +1006,12 @@ ${formatInstruction}
 Return ONLY a valid JSON object. No markdown fences, no extra text.
 ${fileType === 'text' ? 'Example: {"summary":"...","keywords":["k1","k2","k3","k4","k5"],"categories":["Cat1"],"tags":["Tag1"],"formattedContent":"## Section 1\\n\\nContent..."}' : 'Example: {"summary":"...","keywords":["k1","k2","k3","k4","k5"],"categories":["Cat1"],"tags":["Tag1"]}'}`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      max_tokens: 8000,
-      reasoning_effort: 'none',
-    }),
-    signal: AbortSignal.timeout(60000),
-  });
+  const { text } = await aiRequest(url, apiKey, model, {
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.3,
+    max_tokens: 8000,
+  }, AbortSignal.timeout(60000));
 
-  if (!response.ok) {
-    const errText = await response.text().catch(() => '');
-    throw new Error(`AI API 返回错误 (${response.status}): ${errText.slice(0, 200)}`);
-  }
-
-  const data = await response.json();
-  let text = '';
-  const msg = data.choices?.[0]?.message;
-  if (msg?.content) text = msg.content;
-  if (!text && msg?.reasoning_content) text = msg.reasoning_content;
-  if (!text && data.choices?.[0]?.text) text = data.choices[0].text;
   if (!text) throw new Error('AI 返回为空');
 
   // Parse JSON from AI response

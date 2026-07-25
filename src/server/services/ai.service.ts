@@ -1,5 +1,6 @@
 import 'server-only';
 import * as configService from './site-config.service';
+import { aiRequest } from '@/server/utils/ai-client';
 
 const PROMPT_TEMPLATE = `Extract the summary and keywords from the article below.
 
@@ -52,46 +53,13 @@ export async function extractSummary(content: string): Promise<{ summary: string
   const truncated = content.length > maxLen ? content.slice(0, maxLen) + '...' : content;
   const prompt = PROMPT_TEMPLATE.replace('CONTENT_PLACEHOLDER', truncated);
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.3,
-      max_tokens: 2048,
-    }),
-    signal: AbortSignal.timeout(30000),
-  });
+  const { text } = await aiRequest(url, apiKey, model, {
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.3,
+    max_tokens: 2048,
+  }, AbortSignal.timeout(30000));
 
-  if (!response.ok) {
-    const errText = await response.text().catch(() => '');
-    throw new Error(`AI API 返回错误 (${response.status}): ${errText.slice(0, 200)}`);
-  }
-
-  const data = await response.json();
-
-  // Handle different response formats (OpenAI, DeepSeek, etc.)
-  let text = '';
-  const msg = data.choices?.[0]?.message;
-  if (msg?.content) {
-    text = msg.content;
-  } else if (msg?.reasoning_content) {
-    // DeepSeek R1-style: reasoning content is the actual response when content is empty
-    text = msg.reasoning_content;
-  } else if (data.choices?.[0]?.text) {
-    text = data.choices[0].text;
-  } else if (data.response) {
-    text = typeof data.response === 'string' ? data.response : JSON.stringify(data.response);
-  }
-
-  if (!text) {
-    console.error('[AI Debug] Raw response:', JSON.stringify(data).slice(0, 500));
-    throw new Error('AI 返回为空，请检查模型配置');
-  }
+  if (!text) throw new Error('AI 返回为空，请检查模型配置');
 
   // Extract JSON from response - handle potential markdown code blocks or reasoning content
   const jsonMatch = text.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/) || text.match(/\{[\s\S]*\}/);
