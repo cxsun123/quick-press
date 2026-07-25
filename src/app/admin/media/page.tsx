@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
-import { uploadMedia, deleteMedia, listMedia } from '@/server/actions/media.actions';
+import { deleteMedia, listMedia } from '@/server/actions/media.actions';
 import { createClient } from '@/lib/supabase/client';
 
 interface MediaItem {
@@ -32,7 +32,9 @@ export default function MediaPage() {
     try {
       const form = new FormData();
       form.set('file', file);
-      await uploadMedia(form);
+      const res = await fetch('/api/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!data.url) { alert(data.error || '上传失败'); return; }
       load();
     } catch (err: any) {
       alert(err.message || 'Upload failed');
