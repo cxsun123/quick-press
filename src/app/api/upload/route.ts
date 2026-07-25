@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
   console.log('[upload] uploading to storage, buffer size:', buffer.length, 'first 8 hex:', buffer.slice(0, 8).toString('hex'));
   const adminSupabase = createAdminClient();
-  const { error: uploadError } = await adminSupabase.storage.from('media').upload(path, buffer, { contentType });
+  const { error: uploadError } = await adminSupabase.storage.from('media').upload(path, new Blob([buffer], { type: contentType }), { contentType });
   if (uploadError) {
     console.error('[upload] storage upload error:', uploadError);
     return NextResponse.json({ error: uploadError.message }, { status: 500 });
