@@ -1,4 +1,4 @@
-import { createClient } from '@/server/db/client';
+import { createClient, createAdminClient } from '@/server/db/client';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
 
@@ -47,40 +47,16 @@ export async function POST(request: Request) {
   const ext = filename.split('.').pop() || 'bin';
   const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   console.log('[upload] uploading to storage, buffer size:', buffer.length, 'first 8 hex:', buffer.slice(0, 8).toString('hex'));
-  const uploadForm = new FormData();
-  uploadForm.append('', new File([new Uint8Array(buffer)], filename, { type: contentType }));
-  const uploadRes = await fetch(
-    `${supabaseUrl}/storage/v1/object/media/${path}`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${serviceKey}`,
-      },
-      body: uploadForm,
-      // @ts-ignore
-      duplex: 'half',
-    }
-  );
-  if (!uploadRes.ok) {
-    const errText = await uploadRes.text();
-    console.error('[upload] storage upload error:', uploadRes.status, errText);
-    return NextResponse.json({ error: errText }, { status: 500 });
+  const adminSupabase = createAdminClient();
+  const { error: uploadError } = await adminSupabase.storage.from('media').upload(path, buffer, { contentType });
+  if (uploadError) {
+    console.error('[upload] storage upload error:', uploadError);
+    return NextResponse.json({ error: uploadError.message }, { status: 500 });
   }
   console.log('[upload] storage uploaded:', path);
 
-  // Verify: download the uploaded file back and check its hex header
-  const verifyRes = await fetch(`${supabaseUrl}/storage/v1/object/public/media/${path}`);
-  if (verifyRes.ok) {
-    const verifyBuf = Buffer.from(await verifyRes.arrayBuffer());
-    console.log('[upload] verify download size:', verifyBuf.length, 'first 8 hex:', verifyBuf.slice(0, 8).toString('hex'));
-  } else {
-    console.error('[upload] verify download failed:', verifyRes.status);
-  }
-
-  const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(path);
+  const { data: { publicUrl } } = adminSupabase.storage.from('media').getPublicUrl(path);
 
   const { error: insertError } = await supabase.from('media').insert({
     uploader_id: user.id,
