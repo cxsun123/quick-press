@@ -2,24 +2,21 @@ import 'server-only';
 import * as configService from './site-config.service';
 import { aiRequest } from '@/server/utils/ai-client';
 
-const PROMPT_TEMPLATE = `Extract the summary and keywords from the article below.
+const PROMPT_TEMPLATE = `You are a blog metadata extractor. Extract summary and keywords from the article below. Do NOT rewrite the content.
 
-Article:
+## Article Content
 ---
 CONTENT_PLACEHOLDER
 ---
 
-Output Requirements:
-- Return ONLY a JSON object containing summary and keywords.
-- Summary: A single sentence of around 100 characters, no less than 50 characters.
-- Keywords: 3\u20135 keywords.
-- Output Language: Chinese.
-- Strict Output Schema:
-    {
-      "summary": "...",
-      "keywords": ["...", "..."]
-    }
-- Do not include any text, explanation, or markdown formatting outside the JSON.`;
+## Requirements
+1. summary: One-sentence summary (~100 Chinese characters, no less than 50 characters)
+2. keywords: Extract 3-5 core keywords
+3. Output Language: same as article
+
+## Output Format
+Return ONLY a valid JSON object. No markdown fences, no extra text.
+Example: {"summary":"...","keywords":["k1","k2"]}`;
 
 function stripMarkdown(text: string): string {
   return text
