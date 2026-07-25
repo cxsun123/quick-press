@@ -47,10 +47,24 @@ export async function POST(request: Request) {
   const ext = filename.split('.').pop() || 'bin';
   const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-  const { error: uploadError } = await supabase.storage.from('media').upload(path, buffer, { contentType });
-  if (uploadError) {
-    console.error('[upload] storage upload error:', uploadError);
-    return NextResponse.json({ error: uploadError.message }, { status: 500 });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  console.log('[upload] uploading to storage, buffer size:', buffer.length, 'first 8 hex:', buffer.slice(0, 8).toString('hex'));
+  const uploadRes = await fetch(
+    `${supabaseUrl}/storage/v1/object/media/${path}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${serviceKey}`,
+        'Content-Type': contentType,
+      },
+      body: buffer,
+    }
+  );
+  if (!uploadRes.ok) {
+    const errText = await uploadRes.text();
+    console.error('[upload] storage upload error:', uploadRes.status, errText);
+    return NextResponse.json({ error: errText }, { status: 500 });
   }
   console.log('[upload] storage uploaded:', path);
 
