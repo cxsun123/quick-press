@@ -174,28 +174,19 @@ fix(toolbar): dropdown clipped by overflow container
 
 ### 本地文件发布
 
-| 用户 prompt 模式 | 工具 | 参数 |
-|---|---|---|
-| `发布本地文件: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
-| `用这个PDF/DOCX生成文章: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
-| `把这篇文档发布为博客: {PATH}` | `publish_from_file` | `{ "filePath": "<PATH>" }` |
-| `创建文章: {PATH}` (PATH 是本地文件) | `publish_from_file` | `{ "filePath": "<PATH>" }` |
-
-**文件类型自动处理**：PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布。
-
-### URL 发布
+所有发布都使用同一个 `publish` 工具，`source_type` 根据 `filePath`/`url` 自动判断：
 
 | 用户 prompt 模式 | 工具 | 参数 |
 |---|---|---|
-| `创建文章: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
-| `发布文章: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
-| `转载: {URL}` | `publish_full` | `{ "url": "<URL>" }` |
-| `用这篇生成中文文章: {URL}` | `publish_full` | `{ "url": "<URL>", "language": "中文" }` |
-| `把英文博客翻译成中文发布: {URL}` | `publish_full` | `{ "url": "<URL>", "language": "中文" }` |
+| `发布文章: {URL}` 或 `创建文章: {URL}` 或 `转载: {URL}` | `publish` | `{ "url": "<URL>" }` |
+| `发布本地文件: {PATH}` 或 `用这个PDF/DOCX生成文章: {PATH}` | `publish` | `{ "filePath": "<PATH>" }` |
+| 需要翻译成指定语言 | `publish` | `{ "url": "<URL>", "language": "中文" }` |
 
-**规则**：判断 PATH 是本地文件还是 URL，选择对应工具。若用户显式要求不同语言，传 `language` 参数。
-
-**重要**：对于 PDF/DOCX/PPT 等文件，直接调用 `publish_from_file` + `filePath`，不要尝试 `pdftotext`、`python3` 等命令行工具。MCP 工具已内置文件解析。
+**规则**：
+- 判断 PATH 是本地文件还是 URL，`filePath` → `publish({filePath})`，`url` → `publish({url})`
+- DO NOT use `ctx_fetch_and_index`, `webfetch`, or any other web fetching tool for the URL — call `publish` directly, it handles fetching internally
+- 文件类型自动处理：PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布
+- 若用户显式要求不同语言，传 `language` 参数
 
 ## 剩余工作
 
