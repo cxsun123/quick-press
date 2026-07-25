@@ -40,8 +40,11 @@ export function MediaPicker({ open, onClose, onSelect }: MediaPickerProps) {
       form.set('file', file);
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       const data = await res.json();
-      if (data.url) { onSelect(data.url); onClose(); }
-    } catch { /* ignore */ }
+      if (data.url) { onSelect(data.url); onClose(); return; }
+      alert(data.error || '上传失败');
+    } catch (e: any) {
+      alert(e.message || '上传失败');
+    }
     setUploading(false);
     if (inputRef.current) inputRef.current.value = '';
   };
