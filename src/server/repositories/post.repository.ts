@@ -155,9 +155,27 @@ export async function findCategoriesByPost(postId: string) {
 
 export async function insertPost(post: any) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase.from('posts').insert(post).select('id').single();
-  if (error) throw new Error(error.message);
-  return data;
+  for (const key of ['title', 'content', 'summary', 'slug']) {
+    if (typeof post[key] === 'string') {
+      for (let i = 0; i < post[key].length; i++) {
+        const c = post[key].charCodeAt(i);
+        if ((c >= 0xD800 && c <= 0xDFFF) || c === 0) {
+          console.error(`[insertPost] invalid char in ${key} at pos ${i}: code ${c}`);
+        }
+      }
+    }
+  }
+  try {
+    const { data, error } = await supabase.from('posts').insert(post).select('id').single();
+    if (error) throw new Error(error.message);
+    return data;
+  } catch (e: any) {
+    console.error(`[insertPost] error: ${e.message}`);
+    console.error(`[insertPost] title: ${post.title?.substring(0, 50)}`);
+    console.error(`[insertPost] slug len: ${post.slug?.length}, content len: ${post.content?.length}`);
+    console.error(`[insertPost] content chars: ${post.content?.substring(0, 200)}`);
+    throw e;
+  }
 }
 
 export async function updatePost(id: string, updates: any) {
