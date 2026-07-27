@@ -13,3 +13,7 @@ opencode.json
 AGENTS.md
 *.tsbuildinfo
 .codegraph/
+.claude/
+test-results/
+next-env.d.ts
+with-toolbar.yaml
