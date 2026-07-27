@@ -203,7 +203,8 @@ const SKIP_URL_PATTERNS = ['mmbiz_png', 'mmbiz_jpg/4X8', 'favicon', 'icon-', 'lo
 async function uploadImageToStorage(supabase: any, authorId: string, buffer: Buffer, prefix: string): Promise<{ url: string; path: string } | null> {
   const filename = `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
   const storagePath = `mcp/${Date.now()}-${Math.random().toString(36).slice(2)}/${filename}`;
-  const { error } = await supabase.storage.from('media').upload(storagePath, buffer, { contentType: 'image/jpeg' });
+  const body = new Blob([new Uint8Array(buffer)], { type: 'image/jpeg' });
+  const { error } = await supabase.storage.from('media').upload(storagePath, body, { contentType: 'image/jpeg' });
   if (error) return null;
   const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(storagePath);
   await supabase.from('media').insert({ uploader_id: authorId, filename, storage_path: storagePath, content_type: 'image/jpeg', size: buffer.length });
@@ -216,14 +217,17 @@ async function fetchAndCompressImage(imgUrl: string): Promise<Buffer | null> {
     if (!resp.ok) return null;
     const arrBuf = await resp.arrayBuffer();
     let buffer = Buffer.from(arrBuf);
-    try {
-      const meta = await sharp(buffer).metadata();
-      if (meta.width && meta.width > 4096) {
-        buffer = await sharp(buffer).resize({ width: 4096, withoutEnlargement: true }).jpeg({ quality: 85, mozjpeg: true }).toBuffer();
-      }
-    } catch {}
+    // Always convert to JPEG — SearXNG may return PNG/WebP/SVG
+    const maxWidth = 1600;
+    const meta = await sharp(buffer).metadata();
+    if (!meta.width) return null; // Not an image
+    const resizeOpts = meta.width > maxWidth
+      ? { width: maxWidth, withoutEnlargement: true }
+      : { withoutEnlargement: true };
+    buffer = await sharp(buffer).resize(resizeOpts).jpeg({ quality: 85, mozjpeg: true }).toBuffer();
     return buffer;
-  } catch {
+  } catch (e: any) {
+    console.warn(`[fetchAndCompressImage] skipped ${imgUrl.slice(0, 60)}: ${e.message}`);
     return null;
   }
 }
@@ -254,13 +258,15 @@ async function searchCoverImage(params: {
     try {
       const buffer = await fetchAndCompressImage(finalImageUrl);
       if (buffer) {
-        const uploaded = await uploadImageToStorage(supabase, authorId, buffer, 'cover');
-        if (uploaded) coverUrl = uploaded.url;
+        const uploaded = await uploadImageToStorage(supabase, authorId, buffer, 'article');
+        if (uploaded) {
+          imageUrls.push(uploaded.url);
+          coverUrl = uploaded.url; // First image = cover
+        }
       }
     } catch (e: any) {
       console.error('[searchCoverImage] direct image upload failed:', e.message);
     }
-    if (coverUrl) return { coverImageUrl: coverUrl, imageUrls };
   }
 
   for (const rawUrl of imageSearchUrls) {
@@ -318,14 +324,16 @@ async function searchCoverImage(params: {
         try {
           const buffer = await fetchAndCompressImage(result.img_src);
           if (!buffer) continue;
-          if (!coverUrl) {
-            const uploaded = await uploadImageToStorage(supabase, authorId, buffer, 'cover');
-            if (uploaded) coverUrl = uploaded.url;
-          } else if (imageUrls.length < imageCount) {
+          if (imageUrls.length < imageCount) {
             const uploaded = await uploadImageToStorage(supabase, authorId, buffer, 'article');
-            if (uploaded) imageUrls.push(uploaded.url);
+            if (uploaded) {
+              imageUrls.push(uploaded.url);
+              if (!coverUrl) coverUrl = uploaded.url; // First image = cover
+            }
           }
-        } catch {}
+        } catch (e: any) {
+          console.warn(`[searchCoverImage] image process error:`, e.message);
+        }
       }
     } catch (e: any) {
       console.warn(`[searchCoverImage] ${baseUrl} failed:`, e.message);
@@ -335,45 +343,45 @@ async function searchCoverImage(params: {
   return { coverImageUrl: coverUrl, imageUrls };
 }
 
-function insertImagesIntoContent(content: string, coverImageUrl: string | null, title: string, articleImages: { url: string; alt: string; position: number }[], imageUrls: string[], searchQuery: string): string {
+function insertImagesIntoContent(content: string, _coverImageUrl: string | null, title: string, articleImages: { url: string; alt: string; position: number }[], imageUrls: string[], searchQuery: string): string {
   let finalContent = content;
 
-  if (coverImageUrl) {
-    const coverMarkdown = `![${title}](${coverImageUrl})`;
-    const lines = finalContent.split('\n');
-    let insertIdx = lines.findIndex((l: string) => l.startsWith('## '));
-    if (insertIdx === -1) insertIdx = 0;
-    lines.splice(insertIdx, 0, coverMarkdown, '');
-    finalContent = lines.join('\n');
-  }
+  // Combine both image sources
+  const allImages: { url: string; alt: string }[] = [
+    ...articleImages.map(img => ({ url: img.url, alt: img.alt || `${title} image` })),
+    ...imageUrls.map((url, i) => ({ url, alt: `${searchQuery} 插图 ${i + 1}` })),
+  ];
 
-  if (articleImages.length > 0) {
+  if (allImages.length > 0) {
     const lines = finalContent.split('\n');
     const headingIndices: number[] = [];
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].startsWith('## ')) headingIndices.push(i);
     }
-    if (headingIndices.length > 1) {
-      const gap = Math.floor(headingIndices.length / articleImages.length);
-      for (let i = 0; i < articleImages.length; i++) {
-        const targetHeadingIdx = headingIndices[Math.min(i * gap + 1, headingIndices.length - 1)];
-        const insertAt = targetHeadingIdx + 1;
-        const img = articleImages[i];
-        const alt = img.alt || `${title} image ${i + 1}`;
-        lines.splice(insertAt, 0, `![${alt}](${img.url})`, '');
+
+    if (headingIndices.length >= allImages.length) {
+      // Distribute images evenly between sections
+      const gap = Math.floor(headingIndices.length / (allImages.length + 1));
+      for (let i = 0; i < allImages.length; i++) {
+        const headingIdx = headingIndices[Math.min((i + 1) * gap, headingIndices.length - 1)];
+        const insertAt = headingIdx + 1;
+        lines.splice(insertAt, 0, `![${allImages[i].alt}](${allImages[i].url})`, '');
+      }
+      finalContent = lines.join('\n');
+    } else if (headingIndices.length >= 2) {
+      // Fewer headings than images — insert at alternating headings
+      for (let i = 0; i < allImages.length; i++) {
+        const headingIdx = headingIndices[Math.min(i % headingIndices.length, headingIndices.length - 1)];
+        const insertAt = headingIdx + 1;
+        lines.splice(insertAt, 0, `![${allImages[i].alt}](${allImages[i].url})`, '');
       }
       finalContent = lines.join('\n');
     } else {
-      for (const img of articleImages) {
-        const alt = img.alt || `${title} image`;
-        finalContent += `\n\n![${alt}](${img.url})`;
+      // Only 0-1 headings — append at end
+      for (const img of allImages) {
+        finalContent += `\n\n![${img.alt}](${img.url})`;
       }
     }
-  }
-
-  if (imageUrls.length > 0) {
-    const imageMarkdown = imageUrls.map((url: string, i: number) => `![${searchQuery} ${i + 1}](${url})`).join('\n\n');
-    finalContent = imageMarkdown + '\n\n' + finalContent;
   }
 
   return finalContent;
@@ -425,15 +433,7 @@ async function publishPost(params: PublishPostParams): Promise<any> {
   const { title, content, summary, keywords, aiCategories, aiTags, searchQuery, imageCount, visibility, articleImages, extractedCoverUrl, imageUrl, authorId } = params;
   const supabase = createAdminClient();
 
-  const rawUrl = await configService.getSiteConfig('image_search_url');
-  const imageSearchUrls = rawUrl ? rawUrl.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
-
-  const { coverImageUrl, imageUrls } = await searchCoverImage({
-    supabase, authorId, coverImageUrl: imageUrl, extractedCoverUrl, searchQuery, imageCount,
-    imageSearchUrls,
-  });
-
-  const finalContent = insertImagesIntoContent(content, coverImageUrl, title, articleImages, imageUrls, searchQuery);
+  const finalContent = insertImagesIntoContent(content, null, title, articleImages, [], searchQuery);
 
   const tagIds = await resolveOrCreateTags(supabase, aiTags);
   const categoryIds = await resolveOrCreateCategories(supabase, aiCategories);
@@ -451,7 +451,7 @@ async function publishPost(params: PublishPostParams): Promise<any> {
     visibility,
     summary,
     keywords,
-    cover_image_url: coverImageUrl,
+    cover_image_url: null,
   });
 
   if (tagIds.length) {
@@ -459,6 +459,26 @@ async function publishPost(params: PublishPostParams): Promise<any> {
   }
   if (categoryIds.length) {
     await postRepo.insertPostCategories(categoryIds.map(id => ({ post_id: postData.id, category_id: id })));
+  }
+
+  // Sync cover + content image search
+  let coverImageUrl: string | null = null;
+  let finalImagesUploaded = 0;
+  try {
+    const rawUrl = await configService.getSiteConfig('image_search_url');
+    const imageSearchUrls = rawUrl ? rawUrl.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
+    const { coverImageUrl: cover, imageUrls: searchedImages } = await searchCoverImage({
+      supabase, authorId, coverImageUrl: imageUrl, extractedCoverUrl, searchQuery, imageCount,
+      imageSearchUrls,
+    });
+    coverImageUrl = cover;
+    finalImagesUploaded = searchedImages.length;
+    if (coverImageUrl || searchedImages.length > 0) {
+      const updatedContent = insertImagesIntoContent(content, coverImageUrl, title, articleImages, searchedImages, searchQuery);
+      await postRepo.updatePost(postData.id, { cover_image_url: coverImageUrl || null, content: updatedContent });
+    }
+  } catch (e: any) {
+    console.error('[publishPost] cover search failed:', e.message);
   }
 
   return {
@@ -470,7 +490,7 @@ async function publishPost(params: PublishPostParams): Promise<any> {
     keywords,
     categories: aiCategories,
     tags: aiTags,
-    imagesUploaded: imageUrls.length,
+    imagesUploaded: finalImagesUploaded,
     coverImage: coverImageUrl,
   };
 }
@@ -651,9 +671,10 @@ const handlers: Record<string, ToolHandler> = {
     }
 
     const path = `mcp/${Date.now()}-${Math.random().toString(36).slice(2)}/${filename}`;
+    const body = new Blob([new Uint8Array(buffer)], { type: contentType });
     const { error: uploadError } = await supabase.storage
       .from('media')
-      .upload(path, buffer, { contentType });
+      .upload(path, body, { contentType });
     if (uploadError) throw new Error(uploadError.message);
 
     const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(path);

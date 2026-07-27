@@ -131,7 +131,12 @@ async function parsePdf(buffer: Buffer): Promise<string> {
       for (const page of pdfData.Pages || []) {
         for (const item of page.Texts || []) {
           for (const r of item.R || []) {
-            text += decodeURIComponent(r.T || '') + ' ';
+            const t = r.T || '';
+            try {
+              text += decodeURIComponent(t) + ' ';
+            } catch {
+              text += t + ' ';
+            }
           }
         }
         text += '\n';
