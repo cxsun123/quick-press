@@ -26,6 +26,7 @@ interface PostEditorProps {
     visibility?: PostVisibility;
     password?: string;
     cover_image_url?: string;
+    is_pinned?: boolean;
   };
 }
 
@@ -47,6 +48,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.category_ids || []);
 
   const [visibility, setVisibility] = useState<PostVisibility>(initialData?.visibility || 'public');
+  const [isPinned, setIsPinned] = useState(initialData?.is_pinned || false);
   const [password, setPassword] = useState(initialData?.password || '');
   const [summary, setSummary] = useState(initialData?.summary || '');
   const [keywords, setKeywords] = useState<string[]>(initialData?.keywords || []);
@@ -128,6 +130,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
       form.set('tag_ids', JSON.stringify(selectedTags));
       form.set('category_ids', JSON.stringify(selectedCategories));
       form.set('visibility', visibility);
+      form.set('is_pinned', String(isPinned));
       if (password) form.set('password', password);
       form.set('summary', summary);
       form.set('keywords', JSON.stringify(keywords));
@@ -146,7 +149,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
       alert(e.message || tc('loading'));
     }
     setSaving(false);
-  }, [title, content, selectedTags, selectedCategories, initialData?.id, router, markSaved, visibility, password, summary, keywords, coverImageUrl, tc]);
+  }, [title, content, selectedTags, selectedCategories, initialData?.id, router, markSaved, visibility, isPinned, password, summary, keywords, coverImageUrl, tc]);
 
   const handleExtractSummary = useCallback(async () => {
     if (!content.trim()) {
@@ -231,6 +234,8 @@ export function PostEditor({ initialData }: PostEditorProps) {
           onSave={handleSave}
           visibility={visibility}
           onVisibilityChange={setVisibility}
+          isPinned={isPinned}
+          onIsPinnedChange={setIsPinned}
           password={password}
           onPasswordChange={setPassword}
           categories={categories}

@@ -20,6 +20,8 @@ interface EditorSidebarProps {
   onSave: (publish: boolean) => void;
   visibility: PostVisibility;
   onVisibilityChange: (v: PostVisibility) => void;
+  isPinned: boolean;
+  onIsPinnedChange: (v: boolean) => void;
   password: string;
   onPasswordChange: (p: string) => void;
   categories: { id: string; name: string }[];
@@ -67,6 +69,8 @@ export function EditorSidebar({
   onSave,
   visibility,
   onVisibilityChange,
+  isPinned,
+  onIsPinnedChange,
   password,
   onPasswordChange,
   categories,
@@ -278,6 +282,19 @@ export function EditorSidebar({
               postId={postId}
               passwordSavedVersion={passwordSavedVersion}
             />
+
+            <div className="border-t border-[var(--border)]" />
+
+            {/* Pinned */}
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={isPinned}
+                onChange={(e) => onIsPinnedChange(e.target.checked)}
+                className="accent-[var(--primary)]"
+              />
+              <span className="text-sm text-[var(--foreground)]">{t('pinned')}</span>
+            </label>
 
             <div className="border-t border-[var(--border)]" />
 

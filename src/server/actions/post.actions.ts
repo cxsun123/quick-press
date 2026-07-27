@@ -57,6 +57,13 @@ export async function batchUpdateVisibility(postIds: string[], visibility: strin
   revalidatePath('/admin/posts');
 }
 
+export async function togglePin(postId: string): Promise<boolean> {
+  const result = await postService.togglePin(postId);
+  revalidatePath('/admin/posts');
+  revalidatePath('/');
+  return result;
+}
+
 export async function regenerateShareToken(postId: string): Promise<string> {
   return postService.regenerateShareToken(postId);
 }

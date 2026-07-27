@@ -73,7 +73,10 @@
     "chooseFile": "Choose file",
     "public": "Public",
     "private": "Private",
-    "fileTooLarge": "File size exceeds 500KB limit. Please choose a smaller image."
+    "fileTooLarge": "File size exceeds 500KB limit. Please choose a smaller image.",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "pinned": "Pinned"
   },
   "nav": {
     "home": "Home",
@@ -240,7 +243,8 @@
     "sourceEditor": "Source editor",
     "insertMedia": "Insert media image",
     "copyPostLink": "Copy post link (password must be shared separately)",
-    "placeholder": "Start writing...\nMarkdown supported"
+    "placeholder": "Start writing...\nMarkdown supported",
+    "pinned": "Pinned"
   },
   "comment": {
     "comments": "Comments",

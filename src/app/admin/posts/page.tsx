@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
-import { listPosts, deletePost, batchUpdateVisibility } from '@/server/actions/post.actions';
+import { listPosts, deletePost, batchUpdateVisibility, togglePin } from '@/server/actions/post.actions';
 import { BatchActionBar } from '@/components/admin/batch-action-bar';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Pin, PinOff } from 'lucide-react';
 
 interface Post {
   id: string;
@@ -16,7 +16,9 @@ interface Post {
   visibility: string;
   published_at: string | null;
   created_at: string;
+  updated_at: string;
   share_token: string | null;
+  is_pinned: boolean;
   post_tags: { tags: { id: string; name: string; slug: string; color: string } }[];
 }
 
@@ -86,6 +88,11 @@ export default function PostsPage() {
     load();
   };
 
+  const handleTogglePin = async (postId: string) => {
+    await togglePin(postId);
+    load();
+  };
+
   return (
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
@@ -126,7 +133,11 @@ export default function PostsPage() {
             return (
               <div
                 key={post.id}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--background)]"
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg border transition-colors ${
+                  post.is_pinned
+                    ? 'border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/30'
+                    : 'border-[var(--border)] bg-[var(--background)]'
+                }`}
               >
                 <input
                   type="checkbox"
@@ -141,6 +152,12 @@ export default function PostsPage() {
                   >
                     {post.title}
                   </Link>
+                  {post.is_pinned && (
+                    <span className="inline-flex items-center gap-0.5 ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                      <Pin className="h-2.5 w-2.5" />
+                      {tc('pinned')}
+                    </span>
+                  )}
                   {post.post_tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
                       {post.post_tags.map((pt) => (
@@ -155,7 +172,7 @@ export default function PostsPage() {
                     </div>
                   )}
                   <div className="text-xs text-[var(--muted-foreground)] mt-0.5">
-                    /{post.slug} · {new Date(post.created_at).toLocaleDateString()}
+                    /{post.slug} · {new Date(post.updated_at).toLocaleDateString()}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -182,6 +199,18 @@ export default function PostsPage() {
                   }`}>
                     {post.status === 'published' ? tc('published') : tc('draft')}
                   </span>
+                  <button
+                    onClick={() => handleTogglePin(post.id)}
+                    className={`px-3 py-1 text-xs rounded border transition-colors ${
+                      post.is_pinned
+                        ? 'border-amber-400 bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-700 dark:hover:bg-amber-900/50'
+                        : 'border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]'
+                    }`}
+                    title={post.is_pinned ? tc('unpin') : tc('pin')}
+                  >
+                    {post.is_pinned ? <PinOff className="h-3 w-3 inline mr-0.5" /> : <Pin className="h-3 w-3 inline mr-0.5" />}
+                    {post.is_pinned ? tc('unpin') : tc('pin')}
+                  </button>
                   <Link
                     href={`/admin/posts/${post.id}/edit`}
                     className="px-3 py-1 text-xs rounded border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)]"

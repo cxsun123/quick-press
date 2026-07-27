@@ -29,6 +29,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         visibility: post.visibility || 'public',
         password: post.password_plaintext ? await decryptPassword(post.password_plaintext) : '',
         cover_image_url: post.cover_image_url || undefined,
+        is_pinned: post.is_pinned || false,
         tag_ids: tags.map((t: any) => t.id),
         category_ids: categories.map((c: any) => c.id),
       });

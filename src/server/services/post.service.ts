@@ -25,6 +25,7 @@ export async function savePost(formData: FormData): Promise<{ id: string; slug: 
   const keywordsJson = formData.get('keywords') as string || '[]';
   const keywords: string[] = JSON.parse(keywordsJson);
   const visibility = (formData.get('visibility') as string) || 'public';
+  const isPinned = formData.get('is_pinned') === 'true';
   const password = (formData.get('password') as string) || null;
   const coverImageUrl = (formData.get('cover_image_url') as string) || null;
   const userClearedCover = formData.get('cover_image_url') === '';
@@ -40,6 +41,7 @@ export async function savePost(formData: FormData): Promise<{ id: string; slug: 
     keywords: keywords.length > 0 ? keywords : null,
     visibility,
     cover_image_url: resolvedCoverUrl,
+    is_pinned: isPinned,
   };
 
   if (visibility === 'password') {
@@ -215,6 +217,10 @@ export async function getMonthlyArchives(): Promise<{ month: string; count: numb
 
 export async function batchUpdateVisibility(postIds: string[], visibility: string) {
   await postRepo.updatePostsVisibility(postIds, visibility);
+}
+
+export async function togglePin(postId: string): Promise<boolean> {
+  return postRepo.togglePostPin(postId);
 }
 
 export async function regenerateShareToken(postId: string): Promise<string> {

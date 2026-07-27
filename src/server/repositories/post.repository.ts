@@ -48,10 +48,11 @@ export async function findAllByAuthor(authorId: string) {
   const admin = createAdminClient();
   const { data } = await admin
     .from('posts')
-    .select(`id, title, slug, status, visibility, published_at, created_at, share_token,
+    .select(`id, title, slug, status, visibility, is_pinned, published_at, created_at, updated_at, share_token,
       post_tags(tags(id, name, slug, color))`)
     .eq('author_id', authorId)
-    .order('created_at', { ascending: false });
+    .order('is_pinned', { ascending: false })
+    .order('updated_at', { ascending: false });
   return data || [];
 }
 
@@ -143,6 +144,16 @@ export async function findByShareToken(token: string) {
     .eq('share_token', token)
     .single();
   return data;
+}
+
+export async function togglePostPin(postId: string): Promise<boolean> {
+  const admin = createAdminClient();
+  const { data } = await admin.from('posts').select('is_pinned').eq('id', postId).single();
+  if (!data) throw new Error('Post not found');
+  const newValue = !data.is_pinned;
+  const { error } = await admin.from('posts').update({ is_pinned: newValue }).eq('id', postId);
+  if (error) throw new Error(error.message);
+  return newValue;
 }
 
 export async function regenerateShareToken(postId: string): Promise<string> {
