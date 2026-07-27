@@ -892,7 +892,8 @@ async function aiRewrite(rawText: string, existingCategories: string[], existing
   const url = await configService.getSiteConfig('ai_provider_url');
   const apiKey = await configService.getSiteConfig('ai_api_key');
   const model = (await configService.getSiteConfig('ai_model')) || 'gpt-4o-mini';
-  if (!url || !apiKey) throw new Error('AI Provider 未配置，请在设置中配置 AI 相关参数');
+  if (!apiKey) throw new Error('AI API Key 未配置，请在 Admin Settings 中设置；如已设置，请确认服务器已配置 QUICK_PRESS_ENCRYPT_SALT');
+  if (!url) throw new Error('AI Provider URL 未配置，请在设置中配置 AI 相关参数');
 
   const prompt = `You are a senior blog editor. Based on the source article below, write a comprehensive blog post in Chinese using your knowledge.
 
@@ -997,7 +998,8 @@ async function aiExtractMetadata(
   const url = await configService.getSiteConfig('ai_provider_url');
   const apiKey = await configService.getSiteConfig('ai_api_key');
   const model = (await configService.getSiteConfig('ai_model')) || 'gpt-4o-mini';
-  if (!url || !apiKey) throw new Error('AI Provider 未配置，请在设置中配置 AI 相关参数');
+  if (!apiKey) throw new Error('AI API Key 未配置，请在 Admin Settings 中设置；如已设置，请确认服务器已配置 QUICK_PRESS_ENCRYPT_SALT');
+  if (!url) throw new Error('AI Provider URL 未配置，请在设置中配置 AI 相关参数');
 
   const formatInstruction = fileType === 'text'
     ? `6. formattedContent: Add basic Markdown structure to the plain text — use ## for major sections, ### for subsections, bullet lists for enumerated items. Do NOT rewrite content, only add formatting markers.`

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AdminLayout } from '@/components/admin/admin-layout';
-import { getAllSiteConfigs, updateSiteConfigs, testImageSearchUrls, testAiConnection, type ImageSearchTestResult, type AiTestResult } from '@/server/actions/site-config.actions';
+import { getAllSiteConfigs, updateSiteConfigs, testImageSearchUrls, testAiConnection, isEncryptionConfigured, type ImageSearchTestResult, type AiTestResult } from '@/server/actions/site-config.actions';
 import { Eye, EyeOff } from 'lucide-react';
 import { routing, localeNames, type Locale } from '@/i18n/routing';
 
@@ -41,10 +41,13 @@ export default function SettingsPage() {
   const [testingAll, setTestingAll] = useState(false);
   const [urlTestResults, setUrlTestResults] = useState<Map<string, ImageSearchTestResult>>(new Map());
   const [urlError, setUrlError] = useState('');
+  const [encryptionOk, setEncryptionOk] = useState(true);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
     (async () => {
-      const configs = await getAllSiteConfigs();
+      const [configs, encOk] = await Promise.all([getAllSiteConfigs(), isEncryptionConfigured()]);
+      setEncryptionOk(encOk);
       setSiteTitle(configs.site_title || 'quick-press');
       setRegMode((configs.registration_mode as 'open' | 'invite' | 'closed') || 'open');
       setAiUrl(configs.ai_provider_url || '');
@@ -124,6 +127,8 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError('');
+    setSaveSuccess(false);
     try {
       const data: Record<string, string> = {
         site_title: siteTitle,
@@ -136,11 +141,17 @@ export default function SettingsPage() {
       };
       if (aiKey) data.ai_api_key = aiKey;
       if (mcpKey) data.mcp_api_key = mcpKey;
-      await updateSiteConfigs(data);
-      setSavedKeys(new Set(['site_title', 'registration_mode', 'ai_provider_url', 'ai_api_key', 'ai_model', 'ai_max_content_length', 'mcp_api_key', 'image_search_url', 'locale']));
-      setSaveSuccess(true);
+      const result = await updateSiteConfigs(data);
+      if (result.skipped.length > 0) {
+        setSaveError(t('saveWarningNoSalt'));
+      } else {
+        setSavedKeys(new Set(['site_title', 'registration_mode', 'ai_provider_url', 'ai_api_key', 'ai_model', 'ai_max_content_length', 'mcp_api_key', 'image_search_url', 'locale']));
+        setSaveSuccess(true);
+      }
       router.refresh();
-    } catch {}
+    } catch (e: any) {
+      setSaveError(e?.message || '保存失败');
+    }
     setSaving(false);
   };
 
@@ -184,6 +195,11 @@ export default function SettingsPage() {
 
         <section>
           <h2 className="text-sm font-semibold text-[var(--foreground)] mb-3">{t('aiConfig')}</h2>
+          {!encryptionOk && (
+            <div className="mb-3 px-3 py-2 text-xs rounded-md bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300">
+              ⚠ {t('encryptionWarning')}
+            </div>
+          )}
           <div className="space-y-3">
             <div>
               <label className="block text-xs text-[var(--muted-foreground)] mb-1">{t('aiProviderUrl')}</label>
@@ -222,7 +238,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-2">
               <button type="button" onClick={handleTestAi} disabled={aiTesting || !aiUrl || !aiKey}
                 className="px-3 py-1.5 text-xs rounded-md border border-[var(--border)] text-[var(--foreground)] hover:bg-[var(--accent)] disabled:opacity-50 transition-colors">
-                {aiTesting ? '测试中...' : '测试 AI 连接'}
+                {aiTesting ? t('aiTestConnecting') : t('aiTestButton')}
               </button>
               {aiTestResult && (
                 <span className={`text-xs ${aiTestResult.ok ? 'text-green-600 dark:text-green-400' : 'text-red-500'}`}>
@@ -376,6 +392,11 @@ export default function SettingsPage() {
           {saveSuccess && (
             <span className="text-xs text-green-600 dark:text-green-400">
               ✓ {t('saveSuccess')}
+            </span>
+          )}
+          {saveError && (
+            <span className="text-xs text-red-500">
+              ✗ {saveError}
             </span>
           )}
         </div>

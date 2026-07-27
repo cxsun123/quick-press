@@ -193,7 +193,11 @@
     "removeBgImage": "清除背景",
     "noBgImage": "暂未设置背景图片，上传一张图片来自定义站点背景。",
     "previewSite": "预览首页",
-    "bgImageLimit": "不超过 500KB"
+    "bgImageLimit": "不超过 500KB",
+    "encryptionWarning": "未配置 QUICK_PRESS_ENCRYPT_SALT，API Key 将以明文存储。请在 Vercel 环境变量中添加 16 位随机盐值（openssl rand -hex 8）。",
+    "aiTestConnecting": "测试中...",
+    "aiTestButton": "测试 AI 连接",
+    "saveWarningNoSalt": "已保存，但因为没有安全秘钥，无法保存 API Key。"
   },
   "post": {
     "titlePlaceholder": "请输入文章标题",

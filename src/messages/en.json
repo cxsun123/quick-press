@@ -193,7 +193,11 @@
     "removeBgImage": "Remove background",
     "noBgImage": "No background image set. Upload an image to customize your site background.",
     "previewSite": "Preview site",
-    "bgImageLimit": "Max 500KB"
+    "bgImageLimit": "Max 500KB",
+    "encryptionWarning": "QUICK_PRESS_ENCRYPT_SALT not configured. API Keys will be stored in plaintext. Add a 16-character hex salt in Vercel env vars (openssl rand -hex 8).",
+    "aiTestConnecting": "Testing...",
+    "aiTestButton": "Test AI Connection",
+    "saveWarningNoSalt": "Saved, but API Keys were not saved because the encryption salt is not configured."
   },
   "post": {
     "titlePlaceholder": "Enter post title",

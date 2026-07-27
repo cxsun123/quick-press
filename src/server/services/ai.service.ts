@@ -44,7 +44,8 @@ export async function extractSummary(content: string): Promise<{ summary: string
   const maxLenStr = (await configService.getSiteConfig('ai_max_content_length')) || '100000';
   const maxLen = Math.max(1000, parseInt(maxLenStr, 10) || 100000);
 
-  if (!url || !apiKey) throw new Error('AI Provider 未配置，请在设置中配置 AI 相关参数');
+  if (!apiKey) throw new Error('AI API Key 未配置，请在 Admin Settings 中设置；如已设置，请确认服务器已配置 QUICK_PRESS_ENCRYPT_SALT');
+  if (!url) throw new Error('AI Provider URL 未配置，请在设置中配置 AI 相关参数');
 
   // Truncate content to configured limit to avoid exceeding model context window
   const truncated = content.length > maxLen ? content.slice(0, maxLen) + '...' : content;

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { createAdminClient } from '@/server/db/client';
 import { executeTool, getToolDefinitions, getPromptDefinitions, getPrompt } from '@/server/services/mcp.service';
+import { decrypt } from '@/server/utils/encryption';
 
 export const bodySizeLimit = '4mb';
 
@@ -26,7 +27,8 @@ async function authenticate(req: NextRequest): Promise<{ authorized: boolean; er
   if (isApiKey(token)) {
     const supabase = createAdminClient();
     const { data } = await supabase.from('site_config').select('value').eq('key', 'mcp_api_key').single();
-    if (!data?.value || token !== data.value) {
+    const storedKey = data?.value ? decrypt(data.value) : '';
+    if (!storedKey || token !== storedKey) {
       return { authorized: false, error: Response.json({ error: { code: -32001, message: 'Invalid API key' } }, { status: 401 }) };
     }
     return { authorized: true };

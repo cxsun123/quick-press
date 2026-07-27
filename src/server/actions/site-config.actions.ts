@@ -4,6 +4,11 @@ import { revalidatePath } from 'next/cache';
 import * as siteConfigService from '@/server/services/site-config.service';
 import { solveAnubisChallenge } from '@/server/utils/anubis';
 import { aiRequest } from '@/server/utils/ai-client';
+import { hasEncryptionKey } from '@/server/utils/encryption';
+
+export async function isEncryptionConfigured(): Promise<boolean> {
+  return hasEncryptionKey();
+}
 
 export async function getSiteConfig(key: string) {
   return siteConfigService.getSiteConfig(key);
@@ -17,9 +22,10 @@ export async function updateSiteConfig(key: string, value: string) {
   await siteConfigService.updateSiteConfig(key, value);
 }
 
-export async function updateSiteConfigs(data: Record<string, string>) {
-  await siteConfigService.updateSiteConfigs(data);
+export async function updateSiteConfigs(data: Record<string, string>): Promise<{ skipped: string[] }> {
+  const result = await siteConfigService.updateSiteConfigs(data);
   revalidatePath('/', 'layout');
+  return result;
 }
 
 export async function getAllSiteConfigs(): Promise<Record<string, string>> {
@@ -52,6 +58,10 @@ export interface AiTestResult {
 }
 
 export async function testAiConnection(url: string, apiKey: string, model: string): Promise<AiTestResult> {
+  if (!hasEncryptionKey()) {
+    return { ok: false, latencyMs: 0, message: '请先在服务器配置 QUICK_PRESS_ENCRYPT_SALT 加密秘钥', status: null };
+  }
+
   try {
     const testText = '人工智能正在改变世界。深度学习让计算机能够识别图像和理解语言，自动驾驶汽车已经上路测试。';
 

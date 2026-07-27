@@ -118,7 +118,12 @@ supabase db query "select * from storage.buckets;"
 2. 点击 **Add New → Project**，导入 quick-press 仓库。
 3. **选择区域** — 在 **Project Settings → Functions** 中，将 **Function Region** 设为和 Supabase **相同的区域**（如新加坡 `sin1`），避免跨区网络延迟。
 4. 在 **Environment Variables** 中添加上一步的三个 Supabase 变量，以及 `SEARXNG_URL`（`publish_full` 封面图搜索回退所用，从 <https://searx.space/> 选取公共实例，例如 `https://searx.tiekoetter.com`）。
-5. 部署。
+5. 添加加密盐值变量：
+   ```
+   QUICK_PRESS_ENCRYPT_SALT=<使用命令生成: openssl rand -hex 8>
+   ```
+   此 16 位随机 hex 字符串用于加密数据库中的敏感 API Key（AI Key、MCP Key）。未配置时 Key 以明文存储。
+6. 部署。
 
 
 ### 首次使用设置

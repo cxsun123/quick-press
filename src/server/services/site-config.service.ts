@@ -1,8 +1,24 @@
 import 'server-only';
 import * as configRepo from '@/server/repositories/site-config.repository';
+import { encrypt, decrypt, hasEncryptionKey } from '@/server/utils/encryption';
+
+const SENSITIVE_KEYS = ['ai_api_key', 'mcp_api_key'];
+
+function encryptValue(key: string, value: string): string {
+  return SENSITIVE_KEYS.includes(key) ? encrypt(value) : value;
+}
+
+function decryptValue(key: string, value: string): string {
+  return SENSITIVE_KEYS.includes(key) ? decrypt(value) : value;
+}
+
+export function isEncryptionReady(): boolean {
+  return hasEncryptionKey();
+}
 
 export async function getSiteConfig(key: string) {
-  return configRepo.findConfig(key);
+  const value = await configRepo.findConfig(key);
+  return value ? decryptValue(key, value) : value;
 }
 
 export async function getRegistrationMode(): Promise<'open' | 'invite' | 'closed'> {
@@ -12,16 +28,36 @@ export async function getRegistrationMode(): Promise<'open' | 'invite' | 'closed
 }
 
 export async function updateSiteConfig(key: string, value: string) {
-  await configRepo.upsertConfig(key, value);
+  if (SENSITIVE_KEYS.includes(key) && !hasEncryptionKey()) return;
+  await configRepo.upsertConfig(key, encryptValue(key, value));
 }
 
-export async function updateSiteConfigs(data: Record<string, string>) {
-  const items = Object.entries(data).map(([key, value]) => ({ key, value }));
-  await configRepo.upsertConfigs(items);
+export async function updateSiteConfigs(data: Record<string, string>): Promise<{ skipped: string[] }> {
+  const skipped: string[] = [];
+  const items: { key: string; value: string }[] = [];
+  for (const [key, value] of Object.entries(data)) {
+    if (SENSITIVE_KEYS.includes(key) && !hasEncryptionKey()) {
+      skipped.push(key);
+      continue;
+    }
+    items.push({ key, value: encryptValue(key, value) });
+  }
+  if (items.length > 0) await configRepo.upsertConfigs(items);
+  return { skipped };
 }
 
 export async function getAllSiteConfigs(): Promise<Record<string, string>> {
-  return configRepo.findAllConfigs();
+  const raw = await configRepo.findAllConfigs();
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    result[key] = decryptValue(key, value);
+  }
+  if (!hasEncryptionKey()) {
+    for (const key of SENSITIVE_KEYS) {
+      result[key] = '';
+    }
+  }
+  return result;
 }
 
 export async function getSiteTheme(): Promise<{ mode: string; theme: string }> {

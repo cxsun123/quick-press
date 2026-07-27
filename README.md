@@ -122,7 +122,12 @@ Expected output: two buckets — `media` and `themes`.
 2. Click **Add New → Project**, import the quick-press repository from GitHub.
 3. **Select the Region** — in **Project Settings → Functions**, set **Function Region** to the **same region** as your Supabase project (e.g. `Singapore (sin1)`). This keeps your database queries fast.
 4. In the **Environment Variables** section, add the three Supabase variables from Step 2.
-5. Deploy.
+5. Add the encryption salt variable:
+   ```
+   QUICK_PRESS_ENCRYPT_SALT=<generate with: openssl rand -hex 8>
+   ```
+   This 16-character hex string is used to encrypt sensitive API keys (AI Key, MCP Key) in the database. Without it, keys are stored in plaintext.
+6. Deploy.
 
 ### First-Time Setup
 
