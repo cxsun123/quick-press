@@ -126,7 +126,7 @@ Expected output: two buckets — `media` and `themes`.
    ```
    QUICK_PRESS_ENCRYPT_SALT=<generate with: openssl rand -hex 8>
    ```
-   This 16-character hex string is used to encrypt sensitive API keys (AI Key, MCP Key) in the database. Without it, keys are stored in plaintext.
+   This 16-character hex string is used to encrypt sensitive API keys (AI Key, MCP Key) in the database. Without it, API keys cannot be saved.
 6. Deploy.
 
 ### First-Time Setup

@@ -122,7 +122,7 @@ supabase db query "select * from storage.buckets;"
    ```
    QUICK_PRESS_ENCRYPT_SALT=<使用命令生成: openssl rand -hex 8>
    ```
-   此 16 位随机 hex 字符串用于加密数据库中的敏感 API Key（AI Key、MCP Key）。未配置时 Key 以明文存储。
+   此 16 位随机 hex 字符串用于加密数据库中的敏感 API Key（AI Key、MCP Key）。未配置时无法保存 API Key。
 6. 部署。
 
 
