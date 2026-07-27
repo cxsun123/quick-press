@@ -153,33 +153,29 @@ export async function findCategoriesByPost(postId: string) {
   return data?.map((r: any) => r.categories).filter(Boolean) || [];
 }
 
+function sanitizeText(s: string): string {
+  return s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').replace(/\u0000/g, '');
+}
+
 export async function insertPost(post: any) {
   const supabase = createAdminClient();
-  for (const key of ['title', 'content', 'summary', 'slug']) {
+  for (const key of ['title', 'content', 'summary', 'slug', 'excerpt']) {
     if (typeof post[key] === 'string') {
-      for (let i = 0; i < post[key].length; i++) {
-        const c = post[key].charCodeAt(i);
-        if ((c >= 0xD800 && c <= 0xDFFF) || c === 0) {
-          console.error(`[insertPost] invalid char in ${key} at pos ${i}: code ${c}`);
-        }
-      }
+      post[key] = sanitizeText(post[key]);
     }
   }
-  try {
-    const { data, error } = await supabase.from('posts').insert(post).select('id').single();
-    if (error) throw new Error(error.message);
-    return data;
-  } catch (e: any) {
-    console.error(`[insertPost] error: ${e.message}`);
-    console.error(`[insertPost] title: ${post.title?.substring(0, 50)}`);
-    console.error(`[insertPost] slug len: ${post.slug?.length}, content len: ${post.content?.length}`);
-    console.error(`[insertPost] content chars: ${post.content?.substring(0, 200)}`);
-    throw e;
-  }
+  const { data, error } = await supabase.from('posts').insert(post).select('id').single();
+  if (error) throw new Error(error.message);
+  return data;
 }
 
 export async function updatePost(id: string, updates: any) {
   const supabase = createAdminClient();
+  for (const key of ['title', 'content', 'summary', 'slug', 'excerpt']) {
+    if (typeof updates[key] === 'string') {
+      updates[key] = sanitizeText(updates[key]);
+    }
+  }
   const { error } = await supabase.from('posts').update(updates).eq('id', id);
   if (error) throw new Error(error.message);
 }
