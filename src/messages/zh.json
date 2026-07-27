@@ -249,14 +249,19 @@
   "comment": {
     "comments": "评论",
     "leaveComment": "发表评论",
-    "namePlaceholder": "昵称（选填）",
+    "namePlaceholder": "昵称（必填）",
+    "emailPlaceholder": "邮箱（必填）",
     "contentPlaceholder": "写下你的评论...",
     "submit": "提交评论",
     "submittedHint": "评论已提交，审核通过后显示。",
     "noComments": "暂无评论，来抢沙发吧！",
     "approve": "通过",
     "spam": "垃圾",
-    "delete": "删除"
+    "delete": "删除",
+    "onPost": "文章：",
+    "nameRequired": "请填写昵称",
+    "emailRequired": "请填写有效邮箱",
+    "contentRequired": "评论内容不能为空"
   },
   "sidebar": {
     "search": "搜索",

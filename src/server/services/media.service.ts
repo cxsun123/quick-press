@@ -6,10 +6,10 @@ import * as mediaRepo from '@/server/repositories/media.repository';
 export async function uploadMedia(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('未登录');
+  if (!user) throw new Error('NOT_AUTHENTICATED');
 
   const file = formData.get('file') as File;
-  if (!file) throw new Error('请选择文件');
+  if (!file) throw new Error('NO_FILE_SELECTED');
 
   let buffer = Buffer.from(await new Response(file.stream()).arrayBuffer());
   let filename = file.name;

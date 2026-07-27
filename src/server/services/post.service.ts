@@ -10,7 +10,7 @@ import type { PostFilter, PaginatedPosts } from '@/models/post.model';
 export async function savePost(formData: FormData): Promise<{ id: string; slug: string }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('未登录');
+  if (!user) throw new Error('NOT_AUTHENTICATED');
 
   const id = formData.get('id') as string | null;
   const title = formData.get('title') as string;

@@ -249,14 +249,19 @@
   "comment": {
     "comments": "Comments",
     "leaveComment": "Leave a comment",
-    "namePlaceholder": "Name (optional)",
+    "namePlaceholder": "Name (required)",
+    "emailPlaceholder": "Email (required)",
     "contentPlaceholder": "Write your comment...",
     "submit": "Submit comment",
     "submittedHint": "Comment submitted, visible after review.",
     "noComments": "No comments yet. Be the first!",
     "approve": "Approve",
     "spam": "Spam",
-    "delete": "Delete"
+    "delete": "Delete",
+    "onPost": "On:",
+    "nameRequired": "Please enter your name",
+    "emailRequired": "Please enter a valid email",
+    "contentRequired": "Comment cannot be empty"
   },
   "sidebar": {
     "search": "Search",

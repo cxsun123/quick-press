@@ -22,10 +22,12 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const t = useTranslations('comment');
   const [comments, setComments] = useState<Comment[]>([]);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [busy, setBusy] = useState(false);
+  const [formTs] = useState(() => Date.now());
 
   const load = useCallback(async () => {
     const data = await getComments(postId);
@@ -36,7 +38,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!name.trim() || !email.trim() || !content.trim()) return;
     setBusy(true);
     setError('');
     setSuccess('');
@@ -44,13 +46,23 @@ export function CommentSection({ postId }: CommentSectionProps) {
     const form = new FormData();
     form.set('post_id', postId);
     form.set('content', content.trim());
-    if (name.trim()) form.set('author_name', name.trim());
+    form.set('author_name', name.trim());
+    form.set('author_email', email.trim());
+    form.set('_ts', String(formTs));
 
     const res = await submitComment(form);
     setBusy(false);
 
-    if (res.error) {
-      setError(res.error);
+    if (res.type === 'silent') {
+      setContent('');
+      setSuccess(t('submittedHint'));
+    } else if (res.type === 'error') {
+      const errorMessages: Record<string, string> = {
+        nameRequired: t('nameRequired'),
+        emailRequired: t('emailRequired'),
+        contentRequired: t('contentRequired'),
+      };
+      setError(errorMessages[res.code] || res.code);
     } else {
       setContent('');
       setSuccess(t('submittedHint'));
@@ -104,6 +116,15 @@ export function CommentSection({ postId }: CommentSectionProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t('namePlaceholder')}
+          required
+          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t('emailPlaceholder')}
+          required
           className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
         />
         <textarea
@@ -114,6 +135,11 @@ export function CommentSection({ postId }: CommentSectionProps) {
           required
           className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] resize-none"
         />
+        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+          <label htmlFor="confirm_email">网站（选填）</label>
+          <input type="text" name="confirm_email" id="confirm_email" tabIndex={-1} autoComplete="off" />
+        </div>
+        <input type="hidden" name="_ts" value={formTs} />
         <button
           type="submit"
           disabled={busy}

@@ -5,12 +5,12 @@ import * as themeRepo from '@/server/repositories/theme.repository';
 export async function uploadTheme(formData: FormData): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('未登录');
+  if (!user) throw new Error('NOT_AUTHENTICATED');
 
   const name = formData.get('name') as string;
   const file = formData.get('file') as File;
-  if (!name || !file) throw new Error('请填写主题名称并选择 CSS 文件');
-  if (!file.name.endsWith('.css')) throw new Error('只接受 .css 文件');
+  if (!name || !file) throw new Error('THEME_NAME_AND_FILE_REQUIRED');
+  if (!file.name.endsWith('.css')) throw new Error('ONLY_CSS_ACCEPTED');
 
   const path = `user-themes/${Date.now()}-${file.name}`;
   const { error: uploadError } = await supabase.storage.from('themes').upload(path, file, { contentType: 'text/css' });

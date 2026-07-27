@@ -6,7 +6,7 @@ import * as pageRepo from '@/server/repositories/page.repository';
 export async function createPage(formData: FormData): Promise<{ error?: string }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: '未登录' };
+  if (!user) return { error: 'NOT_AUTHENTICATED' };
 
   const title = formData.get('title') as string;
   const content = (formData.get('content') as string) || '';

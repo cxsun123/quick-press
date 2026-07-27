@@ -30,7 +30,7 @@ export async function findApprovedByPost(postId: string) {
 
 export async function findAllComments(status?: string) {
   const supabase = createAdminClient();
-  let query = supabase.from('comments').select('*').order('created_at', { ascending: false });
+  let query = supabase.from('comments').select('*, posts(id, title, slug)').order('created_at', { ascending: false });
   if (status) query = query.eq('status', status);
   const { data } = await query;
   return data || [];

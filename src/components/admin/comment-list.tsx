@@ -13,6 +13,7 @@ interface Comment {
   content: string;
   status: string;
   created_at: string;
+  posts?: { id: string; title: string; slug: string } | null;
 }
 
 export function CommentList({ comments }: { comments: Comment[] }) {
@@ -41,14 +42,24 @@ export function CommentList({ comments }: { comments: Comment[] }) {
       {comments.map((comment) => (
         <div key={comment.id} className="border border-[var(--border)] rounded-lg p-4 bg-[var(--background)]">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-medium text-[var(--foreground)]">
-              {comment.author_name || tc('anonymous')}
+            <div>
+              <div className="text-sm font-medium text-[var(--foreground)]">
+                {comment.author_name || tc('anonymous')}
+              </div>
+              {comment.author_email && (
+                <div className="text-xs text-[var(--muted-foreground)]">{comment.author_email}</div>
+              )}
             </div>
             <div className="text-xs text-[var(--muted-foreground)]">
               {new Date(comment.created_at).toLocaleString()}
             </div>
           </div>
           <p className="text-sm text-[var(--foreground)] mb-3">{comment.content}</p>
+          {comment.posts && (
+            <div className="text-xs text-[var(--muted-foreground)] mb-3">
+              {t('onPost')} <a href={`/admin/posts/${comment.posts.id}/edit`} className="text-[var(--primary)] hover:underline">{comment.posts.title}</a>
+            </div>
+          )}
           <div className="flex gap-2">
             {comment.status === 'pending' && (
               <button
