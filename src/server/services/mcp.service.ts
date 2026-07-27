@@ -811,8 +811,19 @@ const handlers: Record<string, ToolHandler> = {
     const { fileContent, fileName, visibility = 'public', imageUrl, imageQuery, imageCount = 1, language } = args;
     if (!fileContent || !fileName) throw new Error('fileContent and fileName are required');
 
-    const buffer = Buffer.from(fileContent, 'base64');
-    const parsed = await parseFile(buffer, fileName);
+    let buffer;
+    try {
+      buffer = Buffer.from(fileContent, 'base64');
+    } catch (e: any) {
+      throw new Error(`[publish_from_file] Buffer.from(base64) failed: ${e.message}`);
+    }
+
+    let parsed;
+    try {
+      parsed = await parseFile(buffer, fileName);
+    } catch (e: any) {
+      throw new Error(`[publish_from_file] parseFile failed: ${e.constructor.name}: ${e.message}\n${e.stack}`);
+    }
     const skipRewrite = parsed.defaultSkipRewrite;
 
     // Extract cover image from file content
@@ -868,11 +879,15 @@ const handlers: Record<string, ToolHandler> = {
 
     const searchQuery = imageQuery || title;
 
-    return publishPost({
-      title, content, summary, keywords, aiCategories, aiTags,
-      searchQuery, imageCount, visibility, articleImages: [],
-      extractedCoverUrl, imageUrl, authorId,
-    });
+    try {
+      return await publishPost({
+        title, content, summary, keywords, aiCategories, aiTags,
+        searchQuery, imageCount, visibility, articleImages: [],
+        extractedCoverUrl, imageUrl, authorId,
+      });
+    } catch (e: any) {
+      throw new Error(`[publishPost] failed: ${e.constructor.name}: ${e.message}\n${e.stack}`);
+    }
   },
 };
 
