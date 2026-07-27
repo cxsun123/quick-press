@@ -24,6 +24,15 @@ export async function listPosts() {
   return postService.listPosts();
 }
 
+export async function getPostsForAdmin(filter: {
+  page?: number;
+  perPage?: number;
+  status?: string;
+  visibility?: string;
+} = {}) {
+  return postService.getPostsForAdmin(filter);
+}
+
 export async function getPublishedPosts() {
   return postService.getPublishedPosts();
 }

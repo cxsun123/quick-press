@@ -99,6 +99,15 @@ export async function listPosts() {
   return postRepo.findAllByAuthor(user?.id || '');
 }
 
+export async function getPostsForAdmin(filter: {
+  page?: number;
+  perPage?: number;
+  status?: string;
+  visibility?: string;
+} = {}) {
+  return postRepo.findPostsForAdmin(filter);
+}
+
 export async function getPublishedPosts() {
   return postRepo.findPublished();
 }

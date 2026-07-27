@@ -44,6 +44,51 @@ export async function findPublishedPostsPaginated(
   return { posts: [], total: 0, totalPages: 0, currentPage: page };
 }
 
+export async function findPostsForAdmin({
+  page = 1,
+  perPage = 20,
+  status,
+  visibility,
+}: {
+  page?: number;
+  perPage?: number;
+  status?: string;
+  visibility?: string;
+} = {}) {
+  const admin = createAdminClient();
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  let countQuery = admin.from('posts').select('id', { count: 'exact', head: true });
+  let dataQuery = admin.from('posts').select(
+    `id, title, slug, status, visibility, is_pinned, published_at, created_at, updated_at, share_token,
+     post_tags(tags(id, name, slug, color))`,
+  );
+
+  if (status) {
+    countQuery = countQuery.eq('status', status);
+    dataQuery = dataQuery.eq('status', status);
+  }
+  if (visibility) {
+    countQuery = countQuery.eq('visibility', visibility);
+    dataQuery = dataQuery.eq('visibility', visibility);
+  }
+
+  const { count } = await countQuery;
+  const { data: posts } = await dataQuery
+    .order('is_pinned', { ascending: false })
+    .order('updated_at', { ascending: false })
+    .range(from, to);
+
+  return {
+    posts: posts || [],
+    total: count || 0,
+    totalPages: Math.ceil((count || 0) / perPage),
+    currentPage: page,
+    perPage,
+  };
+}
+
 export async function findAllByAuthor(authorId: string) {
   const admin = createAdminClient();
   const { data } = await admin

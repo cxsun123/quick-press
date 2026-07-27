@@ -76,7 +76,8 @@
     "fileTooLarge": "文件大小超过 500KB 限制，请选择更小的图片。",
     "pin": "置顶",
     "unpin": "取消置顶",
-    "pinned": "已置顶"
+    "pinned": "已置顶",
+    "selectAll": "全选"
   },
   "nav": {
     "home": "首页",
@@ -125,6 +126,7 @@
     "editPage": "编辑页面",
     "newPost": "新建文章",
     "postManagement": "文章管理",
+    "allPosts": "全部",
     "pageManagement": "页面管理",
     "commentManagement": "评论管理",
     "tagManagement": "标签与分类",

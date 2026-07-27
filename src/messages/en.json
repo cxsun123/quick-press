@@ -76,7 +76,8 @@
     "fileTooLarge": "File size exceeds 500KB limit. Please choose a smaller image.",
     "pin": "Pin",
     "unpin": "Unpin",
-    "pinned": "Pinned"
+    "pinned": "Pinned",
+    "selectAll": "Select all"
   },
   "nav": {
     "home": "Home",
@@ -125,6 +126,7 @@
     "editPage": "Edit page",
     "newPost": "New post",
     "postManagement": "Post management",
+    "allPosts": "All",
     "pageManagement": "Page management",
     "commentManagement": "Comment management",
     "tagManagement": "Tags & categories",
