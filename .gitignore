@@ -10,4 +10,6 @@ node_modules/
 .vercel
 supabase/.temp/
 opencode.json
-AGENTS.md*.tsbuildinfo
+AGENTS.md
+*.tsbuildinfo
+.codegraph/
