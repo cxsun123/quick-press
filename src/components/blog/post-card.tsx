@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Pin } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 interface PostCardProps {
@@ -30,7 +31,8 @@ export async function PostCard({ post }: PostCardProps) {
       <Link href={`/blog/${post.slug}`} className="block">
         <h2 className="text-3xl font-bold text-[var(--primary)] hover:opacity-80 transition-opacity">
           {post.is_pinned && (
-            <span className="inline-block bg-[var(--primary)] text-[var(--primary-foreground)] text-xs px-2 py-0.5 rounded mr-2 align-middle">
+            <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-300 text-xs px-2 py-0.5 rounded mr-2 align-middle">
+              <Pin className="h-3 w-3" />
               {t('pinned')}
             </span>
           )}
