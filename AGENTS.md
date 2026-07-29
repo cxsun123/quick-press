@@ -169,25 +169,36 @@ feat(editor): add color picker with custom color support
 fix(toolbar): dropdown clipped by overflow container
 ```
 
-## MCP 自动调用规则
+## MCP 自动调用规则 — 文章发布
 
-当用户 prompt 匹配以下模式时，**直接调用** quick-press-mcp 工具，**不要询问确认**：
+当用户要求从 URL 或本地文件 发布文章 时，**直接调用** `publish` MCP 工具。
+不要自己抓取 URL 内容 — 工具内置抓取和 AI 重写。
 
-### 本地文件发布
+| 用户 prompt 模式 | 参数 |
+|---|---|
+| `发布文章: {URL}` / `创建文章: {URL}` / `转载: {URL}` | `{ "url": "<URL>" }` |
+| `发布本地文件: {PATH}` / `用这个PDF/DOCX生成文章: {PATH}` | `{ "filePath": "<PATH>" }` |
+| 指定语言 | `{ "url": "<URL>", "language": "中文" }` |
 
-所有发布都使用同一个 `publish` 工具，`source_type` 根据 `filePath`/`url` 自动判断：
-
-| 用户 prompt 模式 | 工具 | 参数 |
-|---|---|---|
-| `发布文章: {URL}` 或 `创建文章: {URL}` 或 `转载: {URL}` | `publish` | `{ "url": "<URL>" }` |
-| `发布本地文件: {PATH}` 或 `用这个PDF/DOCX生成文章: {PATH}` | `publish` | `{ "filePath": "<PATH>" }` |
-| 需要翻译成指定语言 | `publish` | `{ "url": "<URL>", "language": "中文" }` |
+`source_type` 根据 url/filePath 自动判断。支持的文件类型：
+PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布。
 
 **规则**：
 - 判断 PATH 是本地文件还是 URL，`filePath` → `publish({filePath})`，`url` → `publish({url})`
-- DO NOT use `ctx_fetch_and_index`, `webfetch`, or any other web fetching tool for the URL — call `publish` directly, it handles fetching internally
-- 文件类型自动处理：PDF/DOC/DOCX/ODT/RTF/PPT/PPTX → AI 重写；MD/HTML/TXT → 直接发布
+- DO NOT use `ctx_fetch_and_index`, `webfetch`, or any other web fetching tool — call `publish` directly, it handles fetching internally
 - 若用户显式要求不同语言，传 `language` 参数
+
+### publish 返回值
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `postId` | string | UUID |
+| `slug` | string | URL 标识 |
+| `url` | string | 模式自适应（public/password→全URL, private→相对路径） |
+| `title` / `summary` / `keywords` | 内容元数据 | |
+| `categories` / `tags` | string[] | 分类标签 |
+| `coverImage` | string\|null | 封面图 |
+| `password_plaintext` | string | 仅 password 模式返回 |
 
 ## 剩余工作
 
