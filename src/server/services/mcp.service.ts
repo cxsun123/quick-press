@@ -7,8 +7,10 @@ import { extractSummary } from './ai.service';
 import * as configService from './site-config.service';
 import { aiRequest } from '@/server/utils/ai-client';
 import sharp from 'sharp';
-import { parseFile, convertHtmlToMarkdown, extractCoverFromContent } from '@/server/utils/file-parser';
+import { parseFile, extractCoverFromContent } from '@/server/utils/file-parser';
 import { solveAnubisChallenge } from '@/server/utils/anubis';
+import { fetchUrl } from '@/server/utils/url-fetcher';
+import { hashPassword } from '@/server/utils/password';
 
 type ToolHandler = (args: Record<string, any>) => Promise<any>;
 
@@ -195,10 +197,6 @@ async function getSystemAuthorId(): Promise<string> {
 // ---------------------------------------------------------------------------
 // Shared helpers for publish_full & publish_from_file
 // ---------------------------------------------------------------------------
-
-const AD_DOMAINS = ['google-analytics', 'googletagmanager', 'doubleclick', 'facebook.com/tr', 'facebook.net', 'pixel', '1x1', 'spacer', 'blank', 'clear.gif', 'b.scorecardresearch', 'bat.bing.com', 'cm.everesttech.net'];
-const SKIP_ALT = ['头像', 'avatar', 'icon', 'logo', '二维码', 'qrcode', 'qr code', '广告', 'sponsor', 'badge'];
-const SKIP_URL_PATTERNS = ['mmbiz_png', 'mmbiz_jpg/4X8', 'favicon', 'icon-', 'logo.', 'avatar'];
 
 async function uploadImageToStorage(supabase: any, authorId: string, buffer: Buffer, prefix: string): Promise<{ url: string; path: string } | null> {
   const filename = `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
@@ -427,11 +425,29 @@ interface PublishPostParams {
   extractedCoverUrl?: string | null;
   imageUrl?: string | null;
   authorId: string;
+  passwordPlaintext?: string;
+}
+
+function generatePassword(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let pw = '';
+  for (let i = 0; i < 4; i++) {
+    pw += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return pw;
 }
 
 async function publishPost(params: PublishPostParams): Promise<any> {
-  const { title, content, summary, keywords, aiCategories, aiTags, searchQuery, imageCount, visibility, articleImages, extractedCoverUrl, imageUrl, authorId } = params;
+  const { title, content, summary, keywords, aiCategories, aiTags, searchQuery, imageCount, visibility, articleImages, extractedCoverUrl, imageUrl, authorId, passwordPlaintext: argPassword } = params;
   const supabase = createAdminClient();
+
+  let passwordPlaintext = argPassword || '';
+  let passwordHash = '';
+
+  if (visibility === 'password') {
+    passwordPlaintext = argPassword || generatePassword();
+    passwordHash = await hashPassword(passwordPlaintext);
+  }
 
   const finalContent = insertImagesIntoContent(content, null, title, articleImages, [], searchQuery);
 
@@ -452,6 +468,8 @@ async function publishPost(params: PublishPostParams): Promise<any> {
     summary,
     keywords,
     cover_image_url: null,
+    password_hash: passwordHash || null,
+    password_plaintext: passwordPlaintext || null,
   });
 
   if (tagIds.length) {
@@ -481,10 +499,15 @@ async function publishPost(params: PublishPostParams): Promise<any> {
     console.error('[publishPost] cover search failed:', e.message);
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const postUrl = visibility === 'private'
+    ? `/admin/posts/${postData.id}/edit`
+    : `${baseUrl}/blog/${slug}`;
+
   return {
     postId: postData.id,
     slug,
-    url: `/admin/posts/${postData.id}/edit`,
+    url: postUrl,
     title,
     summary,
     keywords,
@@ -492,6 +515,7 @@ async function publishPost(params: PublishPostParams): Promise<any> {
     tags: aiTags,
     imagesUploaded: finalImagesUploaded,
     coverImage: coverImageUrl,
+    password_plaintext: visibility === 'password' ? passwordPlaintext : undefined,
   };
 }
 
@@ -577,11 +601,11 @@ const handlers: Record<string, ToolHandler> = {
     const supabase = createAdminClient();
     const { limit = 50, offset = 0, status, visibility } = args;
 
-    let query = supabase
-      .from('posts')
-      .select('id, title, slug, status, visibility, published_at, created_at')
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      let query = supabase
+        .from('posts')
+        .select('id, title, slug, status, visibility, published_at, created_at, cover_image_url')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
 
     if (status) query = query.eq('status', status);
     if (visibility) query = query.eq('visibility', visibility);
@@ -611,10 +635,10 @@ const handlers: Record<string, ToolHandler> = {
   async search_posts(args) {
     const supabase = createAdminClient();
     const { query, limit = 20 } = args;
-    const { data } = await supabase
-      .from('posts')
-      .select('id, title, slug, excerpt, status, visibility, published_at')
-      .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+      const { data } = await supabase
+        .from('posts')
+        .select('id, title, slug, excerpt, status, visibility, published_at, cover_image_url')
+        .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
       .order('published_at', { ascending: false })
       .limit(limit);
     return { posts: data || [] };
@@ -701,64 +725,15 @@ const handlers: Record<string, ToolHandler> = {
 
     let rawText = text || '';
     let extractedCoverUrl: string | null = null;
+    let extractedTitle: string | undefined;
     const articleImages: { url: string; alt: string; position: number }[] = [];
     if (url) {
       try {
-        const resp = await fetch(url, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36' },
-          signal: AbortSignal.timeout(30000),
-        });
-        if (!resp.ok) {
-          const status = resp.status;
-          if (status === 403 || status === 401 || status === 429 || status === 503) {
-            throw new Error(`Anti-bot blocked (HTTP ${status}): This URL has bot protection. Please copy the article text and use the "text" parameter instead of "url".`);
-          }
-          throw new Error(`HTTP ${status}: Failed to fetch URL`);
-        }
-        const html = await resp.text();
-
-        const ogMatch = html.match(/<meta\s+(?:[^>]*?)property=["']og:image["'][^>]*?content=["']([^"']+)["']/i)
-          || html.match(/<meta\s+(?:[^>]*?)content=["']([^"']+)["'][^>]*?property=["']og:image["']/i);
-        const twMatch = html.match(/<meta\s+(?:[^>]*?)name=["']twitter:image["'][^>]*?content=["']([^"']+)["']/i)
-          || html.match(/<meta\s+(?:[^>]*?)content=["']([^"']+)["'][^>]*?name=["']twitter:image["']/i);
-        const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-        const rawCover = ogMatch?.[1] || twMatch?.[1] || imgMatch?.[1];
-        if (rawCover) {
-          try { extractedCoverUrl = new URL(rawCover, url).href; } catch { extractedCoverUrl = rawCover; }
-        }
-
-        const bodyMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
-          || html.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
-          || html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-        const bodyHtml = bodyMatch ? bodyMatch[1] : html;
-
-        const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
-        let imgIdx: RegExpExecArray | null;
-        let imgPosition = 0;
-        while ((imgIdx = imgRegex.exec(bodyHtml)) !== null) {
-          const rawSrc = imgIdx[1];
-          if (rawSrc.startsWith('data:')) continue;
-          const srcLower = rawSrc.toLowerCase();
-          if (AD_DOMAINS.some((d: string) => srcLower.includes(d))) continue;
-          const widthMatch = imgIdx[0].match(/width=["']?(\d+)/i);
-          const heightMatch = imgIdx[0].match(/height=["']?(\d+)/i);
-          const w = parseInt(widthMatch?.[1] || '999', 10);
-          const h = parseInt(heightMatch?.[1] || '999', 10);
-          if (w < 100 || h < 100) continue;
-          const altMatch = imgIdx[0].match(/alt=["']([^"']*)["']/i);
-          const alt = altMatch?.[1] || '';
-          if (SKIP_ALT.some((k: string) => alt.toLowerCase().includes(k))) continue;
-          if (SKIP_URL_PATTERNS.some((p: string) => srcLower.includes(p))) continue;
-          let imgUrl: string;
-          try { imgUrl = new URL(rawSrc, url).href; } catch { imgUrl = rawSrc; }
-          if (extractedCoverUrl && imgUrl === extractedCoverUrl) continue;
-          articleImages.push({ url: imgUrl, alt, position: imgPosition++ });
-        }
-
-        rawText = convertHtmlToMarkdown(bodyHtml).markdown;
-        if (rawText.length < 50) {
-          throw new Error('Fetched content too short — likely blocked by anti-bot protection. Please copy the article text and use the "text" parameter instead of "url".');
-        }
+        const result = await fetchUrl(url);
+        rawText = result.markdown;
+        extractedCoverUrl = result.coverUrl;
+        extractedTitle = result.title;
+        articleImages.push(...result.articleImages);
       } catch (e: any) {
         console.error('[publish_full] URL fetch failed:', e.message);
         throw e;
@@ -772,7 +747,7 @@ const handlers: Record<string, ToolHandler> = {
     const existingCategories = (dbCategories || []).map((c: any) => c.name);
     const existingTags = (dbTags || []).map((t: any) => t.name);
 
-    let title = args.title || '';
+    let title = args.title || extractedTitle || '';
     let content = rawText;
     let summary = argSummary || '';
     let aiCategories: string[] = [];
