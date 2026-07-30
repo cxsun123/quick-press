@@ -207,7 +207,7 @@ export function PostEditor({ initialData }: PostEditorProps) {
           <div className="min-h-[500px] border border-[var(--border)] rounded-lg overflow-hidden">
               <WysiwygEditor
                 content={content}
-                onChange={setContent}
+                onChange={(md) => setContent(md.replace(/\\(`)/g, '$1'))}
                 showSource={showSource}
                 onToggleSource={() => setShowSource(!showSource)}
                 locale={locale as 'en' | 'zh'}

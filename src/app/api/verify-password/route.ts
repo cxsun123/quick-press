@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/server/db/client';
 import { verifyPassword } from '@/server/utils/password';
-import { markdownToHtml } from '@chengxinsun26/editor';
+import { renderMarkdown } from '@/lib/markdown';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '密码错误' }, { status: 401 });
     }
 
-    const htmlContent = markdownToHtml(post.content || '');
+    const htmlContent = renderMarkdown(post.content || '');
 
     const response = NextResponse.json({
       success: true,

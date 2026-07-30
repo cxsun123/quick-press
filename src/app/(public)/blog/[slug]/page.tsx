@@ -1,7 +1,8 @@
 import { createClient, createAdminClient } from '@/server/db/client';
 import { PublicLayout } from '@/components/blog/public-layout';
 import { PostContentWrapper } from '@/components/blog/post-content-wrapper';
-import { markdownToHtml, MermaidBlock } from '@chengxinsun26/editor';
+import { MermaidBlock } from '@chengxinsun26/editor';
+import { renderMarkdown } from '@/lib/markdown';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -10,7 +11,7 @@ import { getTranslations } from 'next-intl/server';
 
 async function ArticleContent({ post }: { post: any }) {
   const t = await getTranslations('home');
-  const htmlContent = markdownToHtml(post.content || '');
+  const htmlContent = renderMarkdown(post.content || '');
   return (
     <article className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm p-8 md:p-12">

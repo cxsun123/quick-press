@@ -2,7 +2,7 @@ import { createClient } from '@/server/db/client';
 import { PublicLayout } from '@/components/blog/public-layout';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { markdownToHtml } from '@chengxinsun26/editor';
+import { renderMarkdown } from '@/lib/markdown';
 import { getTranslations } from 'next-intl/server';
 
 export default async function PublicPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -21,7 +21,7 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
 
   let contentHtml = '';
   if (page.content) {
-    contentHtml = markdownToHtml(page.content);
+    contentHtml = renderMarkdown(page.content);
   }
 
   return (
