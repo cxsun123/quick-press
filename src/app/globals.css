@@ -80,6 +80,13 @@ code, pre {
   font-family: var(--font-mono);
 }
 
+/* Tailwind Typography adds ::before/::after backticks on inline <code>.
+   Remove them — our markdown rendering already produces correct <code> tags. */
+.prose :where(code):not(pre code)::before,
+.prose :where(code):not(pre code)::after {
+  content: none;
+}
+
 .prose img {
   display: inline;
 }
