@@ -1,7 +1,7 @@
 import { createClient, createAdminClient } from '@/server/db/client';
 import { PublicLayout } from '@/components/blog/public-layout';
 import { PostContentWrapper } from '@/components/blog/post-content-wrapper';
-import { MermaidBlock } from '@chengxinsun26/editor';
+import { MermaidBlock, CodeBlockCopy } from '@chengxinsun26/editor';
 import { renderMarkdown } from '@/lib/markdown';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -32,6 +32,7 @@ async function ArticleContent({ post }: { post: any }) {
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
         <MermaidBlock />
+        <CodeBlockCopy />
       </div>
       <div className="max-w-4xl mx-auto px-4">
         <CommentSection postId={post.id} />

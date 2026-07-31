@@ -3,6 +3,7 @@ import { PublicLayout } from '@/components/blog/public-layout';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { renderMarkdown } from '@/lib/markdown';
+import { CodeBlockCopy } from '@chengxinsun26/editor';
 import { getTranslations } from 'next-intl/server';
 
 export default async function PublicPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,10 +31,13 @@ export default async function PublicPage({ params }: { params: Promise<{ slug: s
         <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-sm p-8 md:p-12">
           <h1 className="text-3xl font-bold text-[var(--foreground)] mb-8">{page.title}</h1>
           {contentHtml ? (
-            <div
-              className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[var(--foreground)] leading-relaxed prose-img:inline"
-              dangerouslySetInnerHTML={{ __html: contentHtml }}
-            />
+            <>
+              <div
+                className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[var(--foreground)] leading-relaxed prose-img:inline"
+                dangerouslySetInnerHTML={{ __html: contentHtml }}
+              />
+              <CodeBlockCopy />
+            </>
           ) : (
             <div className="text-[var(--muted-foreground)]">{t('noContent')}</div>
           )}
